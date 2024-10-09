@@ -1,9 +1,14 @@
 import type { Metadata } from 'next';
+
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { SITE_TITLE, SITE_DESC } from '@/constants';
+
 import './globals.css';
 
 export const metadata: Metadata = {
-	title: 'Vocab Builder',
-	description: 'A tool to help build vocabulary for reciting with Anki.',
+	title: SITE_TITLE,
+	description: SITE_DESC,
 };
 
 export default function RootLayout({
@@ -13,7 +18,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
-			<body>{children}</body>
+			<body>
+				<Header />
+				<main>{children}</main>
+				<Footer />
+			</body>
 		</html>
 	);
 }

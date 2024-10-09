@@ -1,5 +1,11 @@
-import React from 'react';
+import * as React from 'react';
+
+import UserInput from '@/components/UserInput';
 
 export default function Home() {
-	return <div>Hello World.</div>;
+	return (
+		<section>
+			<UserInput />
+		</section>
+	);
 }

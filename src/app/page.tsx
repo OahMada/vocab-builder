@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import UserInput from '@/components/UserInput';
+import GatherSentence from '@/components/GatherSentence';
 
 export default function Home() {
 	return (
 		<section>
-			<UserInput />
+			<GatherSentence />
 		</section>
 	);
 }

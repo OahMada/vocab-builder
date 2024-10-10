@@ -4,19 +4,25 @@ import * as React from 'react';
 
 var localStorageKey = 'user-input-sentence';
 
-function UserInput() {
-	let [sentence, setSentence] = React.useState<null | string>(null);
+function UserInput({ updateSentence }: { updateSentence: (text: string) => void }) {
+	let [userInput, setUserInput] = React.useState<null | string>(null);
 
 	React.useEffect(() => {
 		let savedValue = window.localStorage.getItem(localStorageKey);
-		setSentence(savedValue ? savedValue : '');
+		setUserInput(savedValue ? savedValue : '');
 	}, []);
 
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		// TODO shift + enter to submit
 		e.preventDefault();
+
+		if (!userInput) {
+			return;
+		}
+
 		window.localStorage.setItem(localStorageKey, '');
-		setSentence('');
+		setUserInput('');
+		updateSentence(userInput);
 	}
 
 	return (
@@ -24,12 +30,13 @@ function UserInput() {
 			<label htmlFor='user-input-field'>Enter Sentence: </label>
 			<textarea
 				id='user-input-field'
-				value={sentence ?? ''}
+				value={userInput ?? ''}
 				onChange={(e) => {
-					setSentence(e.target.value);
+					setUserInput(e.target.value);
 					window.localStorage.setItem(localStorageKey, e.target.value);
 				}}
 				placeholder='Input the sentence here...'
+				required={true}
 			/>
 			<button>Submit</button>
 		</form>

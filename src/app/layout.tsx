@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import { SITE_TITLE, SITE_DESC } from '@/constants';
+import StyledComponentsRegistry from '@/lib/registry';
 
 import './globals.css';
 
@@ -19,9 +18,7 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body>
-				<Header />
-				<main>{children}</main>
-				<Footer />
+				<StyledComponentsRegistry>{children}</StyledComponentsRegistry>
 			</body>
 		</html>
 	);

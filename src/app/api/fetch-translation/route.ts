@@ -5,6 +5,15 @@ const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 export async function POST(request: NextRequest) {
+	// for mock
+	let searchParams = request.nextUrl.searchParams;
+	let mock = searchParams.get('mock');
+	if (mock === 'true') {
+		await new Promise((resolve) => setTimeout(resolve, 2000));
+		return new Response('我们在一个夏末坐在一起， 那个美丽温柔的女人，你的密友.', { status: 200 });
+	}
+
+	// production logic
 	let reqBody = await request.json();
 
 	let AxiosConfig = {

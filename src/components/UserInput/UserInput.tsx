@@ -1,14 +1,30 @@
 'use client';
 
 import * as React from 'react';
+import styled from 'styled-components';
+import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
 
-var localStorageKey = 'user-input-sentence';
+var StyledForm = styled.form`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	textarea {
+		resize: none;
+		width: 100%;
+	}
+
+	.btns {
+		display: flex;
+		justify-content: flex-end;
+	}
+`;
 
 function UserInput({ updateSentence }: { updateSentence: (text: string) => void }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 
 	React.useEffect(() => {
-		let savedValue = window.localStorage.getItem(localStorageKey);
+		let savedValue = window.localStorage.getItem(USER_INPUT_SENTENCE);
 		setUserInput(savedValue ? savedValue : '');
 	}, []);
 
@@ -20,26 +36,31 @@ function UserInput({ updateSentence }: { updateSentence: (text: string) => void 
 			return;
 		}
 
-		window.localStorage.setItem(localStorageKey, '');
+		window.localStorage.setItem(USER_INPUT_SENTENCE, '');
 		setUserInput('');
 		updateSentence(userInput);
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<label htmlFor='user-input-field'>Enter Sentence: </label>
+		<StyledForm onSubmit={handleSubmit}>
+			<h1>Enter Sentence: </h1>
 			<textarea
-				id='user-input-field'
 				value={userInput ?? ''}
 				onChange={(e) => {
 					setUserInput(e.target.value);
-					window.localStorage.setItem(localStorageKey, e.target.value);
+					window.localStorage.setItem(USER_INPUT_SENTENCE, e.target.value);
 				}}
 				placeholder='Input the sentence here...'
 				required={true}
+				rows={3}
 			/>
-			<button>Submit</button>
-		</form>
+			<div className='btns'>
+				<button type='button' onClick={() => setUserInput(SENTENCE_SAMPLE)}>
+					Sample
+				</button>
+				<button>Submit</button>
+			</div>
+		</StyledForm>
 	);
 }
 

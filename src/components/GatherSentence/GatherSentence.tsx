@@ -1,24 +1,21 @@
 'use client';
 
 import * as React from 'react';
+import Cookie from 'js-cookie';
 
 import UserInput from '@/components/UserInput';
 import NewCollectionEntry from '@/components/NewCollectionEntry';
 import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
 
-function GatherSentence() {
-	let [sentence, setSentence] = React.useState<null | string>(null);
-
-	React.useEffect(() => {
-		let savedSentence = window.localStorage.getItem(SENTENCE_TO_BE_PROCESSED);
-		if (savedSentence) {
-			setSentence(savedSentence);
-		}
-	}, []);
+function GatherSentence({ savedSentence }: { savedSentence?: string }) {
+	let [sentence, setSentence] = React.useState<string | undefined>(savedSentence);
 
 	function updateSentence(text: string) {
-		setSentence(text.trim());
-		window.localStorage.setItem(SENTENCE_TO_BE_PROCESSED, text);
+		let trimmedText = text.trim();
+		setSentence(trimmedText);
+		Cookie.set(SENTENCE_TO_BE_PROCESSED, trimmedText, {
+			expires: 1000,
+		});
 	}
 
 	if (!sentence) {

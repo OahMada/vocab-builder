@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import styled from 'styled-components';
 import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
@@ -55,7 +53,13 @@ function UserInput({ updateSentence }: { updateSentence: (text: string) => void 
 				rows={3}
 			/>
 			<div className='btns'>
-				<button type='button' onClick={() => setUserInput(SENTENCE_SAMPLE)}>
+				<button
+					type='button'
+					onClick={() => {
+						setUserInput(SENTENCE_SAMPLE);
+						window.localStorage.setItem(USER_INPUT_SENTENCE, SENTENCE_SAMPLE);
+					}}
+				>
 					Sample
 				</button>
 				<button>Submit</button>

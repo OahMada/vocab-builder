@@ -10,12 +10,14 @@
 		"new-component": "new-component -l ts"
 	},
 	"dependencies": {
+		"@types/js-cookie": "^3.0.6",
 		"@types/node": "^22.7.5",
 		"@types/react": "^18.3.11",
 		"@types/react-dom": "^18.3.1",
 		"axios": "^1.7.7",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.15",
+		"js-cookie": "^3.0.5",
 		"new-component": "^5.0.3",
 		"next": "14.2.15",
 		"react": "^18.3.1",

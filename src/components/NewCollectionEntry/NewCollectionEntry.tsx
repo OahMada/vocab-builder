@@ -1,8 +1,9 @@
 import * as React from 'react';
 import useSWRImmutable from 'swr/immutable';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
-import { FETCH_TRANSLATE_ROUTE } from '@/constants';
+import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED } from '@/constants';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	const response = await axios.post(url, {
@@ -26,7 +27,14 @@ function NewCollectionEntry({ sentence, updateSentence }: { sentence: string; up
 			</div>
 			<div>
 				<button onClick={() => mutate()}>Retry Translation</button>
-				<button onClick={() => updateSentence('')}>Cancel</button>
+				<button
+					onClick={() => {
+						updateSentence('');
+						Cookies.remove(SENTENCE_TO_BE_PROCESSED);
+					}}
+				>
+					Cancel
+				</button>
 				<button>Finish Editing</button>
 			</div>
 		</div>

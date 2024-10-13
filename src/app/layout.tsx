@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 import { SITE_TITLE, SITE_DESC } from '@/constants';
-import StyledComponentsRegistry from '@/lib/registry';
+import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry';
 
 import './globals.css';
 

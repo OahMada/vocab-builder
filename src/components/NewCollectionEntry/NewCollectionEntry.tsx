@@ -3,7 +3,8 @@ import useSWRImmutable from 'swr/immutable';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED } from '@/constants';
+import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL } from '@/constants';
+import { createVocabEntry, NewEntry } from '@/actions';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	const response = await axios.post(url, {
@@ -14,6 +15,14 @@ var fetcher = async (url: string, sentence: string): Promise<string> => {
 
 function NewCollectionEntry({ sentence, updateSentence }: { sentence: string; updateSentence: (text: string) => void }) {
 	let { data, error, isLoading, mutate } = useSWRImmutable([FETCH_TRANSLATE_ROUTE, sentence], ([url, sentence]) => fetcher(url, sentence));
+
+	let newEntry: NewEntry = {
+		sentence,
+		translation: data!,
+		userEmail: USER_EMAIL,
+	};
+
+	const createVocabEntryWithData = createVocabEntry.bind(null, newEntry);
 
 	// TODO finish and upload data to database
 	// TODO Error handling -> retry
@@ -35,7 +44,13 @@ function NewCollectionEntry({ sentence, updateSentence }: { sentence: string; up
 				>
 					Cancel
 				</button>
-				<button>Finish Editing</button>
+				<button
+					onClick={async () => {
+						await createVocabEntryWithData();
+					}}
+				>
+					Finish Editing
+				</button>
 			</div>
 		</div>
 	);

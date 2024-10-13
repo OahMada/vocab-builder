@@ -8,9 +8,9 @@
 		"start": "next start",
 		"lint": "next lint",
 		"new-component": "new-component -l ts",
-		"prisma-push": "npx prisma db push",
-		"prisma-seed": "npx prisma db seed",
-		"prisma-studio": "npx prisma studio"
+		"prisma-push": "dotenv -e .env.local -- npx prisma db push",
+		"prisma-seed": "dotenv -e .env.local -- npx prisma db seed",
+		"prisma-studio": "dotenv -e .env.local -- npx prisma studio"
 	},
 	"prisma": {
 		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"

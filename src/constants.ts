@@ -6,3 +6,5 @@ export const SENTENCE_TO_BE_PROCESSED = 'sentence-to-be-processed';
 export const SENTENCE_SAMPLE = "We sat together at one summer's end,That beautiful mild woman, your close friend.";
 
 export const FETCH_TRANSLATE_ROUTE = process.env.NODE_ENV === 'development' ? '/api/fetch-translation?mock=true' : '/api/fetch-translation';
+
+export const USER_EMAIL = 'adam@gmail.com';

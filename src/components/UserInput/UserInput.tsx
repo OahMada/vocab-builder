@@ -2,22 +2,6 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
 
-var StyledForm = styled.form`
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-
-	textarea {
-		resize: none;
-		width: 100%;
-	}
-
-	.btns {
-		display: flex;
-		justify-content: flex-end;
-	}
-`;
-
 function UserInput({ updateSentence }: { updateSentence: (text: string) => void }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 
@@ -34,8 +18,8 @@ function UserInput({ updateSentence }: { updateSentence: (text: string) => void 
 			return;
 		}
 
-		window.localStorage.setItem(USER_INPUT_SENTENCE, '');
 		setUserInput('');
+		window.localStorage.setItem(USER_INPUT_SENTENCE, '');
 		updateSentence(userInput);
 	}
 
@@ -69,3 +53,19 @@ function UserInput({ updateSentence }: { updateSentence: (text: string) => void 
 }
 
 export default UserInput;
+
+var StyledForm = styled.form`
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	textarea {
+		resize: none;
+		width: 100%;
+	}
+
+	.btns {
+		display: flex;
+		justify-content: flex-end;
+	}
+`;

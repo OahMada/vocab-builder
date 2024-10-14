@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
 import axios, { AxiosError, isAxiosError } from 'axios';
 
+import { UserInputSchema } from '@/types';
+
 const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
@@ -14,7 +16,14 @@ export async function POST(request: NextRequest) {
 	}
 
 	// production logic
-	let reqBody = await request.json();
+	let { sentence } = await request.json();
+
+	// validation
+	let result = UserInputSchema.safeParse(sentence);
+	if (result.error) {
+		let formattedError = result.error.format();
+		return new Response(JSON.stringify(formattedError._errors), { status: 400 });
+	}
 
 	let AxiosConfig = {
 		method: 'post',
@@ -26,7 +35,7 @@ export async function POST(request: NextRequest) {
 					role: 'system',
 					content: `You are a language translator. You will translate any text provided by the user into Chinese.`,
 				},
-				{ role: 'user', content: reqBody.sentence },
+				{ role: 'user', content: result.data },
 			],
 		},
 		headers: { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` },

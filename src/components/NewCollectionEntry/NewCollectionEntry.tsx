@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL } from '@/constants';
 import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/types';
+import Toast from '@/components/Toast';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	const response = await axios.post(url, {
@@ -66,6 +67,7 @@ function NewCollectionEntry({ sentence, updateSentence }: { sentence: string; up
 					Finish Editing
 				</button>
 			</div>
+			<Toast content='hello world' />
 		</div>
 	);
 }

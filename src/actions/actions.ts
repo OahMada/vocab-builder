@@ -1,9 +1,10 @@
 'use server';
 
 import prisma from '@/lib/db';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 
 import { CreateVocabEntryInputSchema } from '@/types';
+import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 
 // export var validateCreateVocabEntryInput = (sentence: string, translation: string, userEmail: string, note?: string) => {
 // 	return Prisma.validator<Prisma.VocabEntryCreateInput>()({
@@ -47,5 +48,5 @@ export async function createVocabEntry(entry: unknown) {
 		// TODO
 	}
 
-	revalidatePath('/');
+	revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 }

@@ -2,36 +2,27 @@
 
 import prisma from '@/lib/db';
 import { revalidateTag } from 'next/cache';
+import { Prisma } from '@prisma/client';
 
-import { CreateVocabEntryInputSchema } from '@/types';
+import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
-
-// export var validateCreateVocabEntryInput = (sentence: string, translation: string, userEmail: string, note?: string) => {
-// 	return Prisma.validator<Prisma.VocabEntryCreateInput>()({
-// 		sentence,
-// 		translation,
-// 		note,
-// 		user: {
-// 			connect: {
-// 				email: userEmail,
-// 			},
-// 		},
-// 	});
-// };
+import { constructZodErrorMessage } from '@/helpers';
 
 export async function createVocabEntry(entry: unknown) {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
 
 	if (result.error) {
-		console.log(result.error);
-		return;
-		// TODO return the error message and catch it on the client
+		let errorMessage = constructZodErrorMessage(result.error);
+
+		return {
+			errorMessage,
+		};
 	}
 
 	let { sentence, translation, userEmail, note } = result.data;
 
 	try {
-		await prisma.vocabEntry.create({
+		let data = await prisma.vocabEntry.create({
 			data: {
 				sentence,
 				translation,
@@ -43,10 +34,29 @@ export async function createVocabEntry(entry: unknown) {
 				},
 			},
 		});
+		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
+		return {
+			data: {
+				note: data.note,
+				sentence: data.sentence,
+				translation: data.translation,
+			},
+		};
 	} catch (error) {
-		console.log(error);
-		// TODO
+		if (process.env.NODE_ENV === 'development') console.log(error);
+		if (error instanceof Prisma.PrismaClientKnownRequestError) {
+			// The .code property can be accessed in a type-safe manner
+			if (error.code === 'P2002') {
+				return { errorMessage: 'The very sentence has already been saved. Please update the existing one instead.' };
+			} else {
+				return { errorMessage: `${error.message}. Code: ${error.code}` };
+			}
+		} else if (error instanceof Prisma.PrismaClientInitializationError) {
+			return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
+		} else {
+			// eslint-disable-next-line
+			let err = error as any;
+			return { errorMessage: err.message };
+		}
 	}
-
-	revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 }

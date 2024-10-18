@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import axios, { AxiosError, isAxiosError } from 'axios';
 
-import { UserInputSchema } from '@/types';
+import { UserInputSchema } from '@/lib/dataValidation';
 
 const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 	let result = UserInputSchema.safeParse(sentence);
 	if (result.error) {
 		let formattedError = result.error.format();
-		return new Response(JSON.stringify(formattedError._errors), { status: 400 });
+		return new Response(JSON.stringify(formattedError._errors[0]), { status: 400 }); // TODO a helper function to properly construct error message
 	}
 
 	let AxiosConfig = {
@@ -43,19 +43,21 @@ export async function POST(request: NextRequest) {
 
 	try {
 		let { data, status, statusText } = await axios(AxiosConfig);
-		// throw new Error('Error out');
 		return new Response(JSON.stringify(data['choices'][0]['message']['content']), { status, statusText });
 	} catch (err) {
+		if (process.env.NODE_ENV === 'development') console.log(err);
 		let error = err as Error | AxiosError;
 		// https://axios-http.com/docs/handling_errors
 		if (isAxiosError(error)) {
 			if (error.response) {
-				return new Response(JSON.stringify(error.response.data), { status: error.response.status, statusText: error.response.statusText });
+				return new Response(JSON.stringify(error.response.data ? error.response.data : 'Something went wrong, please try again later'), {
+					status: error.response.status,
+					statusText: error.response.statusText,
+				});
 			} else if (error.request) {
 				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-				// http.ClientRequest in node.js
-				return new Response(JSON.stringify(error.request), { status: 500 });
+				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
+				return new Response('Something went wrong, please try again later', { status: 500 });
 			}
 		} else {
 			// Something happened in setting up the request that triggered an Error

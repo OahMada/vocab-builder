@@ -15,6 +15,7 @@ var StyledToastViewport = styled(ToastViewport)`
 	gap: 10px;
 	width: 390px;
 	max-width: 100vw;
+	list-style: none;
 `;
 
 function ToastWrapper({ children }: { children: React.ReactNode }) {

@@ -6,30 +6,26 @@ import Cookie from 'js-cookie';
 import UserInput from '@/components/UserInput';
 import NewCollectionEntry from '@/components/NewCollectionEntry';
 import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
-import { UserInputSchema } from '@/types';
 
 function GatherSentence({ savedSentence }: { savedSentence?: string }) {
 	let [sentence, setSentence] = React.useState<string | undefined>(savedSentence);
+	let [shouldClearUserInput, setShouldClearUserInput] = React.useState(false);
 
 	function updateSentence(text: string) {
-		let result = UserInputSchema.safeParse(text);
+		setSentence(text);
+		Cookie.set(SENTENCE_TO_BE_PROCESSED, text, {
+			expires: 1000,
+		});
+	}
 
-		if (result.error) {
-			console.log(result.error);
-			// TODO better error formatting
-			// TODO toast to show the error
-		} else {
-			setSentence(result.data);
-			Cookie.set(SENTENCE_TO_BE_PROCESSED, result.data, {
-				expires: 1000,
-			});
-		}
+	function updateShouldClearUserInput(value: boolean) {
+		setShouldClearUserInput(value);
 	}
 
 	if (!sentence) {
-		return <UserInput updateSentence={updateSentence} />;
+		return <UserInput updateSentence={updateSentence} clearUserInput={shouldClearUserInput} />;
 	}
-	return <NewCollectionEntry sentence={sentence} updateSentence={updateSentence} />;
+	return <NewCollectionEntry sentence={sentence} updateSentence={updateSentence} updateShouldClearUserInput={updateShouldClearUserInput} />;
 }
 
 export default GatherSentence;

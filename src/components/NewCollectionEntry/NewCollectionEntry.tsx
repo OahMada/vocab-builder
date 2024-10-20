@@ -33,6 +33,7 @@ function NewCollectionEntry({
 		error: swrError,
 		isLoading,
 		mutate,
+		isValidating,
 	} = useSWRImmutable([FETCH_TRANSLATE_ROUTE, sentence], ([url, sentence]) => fetcher(url, sentence), {
 		shouldRetryOnError: false,
 		onError: (error) => {
@@ -95,11 +96,15 @@ function NewCollectionEntry({
 				{translationNode}
 			</div>
 			<div>
-				<button onClick={() => mutate()}>Retry Translation</button>
-				<button onClick={resetUserInput}>Cancel</button>
-				<button onClick={handleSubmitNewEntry} disabled={error !== ''}>
-					Finish Editing
+				<button onClick={() => mutate()} disabled={isLoading || isValidating}>
+					Retry Translation
 				</button>
+				<button onClick={resetUserInput}>Cancel</button>
+				{!isLoading && (
+					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating}>
+						Finish Editing
+					</button>
+				)}
 			</div>
 			{error && <Toast toastType='error' content={error} />}
 		</div>

@@ -13,8 +13,12 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 
 	React.useEffect(() => {
 		let savedValue = window.localStorage.getItem(USER_INPUT_SENTENCE);
-		setUserInput(savedValue ? savedValue : '');
-		if (clearUserInput) setUserInput('');
+		if (clearUserInput) {
+			setUserInput('');
+			window.localStorage.setItem(USER_INPUT_SENTENCE, '');
+		} else {
+			setUserInput(savedValue);
+		}
 	}, [clearUserInput]);
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {

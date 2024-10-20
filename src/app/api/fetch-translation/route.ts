@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 	let result = UserInputSchema.safeParse(sentence);
 	if (result.error) {
 		let formattedError = result.error.format();
-		return new Response(JSON.stringify(formattedError._errors[0]), { status: 400 }); // TODO a helper function to properly construct error message
+		return new Response(JSON.stringify(formattedError._errors[0]), { status: 400 });
 	}
 
 	let AxiosConfig = {

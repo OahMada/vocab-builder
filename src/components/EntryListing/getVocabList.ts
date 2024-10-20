@@ -18,6 +18,9 @@ var getVocabList = unstable_cache(
 				userId: DATABASE_USER_ID,
 			},
 			select: entrySelect,
+			orderBy: {
+				updatedAt: 'desc',
+			},
 		});
 	},
 	[VOCAB_LIST_VALIDATION_TAG],

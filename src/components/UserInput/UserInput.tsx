@@ -4,10 +4,12 @@ import styled from 'styled-components';
 import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
 import Toast from '@/components/Toast';
 import { UserInputSchema } from '@/lib/dataValidation';
+import { fetchSentenceRecord } from '@/actions';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 	let [error, setError] = React.useState('');
+	let [isLoading, startTransition] = React.useTransition();
 
 	React.useEffect(() => {
 		let savedValue = window.localStorage.getItem(USER_INPUT_SENTENCE);
@@ -15,7 +17,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 		if (clearUserInput) setUserInput('');
 	}, [clearUserInput]);
 
-	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		// TODO shift + enter to submit
 		e.preventDefault();
 
@@ -24,6 +26,19 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 			let formattedError = result.error.format();
 			setError(formattedError._errors[0]);
 		} else {
+			// Check the uniqueness of the sentence before submitting.
+			// https://medium.com/@mguleryuz3/next-js-14-app-router-server-actions-with-react-usetransition-a-new-era-for-fullstack-2798e58bb793
+			let promise: ReturnType<typeof fetchSentenceRecord>;
+
+			startTransition(() => {
+				promise = fetchSentenceRecord(result.data);
+			});
+			let response = await promise!;
+			if (response?.errorMessage) {
+				setError(response.errorMessage);
+				return;
+			}
+
 			setError('');
 			updateSentence(result.data);
 		}
@@ -53,7 +68,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					>
 						Sample
 					</button>
-					<button>Submit</button>
+					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>
 			</StyledForm>
 			{error && <Toast toastType='error' content={error} />}

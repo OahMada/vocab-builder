@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 import { revalidateTag } from 'next/cache';
 import { Prisma } from '@prisma/client';
 
-import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
+import { CreateVocabEntryInputSchema, UserInputSchema } from '@/lib/dataValidation';
 import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 import { constructZodErrorMessage } from '@/helpers';
 
@@ -54,9 +54,36 @@ export async function createVocabEntry(entry: unknown) {
 		} else if (error instanceof Prisma.PrismaClientInitializationError) {
 			return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
 		} else {
-			// eslint-disable-next-line
-			let err = error as any;
+			let err = error as { message: string };
 			return { errorMessage: err.message };
 		}
+	}
+}
+
+export type FetchSentenceRecordReturn = ReturnType<typeof fetchSentenceRecord>;
+
+export async function fetchSentenceRecord(text: unknown) {
+	let result = UserInputSchema.safeParse(text);
+
+	if (result.error) {
+		let errorMessage = constructZodErrorMessage(result.error);
+		return {
+			errorMessage,
+		};
+	}
+
+	let sentence = result.data;
+
+	let data = await prisma.vocabEntry.findUnique({
+		where: {
+			sentence,
+		},
+	});
+	if (data) {
+		return {
+			errorMessage: 'The sentence you try to submit is already present in your collection.',
+		};
+	} else {
+		return null;
 	}
 }

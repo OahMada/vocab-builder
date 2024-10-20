@@ -11,6 +11,8 @@ var entrySelect = {
 	id: true,
 } satisfies Prisma.VocabEntrySelect;
 
+export type VocabEntry = Prisma.VocabEntryGetPayload<{ select: typeof entrySelect }>;
+
 var getVocabList = unstable_cache(
 	() => {
 		return prisma.vocabEntry.findMany({

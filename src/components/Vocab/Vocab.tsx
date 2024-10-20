@@ -1,21 +1,25 @@
-'use client';
-
 import * as React from 'react';
-import styled from 'styled-components';
+import { cookies } from 'next/headers';
 
-var StyledArticle = styled.article`
-	grid-column: 3 / 4;
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-`;
+import getVocabList from './getVocabList';
+import GatherSentence from '../GatherSentence';
+import EntryListing from '../EntryListing';
+import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
+import StyledArticle from './StyledArticle';
+import OptimisticVocabProvider from '../OptimisticVocabProvider';
 
-function Vocab({
-	children,
-}: Readonly<{
-	children: React.ReactNode;
-}>) {
-	return <StyledArticle>{children}</StyledArticle>;
+async function Vocab() {
+	let vocabList = await getVocabList();
+	let sentence = cookies().get(SENTENCE_TO_BE_PROCESSED)?.value || undefined;
+
+	return (
+		<StyledArticle>
+			<OptimisticVocabProvider vocabList={vocabList}>
+				<GatherSentence savedSentence={sentence} />
+				<EntryListing />
+			</OptimisticVocabProvider>
+		</StyledArticle>
+	);
 }
 
 export default Vocab;

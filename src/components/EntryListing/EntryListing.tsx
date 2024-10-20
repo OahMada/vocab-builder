@@ -1,22 +1,14 @@
+'use client';
+
 import * as React from 'react';
+import { useOptimisticVocabContext } from '@/components/OptimisticVocabProvider';
 
-import getVocabList from './getVocabList';
-
-// var entrySelect = Prisma.validator<Prisma.VocabEntrySelect>()({
-// 	sentence: true,
-// 	translation: true,
-// 	note: true,
-// 	id: true,
-// });
-
-// type VocabEntrySelectType = Prisma.VocabEntryGetPayload<{ select: typeof entrySelect }>;
-
-async function EntryListing() {
-	let vocabList = await getVocabList();
+function EntryListing() {
+	let { optimisticVocab } = useOptimisticVocabContext();
 
 	return (
 		<section>
-			{vocabList.map((entry) => {
+			{optimisticVocab.map((entry) => {
 				return (
 					<div key={entry.id}>
 						<p>{entry.sentence}</p>

@@ -8,6 +8,7 @@ import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import Toast from '@/components/Toast';
 import { constructZodErrorMessage } from '@/helpers';
+import { useOptimisticVocabContext } from '@/components/OptimisticVocabProvider';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -26,8 +27,10 @@ function NewCollectionEntry({
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
 	let [error, setError] = React.useState('');
+	let { addOptimisticVocabEntry } = useOptimisticVocabContext();
 	let {
 		data: translation,
+		error: swrError,
 		isLoading,
 		mutate,
 	} = useSWRImmutable([FETCH_TRANSLATE_ROUTE, sentence], ([url, sentence]) => fetcher(url, sentence), {
@@ -37,6 +40,15 @@ function NewCollectionEntry({
 			setError(error.response.data ? error.response.data : error.message); // error.response.data could be empty.
 		},
 	});
+
+	let translationNode: React.ReactNode;
+	if (isLoading) {
+		translationNode = <p>Translating...</p>;
+	} else if (swrError) {
+		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
+	} else {
+		translationNode = <p>{translation}</p>;
+	}
 
 	async function handleSubmitNewEntry() {
 		let newEntry = {
@@ -52,7 +64,14 @@ function NewCollectionEntry({
 			setError(errorMessage);
 			return;
 		} else {
-			let response = await createVocabEntry.bind(null, result.data)();
+			let data = result.data;
+			addOptimisticVocabEntry({
+				id: 'optimistic_entry',
+				note: data.note ?? '',
+				sentence: data.sentence,
+				translation: data.translation,
+			});
+			let response = await createVocabEntry.bind(null, data)();
 			if (response.errorMessage) {
 				setError(response.errorMessage);
 				return;
@@ -73,7 +92,7 @@ function NewCollectionEntry({
 			<div>
 				<h1>New Vocabulary Entry</h1>
 				<p>{sentence}</p>
-				<p>{translation}</p>
+				{translationNode}
 			</div>
 			<div>
 				<button onClick={() => mutate()}>Retry Translation</button>

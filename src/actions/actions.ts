@@ -34,7 +34,6 @@ export async function createVocabEntry(entry: unknown) {
 				},
 			},
 		});
-		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 		return {
 			data: {
 				note: data.note,
@@ -57,6 +56,8 @@ export async function createVocabEntry(entry: unknown) {
 			let err = error as { message: string };
 			return { errorMessage: err.message };
 		}
+	} finally {
+		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
 }
 

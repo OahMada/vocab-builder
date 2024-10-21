@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import axios, { AxiosError, isAxiosError } from 'axios';
 
 import { UserInputSchema } from '@/lib/dataValidation';
+import { delay } from '@/helpers';
 
 const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
 	let searchParams = request.nextUrl.searchParams;
 	let mock = searchParams.get('mock');
 	if (mock === 'true') {
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		await delay(2000);
 		return new Response('我们在一个夏末坐在一起， 那个美丽温柔的女人，你的密友.', { status: 200 });
 		// return new Response('Unexpected Error', { status: 400 });
 	}

@@ -9,7 +9,7 @@ var StyledSection = styled.main`
 	padding: 32px;
 `;
 
-function ContentWrapper({
+function MainContentWrapper({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
@@ -17,4 +17,4 @@ function ContentWrapper({
 	return <StyledSection>{children}</StyledSection>;
 }
 
-export default ContentWrapper;
+export default MainContentWrapper;

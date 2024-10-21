@@ -7,3 +7,7 @@ export function constructZodErrorMessage(err: ZodError) {
 	});
 	return errorMessage;
 }
+
+export async function delay(time: number) {
+	await new Promise((resolve) => setTimeout(resolve, time));
+}

@@ -3,8 +3,8 @@ import * as React from 'react';
 import Info from '@/components/Info';
 import Setting from '@/components/Setting';
 import Footer from '@/components/Footer';
-import Vocab from '@/components/Vocab';
 import MainContentWrapper from '@/components/MainContentWrapper';
+import VocabLoading from '@/components/Vocab/VocabLoading';
 
 export default function Home() {
 	return (
@@ -13,7 +13,7 @@ export default function Home() {
 				<Setting />
 				<Footer />
 			</Info>
-			<Vocab />
+			<VocabLoading />
 		</MainContentWrapper>
 	);
 }

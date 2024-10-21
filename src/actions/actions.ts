@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 
 import { CreateVocabEntryInputSchema, UserInputSchema } from '@/lib/dataValidation';
 import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
-import { constructZodErrorMessage } from '@/helpers';
+import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
 
 export async function createVocabEntry(entry: unknown) {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
@@ -53,8 +53,8 @@ export async function createVocabEntry(entry: unknown) {
 		} else if (error instanceof Prisma.PrismaClientInitializationError) {
 			return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
 		} else {
-			let err = error as { message: string };
-			return { errorMessage: err.message };
+			let errorMessage = getErrorMessage(error);
+			return { errorMessage };
 		}
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);

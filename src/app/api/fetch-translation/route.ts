@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server';
-import axios, { AxiosError, isAxiosError } from 'axios';
+import axios, { isAxiosError } from 'axios';
 
 import { UserInputSchema } from '@/lib/dataValidation';
-import { delay } from '@/helpers';
+import { delay, getErrorMessage } from '@/helpers';
 
 const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -46,9 +46,8 @@ export async function POST(request: NextRequest) {
 	try {
 		let { data, status, statusText } = await axios(AxiosConfig);
 		return new Response(JSON.stringify(data['choices'][0]['message']['content']), { status, statusText });
-	} catch (err) {
-		if (process.env.NODE_ENV === 'development') console.log(err);
-		let error = err as Error | AxiosError;
+	} catch (error) {
+		if (process.env.NODE_ENV === 'development') console.log(error);
 		// https://axios-http.com/docs/handling_errors
 		if (isAxiosError(error)) {
 			if (error.response) {
@@ -63,7 +62,8 @@ export async function POST(request: NextRequest) {
 			}
 		} else {
 			// Something happened in setting up the request that triggered an Error
-			return new Response(JSON.stringify(error.message), { status: 500 });
+			let errorMessage = getErrorMessage(error);
+			return new Response(JSON.stringify(errorMessage), { status: 500 });
 		}
 	}
 }

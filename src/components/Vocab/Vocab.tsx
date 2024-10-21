@@ -7,6 +7,7 @@ import EntryListing from '../EntryListing';
 import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
 import StyledArticle from './StyledArticle';
 import OptimisticVocabProvider from '../OptimisticVocabProvider';
+import ErrorBoundaryWrapper from '../GatherSentence/ErrorBoundaryWrapper';
 
 async function Vocab() {
 	let vocabList = await getVocabList();
@@ -15,7 +16,9 @@ async function Vocab() {
 	return (
 		<StyledArticle>
 			<OptimisticVocabProvider vocabList={vocabList}>
-				<GatherSentence savedSentence={sentence} />
+				<ErrorBoundaryWrapper>
+					<GatherSentence savedSentence={sentence} />
+				</ErrorBoundaryWrapper>
 				<EntryListing />
 			</OptimisticVocabProvider>
 		</StyledArticle>

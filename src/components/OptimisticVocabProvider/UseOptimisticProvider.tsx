@@ -12,7 +12,7 @@ var OptimisticVocabContext = React.createContext<OptimisticVocabContextType | nu
 
 function OptimisticVocabProvider({ vocabList, children }: { vocabList: VocabEntry[]; children: React.ReactNode }) {
 	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabList, (currentState: VocabEntry[], newEntry: VocabEntry) => {
-		return [newEntry, ...currentState];
+		return [newEntry, ...currentState.slice(0, -1)]; // Make sure there are always 5 entries that are returned.
 	});
 
 	let value = React.useMemo(() => ({ optimisticVocab, addOptimisticVocabEntry }), [addOptimisticVocabEntry, optimisticVocab]);

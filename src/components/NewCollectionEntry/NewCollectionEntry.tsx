@@ -2,6 +2,7 @@ import * as React from 'react';
 import useSWRImmutable from 'swr/immutable';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { startTransition } from 'react';
 
 import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL } from '@/constants';
 import { createVocabEntry } from '@/actions';
@@ -66,26 +67,31 @@ function NewCollectionEntry({
 			return;
 		} else {
 			let data = result.data;
-			addOptimisticVocabEntry({
-				id: 'optimistic_entry',
-				note: data.note ?? '',
-				sentence: data.sentence,
-				translation: data.translation,
+			startTransition(() => {
+				// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
+				addOptimisticVocabEntry({
+					id: 'optimistic_entry',
+					note: data.note ?? '',
+					sentence: data.sentence,
+					translation: data.translation,
+				});
 			});
+
+			// Put the resetting logic before the create action to avoid this component being evaluated on the server. Also get a snappy UI by doing this.
+			resetUserInput();
+			updateShouldClearUserInput(true);
 			let response = await createVocabEntry.bind(null, data)();
 			if (response.errorMessage) {
 				setError(response.errorMessage);
 				return;
 			}
 		}
-		resetUserInput();
-		updateShouldClearUserInput(true);
 	}
 
 	function resetUserInput() {
-		setError('');
 		updateSentence('');
 		Cookies.remove(SENTENCE_TO_BE_PROCESSED);
+		setError('');
 	}
 
 	return (

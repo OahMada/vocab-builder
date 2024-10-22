@@ -60,3 +60,7 @@ h5,
 h6 {
 	overflow-wrap: break-word;
 }
+
+/* The resource http://localhost:3000/_next/static/css/app/layout.css?v=1729602510250 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.  */
+/* Only in development, so I'm gonna leave it. */
+/* It's actually a byproduct of another bug */

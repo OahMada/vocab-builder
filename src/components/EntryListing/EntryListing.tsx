@@ -20,4 +20,15 @@ function EntryListing() {
 	);
 }
 
+// function Entries({ items }: { items: VocabEntry[] }) {
+// 	let itemSlice = items.slice(0, 5);
+// 	return itemSlice.map((item) => {
+// 		return (
+// 			<div key={item.id}>
+// 				<p>{item.sentence}</p>
+// 				<p>{item.translation}</p>
+// 			</div>
+// 		);
+// 	});
+// }
 export default EntryListing;

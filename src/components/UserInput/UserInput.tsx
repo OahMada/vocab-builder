@@ -61,6 +61,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					placeholder='Input the sentence here...'
 					required={true}
 					rows={3}
+					name='user-input' // Browser would complain if this is omitted.
 				/>
 				<div className='btns'>
 					<button

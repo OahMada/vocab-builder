@@ -5,8 +5,8 @@ import styled from 'styled-components';
 
 var StyledSection = styled.div``;
 
-function Setting() {
+function AppSetting() {
 	return <StyledSection>User & Setting stuff</StyledSection>;
 }
 
-export default Setting;
+export default AppSetting;

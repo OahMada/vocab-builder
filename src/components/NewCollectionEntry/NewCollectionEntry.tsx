@@ -10,6 +10,7 @@ import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import Toast from '@/components/Toast';
 import { constructZodErrorMessage } from '@/helpers';
 import { useOptimisticVocabContext } from '@/components/OptimisticVocabProvider';
+import SentenceTranslation from '@/components/SentenceTranslation';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -28,9 +29,15 @@ function NewCollectionEntry({
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
 	let [error, setError] = React.useState('');
+	let [translation, setTranslation] = React.useState('');
+	function alterTranslation(text: string) {
+		setTranslation(text);
+	}
+
 	let { addOptimisticVocabEntry } = useOptimisticVocabContext();
+
 	let {
-		data: translation,
+		data,
 		error: swrError,
 		isLoading,
 		mutate,
@@ -41,6 +48,9 @@ function NewCollectionEntry({
 			if (process.env.NODE_ENV === 'development') console.log(error);
 			setError(error.response.data ? error.response.data : error.message); // error.response.data could be empty.
 		},
+		onSuccess: (data) => {
+			setTranslation(data);
+		},
 	});
 
 	let translationNode: React.ReactNode;
@@ -48,8 +58,8 @@ function NewCollectionEntry({
 		translationNode = <p>Translating...</p>;
 	} else if (swrError) {
 		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
-	} else {
-		translationNode = <p>{translation}</p>;
+	} else if (data) {
+		translationNode = <SentenceTranslation alterTranslation={alterTranslation} translation={translation} />;
 	}
 
 	async function handleSubmitNewEntry() {
@@ -97,8 +107,9 @@ function NewCollectionEntry({
 	return (
 		<div>
 			<div>
-				<h1>New Vocabulary Entry</h1>
+				<h2>New Vocabulary Entry</h2>
 				<p>{sentence}</p>
+				<h2>Translation</h2>
 				{translationNode}
 			</div>
 			<div>

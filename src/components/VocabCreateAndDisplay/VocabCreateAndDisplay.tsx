@@ -9,6 +9,7 @@ import { VocabEntry } from '@/components/Vocab/getVocabList';
 import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
 import UserInput from '@/components/UserInput';
 import ErrorBoundaryWrapper from '../ErrorBoundaryWrapper';
+import SWRConfigWrapper from '@/components/SWRConfigWrapper';
 
 function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabEntry[]; savedSentence: string | undefined }) {
 	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabList, (currentState: VocabEntry[], newEntry: VocabEntry) => {
@@ -35,12 +36,14 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 				{!sentence ? (
 					<UserInput updateSentence={updateSentence} clearUserInput={shouldClearUserInput} />
 				) : (
-					<SubmitNewCollectionEntry
-						sentence={sentence}
-						addOptimisticVocabEntry={addOptimisticVocabEntry}
-						updateSentence={updateSentence}
-						updateShouldClearUserInput={updateShouldClearUserInput}
-					/>
+					<SWRConfigWrapper>
+						<SubmitNewCollectionEntry
+							sentence={sentence}
+							addOptimisticVocabEntry={addOptimisticVocabEntry}
+							updateSentence={updateSentence}
+							updateShouldClearUserInput={updateShouldClearUserInput}
+						/>
+					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
 			<EntryListing optimisticVocab={optimisticVocab} />

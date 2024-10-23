@@ -4,7 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { startTransition } from 'react';
 
-import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL } from '@/constants';
+import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL, TRANSLATION_TEXT } from '@/constants';
 import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import Toast from '@/components/Toast';
@@ -31,7 +31,8 @@ function SubmitNewCollectionEntry({
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
 	let [error, setError] = React.useState('');
-	let [translation, setTranslation] = React.useState('');
+
+	let [translation, setTranslation] = React.useState<null | string>(null);
 	function alterTranslation(text: string) {
 		setTranslation(text);
 	}
@@ -50,16 +51,30 @@ function SubmitNewCollectionEntry({
 		},
 	});
 
+	// Needed when hitting cancel and submitting the same sentence again.
 	React.useEffect(() => {
-		if (data) setTranslation(data);
+		let savedTranslation = window.localStorage.getItem(TRANSLATION_TEXT);
+		if (data && !savedTranslation) {
+			setTranslation(data);
+		} else if (savedTranslation) {
+			// To preserve user editing after a page refresh.
+			setTranslation(savedTranslation);
+		}
 	}, [data]);
 
+	React.useEffect(() => {
+		if (typeof translation === 'string') {
+			window.localStorage.setItem(TRANSLATION_TEXT, translation);
+		}
+	}, [translation]);
+
 	let translationNode: React.ReactNode;
-	if (isLoading) {
+
+	if (isLoading || isValidating) {
 		translationNode = <p>Translating...</p>;
 	} else if (swrError) {
 		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
-	} else if (data) {
+	} else if (translation) {
 		translationNode = <SentenceTranslation alterTranslation={alterTranslation} translation={translation} />;
 	}
 
@@ -88,7 +103,7 @@ function SubmitNewCollectionEntry({
 				});
 			});
 
-			// Put the resetting logic before the create action to avoid this component being evaluated on the server. Also get a snappy UI by doing this.
+			// Put the resetting logic before the create action to get a snappy UI.
 			resetUserInput();
 			updateShouldClearUserInput(true);
 			let response = await createVocabEntry.bind(null, data)();
@@ -114,7 +129,15 @@ function SubmitNewCollectionEntry({
 				{translationNode}
 			</div>
 			<div>
-				<button onClick={() => mutate()} disabled={isLoading || isValidating}>
+				<button
+					onClick={() => {
+						setError(''); // Otherwise, the submit button would stay disabled.
+						window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
+						setTranslation(data!); // For cases where the refetched translation is the same as before, it essentially resets the translation.
+						mutate();
+					}}
+					disabled={isLoading || isValidating}
+				>
 					Retry Translation
 				</button>
 				<button

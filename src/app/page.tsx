@@ -5,7 +5,6 @@ import AppSetting from '@/components/AppSetting';
 import Footer from '@/components/Footer';
 import Vocab from '@/components/Vocab';
 import MainContentWrapper from '@/components/MainContentWrapper';
-import VocabLoading from '@/components/Vocab/VocabLoading';
 
 export default function Home() {
 	return (
@@ -14,7 +13,8 @@ export default function Home() {
 				<AppSetting />
 				<Footer />
 			</Info>
-			<React.Suspense fallback={<VocabLoading />}>
+			<React.Suspense fallback='Loading...'>
+				{/* TODO a skeleton loading component for the fallback, which includes an input box */}
 				<Vocab />
 			</React.Suspense>
 		</MainContentWrapper>

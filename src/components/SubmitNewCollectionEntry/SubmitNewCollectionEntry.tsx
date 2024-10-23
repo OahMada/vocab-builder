@@ -9,8 +9,8 @@ import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import Toast from '@/components/Toast';
 import { constructZodErrorMessage } from '@/helpers';
-import { useOptimisticVocabContext } from '@/components/OptimisticVocabProvider';
 import SentenceTranslation from '@/components/SentenceTranslation';
+import { VocabEntry } from '../Vocab/getVocabList';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -19,12 +19,14 @@ var fetcher = async (url: string, sentence: string): Promise<string> => {
 	return response.data;
 };
 
-function NewCollectionEntry({
+function SubmitNewCollectionEntry({
 	sentence,
+	addOptimisticVocabEntry,
 	updateSentence,
 	updateShouldClearUserInput,
 }: {
 	sentence: string;
+	addOptimisticVocabEntry: (value: VocabEntry) => void;
 	updateSentence: (text: string) => void;
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
@@ -33,8 +35,6 @@ function NewCollectionEntry({
 	function alterTranslation(text: string) {
 		setTranslation(text);
 	}
-
-	let { addOptimisticVocabEntry } = useOptimisticVocabContext();
 
 	let {
 		data,
@@ -48,10 +48,11 @@ function NewCollectionEntry({
 			if (process.env.NODE_ENV === 'development') console.log(error);
 			setError(error.response.data ? error.response.data : error.message); // error.response.data could be empty.
 		},
-		onSuccess: (data) => {
-			setTranslation(data);
-		},
 	});
+
+	React.useEffect(() => {
+		if (data) setTranslation(data);
+	}, [data]);
 
 	let translationNode: React.ReactNode;
 	if (isLoading) {
@@ -116,7 +117,14 @@ function NewCollectionEntry({
 				<button onClick={() => mutate()} disabled={isLoading || isValidating}>
 					Retry Translation
 				</button>
-				<button onClick={resetUserInput}>Cancel</button>
+				<button
+					onClick={() => {
+						resetUserInput();
+						updateShouldClearUserInput(false);
+					}}
+				>
+					Cancel
+				</button>
 				{!isLoading && (
 					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating}>
 						Finish Editing
@@ -128,4 +136,4 @@ function NewCollectionEntry({
 	);
 }
 
-export default NewCollectionEntry;
+export default SubmitNewCollectionEntry;

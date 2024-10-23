@@ -2,12 +2,9 @@ import * as React from 'react';
 import { cookies } from 'next/headers';
 
 import getVocabList from './getVocabList';
-import GatherSentence from '../GatherSentence';
-import EntryListing from '../EntryListing';
 import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
 import StyledArticle from './StyledArticle';
-import OptimisticVocabProvider from '../OptimisticVocabProvider';
-import ErrorBoundaryWrapper from '../GatherSentence/ErrorBoundaryWrapper';
+import VocabCreateAndDisplay from '@/components/VocabCreateAndDisplay';
 
 async function Vocab() {
 	let vocabList = await getVocabList();
@@ -15,12 +12,7 @@ async function Vocab() {
 
 	return (
 		<StyledArticle>
-			<OptimisticVocabProvider vocabList={vocabList}>
-				<ErrorBoundaryWrapper>
-					<GatherSentence savedSentence={sentence} />
-				</ErrorBoundaryWrapper>
-				<EntryListing />
-			</OptimisticVocabProvider>
+			<VocabCreateAndDisplay vocabList={vocabList} savedSentence={sentence} />
 		</StyledArticle>
 	);
 }

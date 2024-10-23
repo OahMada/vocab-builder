@@ -1,11 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { useOptimisticVocabContext } from '@/components/OptimisticVocabProvider';
+import { VocabEntry } from '../Vocab/getVocabList';
 
-function EntryListing() {
-	let { optimisticVocab } = useOptimisticVocabContext();
-
+function EntryListing({ optimisticVocab }: { optimisticVocab: VocabEntry[] }) {
 	return (
 		<section>
 			{optimisticVocab.map((entry) => {

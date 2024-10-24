@@ -5,21 +5,25 @@ import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
 import Toast from '@/components/Toast';
 import { UserInputSchema } from '@/lib/dataValidation';
 import { fetchSentenceRecord } from '@/actions';
+import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 	let [error, setError] = React.useState('');
 	let [isLoading, startTransition] = React.useTransition();
 
-	React.useEffect(() => {
-		let savedValue = window.localStorage.getItem(USER_INPUT_SENTENCE);
-		if (clearUserInput) {
-			setUserInput('');
-			window.localStorage.setItem(USER_INPUT_SENTENCE, '');
-		} else {
-			setUserInput(savedValue);
-		}
-	}, [clearUserInput]);
+	let updateUserInput = React.useCallback(
+		function (savedText: null | string) {
+			if (clearUserInput) {
+				setUserInput('');
+			} else {
+				setUserInput(savedText);
+			}
+		},
+		[clearUserInput]
+	);
+
+	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: USER_INPUT_SENTENCE, valueToSave: userInput, stateUpdater: updateUserInput });
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		// TODO shift + enter to submit
@@ -56,7 +60,6 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					value={userInput ?? ''}
 					onChange={(e) => {
 						setUserInput(e.target.value);
-						window.localStorage.setItem(USER_INPUT_SENTENCE, e.target.value);
 					}}
 					placeholder='Input the sentence here...'
 					required={true}
@@ -68,7 +71,6 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 						type='button'
 						onClick={() => {
 							setUserInput(SENTENCE_SAMPLE);
-							window.localStorage.setItem(USER_INPUT_SENTENCE, SENTENCE_SAMPLE);
 						}}
 					>
 						Sample

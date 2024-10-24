@@ -8,9 +8,10 @@ import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL, TRANSLATIO
 import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import Toast from '@/components/Toast';
-import { constructZodErrorMessage } from '@/helpers';
+import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
 import SentenceTranslation from '@/components/SentenceTranslation';
 import { VocabEntry } from '../Vocab/getVocabList';
+import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -31,11 +32,7 @@ function SubmitNewCollectionEntry({
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
 	let [error, setError] = React.useState('');
-
 	let [translation, setTranslation] = React.useState<null | string>(null);
-	function alterTranslation(text: string) {
-		setTranslation(text);
-	}
 
 	let {
 		data,
@@ -47,26 +44,23 @@ function SubmitNewCollectionEntry({
 		shouldRetryOnError: false,
 		onError: (error) => {
 			if (process.env.NODE_ENV === 'development') console.log(error);
-			setError(error.response.data ? error.response.data : error.message); // error.response.data could be empty.
+			let errorMessage = getErrorMessage(error);
+			setError(errorMessage);
 		},
 	});
 
-	// Needed when hitting cancel and submitting the same sentence again.
-	React.useEffect(() => {
-		let savedTranslation = window.localStorage.getItem(TRANSLATION_TEXT);
-		if (data && !savedTranslation) {
-			setTranslation(data);
-		} else if (savedTranslation) {
-			// To preserve user editing after a page refresh.
-			setTranslation(savedTranslation);
-		}
-	}, [data]);
-
-	React.useEffect(() => {
-		if (typeof translation === 'string') {
-			window.localStorage.setItem(TRANSLATION_TEXT, translation);
-		}
-	}, [translation]);
+	let updateTranslation = React.useCallback(
+		function (savedText: null | string) {
+			if (data && !savedText) {
+				setTranslation(data);
+			} else if (savedText) {
+				// To preserve user editing after a page refresh.
+				setTranslation(savedText);
+			}
+		},
+		[data]
+	);
+	useLocalStoragePersist({ defaultValue: '', localStorageKey: TRANSLATION_TEXT, valueToSave: translation, stateUpdater: updateTranslation });
 
 	let translationNode: React.ReactNode;
 
@@ -75,7 +69,7 @@ function SubmitNewCollectionEntry({
 	} else if (swrError) {
 		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
 	} else if (translation) {
-		translationNode = <SentenceTranslation alterTranslation={alterTranslation} translation={translation} />;
+		translationNode = <SentenceTranslation setTranslation={setTranslation} translation={translation} />;
 	}
 
 	async function handleSubmitNewEntry() {
@@ -106,6 +100,7 @@ function SubmitNewCollectionEntry({
 			// Put the resetting logic before the create action to get a snappy UI.
 			resetUserInput();
 			updateShouldClearUserInput(true);
+			resetTranslationText();
 			let response = await createVocabEntry.bind(null, data)();
 			if (response.errorMessage) {
 				setError(response.errorMessage);
@@ -114,10 +109,16 @@ function SubmitNewCollectionEntry({
 		}
 	}
 
+	// used to control whether UserInput should be shown
 	function resetUserInput() {
 		updateSentence('');
 		Cookies.remove(SENTENCE_TO_BE_PROCESSED);
 		setError('');
+	}
+
+	function resetTranslationText() {
+		window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
+		setTranslation(data!); // For cases where the refetched translation is the same as before, it essentially resets the translation since the useEffect call would not be invoked.
 	}
 
 	return (
@@ -132,8 +133,7 @@ function SubmitNewCollectionEntry({
 				<button
 					onClick={() => {
 						setError(''); // Otherwise, the submit button would stay disabled.
-						window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
-						setTranslation(data!); // For cases where the refetched translation is the same as before, it essentially resets the translation.
+						resetTranslationText();
 						mutate();
 					}}
 					disabled={isLoading || isValidating}
@@ -142,6 +142,7 @@ function SubmitNewCollectionEntry({
 				</button>
 				<button
 					onClick={() => {
+						resetTranslationText();
 						resetUserInput();
 						updateShouldClearUserInput(false);
 					}}

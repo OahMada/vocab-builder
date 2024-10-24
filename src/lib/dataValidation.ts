@@ -4,6 +4,10 @@ export var UserInputSchema = z.string().trim().max(500, {
 	message: 'The sentence you input should be no longer than 500 characters.',
 });
 
+export var PhoneticSymbolSchema = z.string().trim().max(45, {
+	message: 'The word passed is too long to be seen as a valid word.',
+});
+
 export var CreateVocabEntryInputSchema = z.object({
 	sentence: z.string(),
 	translation: z.string().min(1, { message: 'Please provide the translation text.' }),

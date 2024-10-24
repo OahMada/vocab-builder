@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
-function Note({ note, setNote }: { note: string; setNote: React.Dispatch<React.SetStateAction<string | null>> }) {
+function Note({ note, updateNote }: { note: string; updateNote: (note: string) => void }) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
@@ -18,7 +18,7 @@ function Note({ note, setNote }: { note: string; setNote: React.Dispatch<React.S
 						name='note'
 						value={note}
 						onChange={(e) => {
-							setNote(e.target.value);
+							updateNote(e.target.value);
 						}}
 					/>
 					<button onClick={() => setEditMode(false)}>Done</button>

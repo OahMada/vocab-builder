@@ -17,6 +17,7 @@ import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import SentenceTranslation from '@/components/SentenceTranslation';
 import Toast from '@/components/Toast';
 import Note from '@/components/Note';
+import Sentence from '@/components/Sentence';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -75,7 +76,7 @@ function SubmitNewCollectionEntry({
 	} else if (swrError) {
 		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
 	} else if (translation) {
-		translationNode = <SentenceTranslation setTranslation={setTranslation} translation={translation} />;
+		translationNode = <SentenceTranslation updateTranslation={(translation: string) => setTranslation(translation)} translation={translation} />;
 	}
 
 	// used to control whether UserInput should be shown
@@ -141,11 +142,11 @@ function SubmitNewCollectionEntry({
 		<div>
 			<div>
 				<h2>New Vocabulary Entry</h2>
-				<p>{sentence}</p>
+				<Sentence sentence={sentence} updateError={(errorMessage: string) => setError(errorMessage)} />
 				<h2>Translation</h2>
 				{translationNode}
 				<h3>Note</h3>
-				<Note note={note === null ? '' : note} setNote={setNote} />
+				<Note note={note === null ? '' : note} updateNote={(note: string) => setNote(note)} />
 			</div>
 			<div>
 				<button

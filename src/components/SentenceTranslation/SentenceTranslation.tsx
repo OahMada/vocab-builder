@@ -2,13 +2,7 @@ import * as React from 'react';
 
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
-var Translation = function ({
-	setTranslation,
-	translation,
-}: {
-	setTranslation: React.Dispatch<React.SetStateAction<string | null>>;
-	translation: string;
-}) {
+var Translation = function ({ updateTranslation, translation }: { updateTranslation: (translation: string) => void; translation: string }) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
@@ -24,7 +18,7 @@ var Translation = function ({
 					<textarea
 						value={translation}
 						onChange={(e) => {
-							setTranslation(e.target.value);
+							updateTranslation(e.target.value);
 						}}
 						name='translation-text'
 					/>

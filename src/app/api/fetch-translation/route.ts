@@ -1,11 +1,8 @@
 import { NextRequest } from 'next/server';
-import axios, { isAxiosError } from 'axios';
 
 import { UserInputSchema } from '@/lib/dataValidation';
-import { delay, getErrorMessage } from '@/helpers';
-
-const API_KEY = process.env.OPENAI_API_KEY;
-const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+import { delay } from '@/helpers';
+import performAxiosRequest from '@/lib/performAxiosRequest';
 
 export async function POST(request: NextRequest) {
 	// for mock
@@ -27,43 +24,5 @@ export async function POST(request: NextRequest) {
 		return new Response(JSON.stringify(formattedError._errors[0]), { status: 400 });
 	}
 
-	let AxiosConfig = {
-		method: 'post',
-		url: API_ENDPOINT,
-		data: {
-			model: 'gpt-4o',
-			messages: [
-				{
-					role: 'system',
-					content: `You are a language translator. You will translate any text provided by the user into Chinese.`,
-				},
-				{ role: 'user', content: result.data },
-			],
-		},
-		headers: { 'content-type': 'application/json', Authorization: `Bearer ${API_KEY}` },
-	};
-
-	try {
-		let { data, status, statusText } = await axios(AxiosConfig);
-		return new Response(JSON.stringify(data['choices'][0]['message']['content']), { status, statusText });
-	} catch (error) {
-		if (process.env.NODE_ENV === 'development') console.log(error);
-		// https://axios-http.com/docs/handling_errors
-		if (isAxiosError(error)) {
-			if (error.response) {
-				return new Response(JSON.stringify(error.response.data ? error.response.data : 'Something went wrong, please try again later'), {
-					status: error.response.status,
-					statusText: error.response.statusText,
-				});
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-				return new Response('Something went wrong, please try again later', { status: 500 });
-			}
-		} else {
-			// Something happened in setting up the request that triggered an Error
-			let errorMessage = getErrorMessage(error);
-			return new Response(JSON.stringify(errorMessage), { status: 500 });
-		}
-	}
+	return performAxiosRequest(result.data, `You are a language translator. You will translate any text provided by the user into Chinese.`);
 }

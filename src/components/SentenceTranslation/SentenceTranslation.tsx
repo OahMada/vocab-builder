@@ -10,7 +10,6 @@ var Translation = function ({
 	translation: string;
 }) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
-
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
 		localStorageKey: 'translation-edit-mode',

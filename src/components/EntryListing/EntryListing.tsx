@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+
 import { VocabEntry } from '../Vocab/getVocabList';
 
 function EntryListing({ optimisticVocab }: { optimisticVocab: VocabEntry[] }) {

@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { cookies } from 'next/headers';
 
+import { SENTENCE_TEXT } from '@/constants';
+
 import getVocabList from './getVocabList';
-import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
+
 import StyledArticle from './StyledArticle';
 import VocabCreateAndDisplay from '@/components/VocabCreateAndDisplay';
 
 async function Vocab() {
 	let vocabList = await getVocabList();
-	let sentence = cookies().get(SENTENCE_TO_BE_PROCESSED)?.value || undefined;
+	let sentence = cookies().get(SENTENCE_TEXT)?.value || undefined;
 
 	return (
 		<StyledArticle>

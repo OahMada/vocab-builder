@@ -4,14 +4,19 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { startTransition } from 'react';
 
-import { FETCH_TRANSLATE_ROUTE, SENTENCE_TO_BE_PROCESSED, USER_EMAIL, TRANSLATION_TEXT } from '@/constants';
-import { createVocabEntry } from '@/actions';
-import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
-import Toast from '@/components/Toast';
-import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
-import SentenceTranslation from '@/components/SentenceTranslation';
 import { VocabEntry } from '../Vocab/getVocabList';
+
+import { FETCH_TRANSLATE_ROUTE, SENTENCE_TEXT, USER_EMAIL, TRANSLATION_TEXT, NOTE_TEXT } from '@/constants';
+
+import { createVocabEntry } from '@/actions';
+
+import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
+import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+
+import SentenceTranslation from '@/components/SentenceTranslation';
+import Toast from '@/components/Toast';
+import Note from '@/components/Note';
 
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -33,6 +38,7 @@ function SubmitNewCollectionEntry({
 }) {
 	let [error, setError] = React.useState('');
 	let [translation, setTranslation] = React.useState<null | string>(null);
+	let [note, setNote] = React.useState<null | string>(null);
 
 	let {
 		data,
@@ -60,16 +66,40 @@ function SubmitNewCollectionEntry({
 		},
 		[data]
 	);
-	useLocalStoragePersist({ defaultValue: '', localStorageKey: TRANSLATION_TEXT, valueToSave: translation, stateUpdater: updateTranslation });
+	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: TRANSLATION_TEXT, valueToSave: translation, stateUpdater: updateTranslation });
+	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: NOTE_TEXT, valueToSave: note, stateSetter: setNote });
 
 	let translationNode: React.ReactNode;
-
 	if (isLoading || isValidating) {
 		translationNode = <p>Translating...</p>;
 	} else if (swrError) {
 		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
 	} else if (translation) {
 		translationNode = <SentenceTranslation setTranslation={setTranslation} translation={translation} />;
+	}
+
+	// used to control whether UserInput should be shown
+	function resetSentence() {
+		updateSentence('');
+		Cookies.remove(SENTENCE_TEXT);
+	}
+
+	function resetTranslationText() {
+		window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
+		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. it essentially resets the translation.
+	}
+
+	function resetNoteText() {
+		window.localStorage.removeItem(NOTE_TEXT);
+		setNote('');
+	}
+
+	function resetAll(clearUserInput: boolean) {
+		resetSentence();
+		resetTranslationText();
+		resetNoteText();
+		setError('');
+		updateShouldClearUserInput(clearUserInput);
 	}
 
 	async function handleSubmitNewEntry() {
@@ -98,27 +128,13 @@ function SubmitNewCollectionEntry({
 			});
 
 			// Put the resetting logic before the create action to get a snappy UI.
-			resetUserInput();
-			updateShouldClearUserInput(true);
-			resetTranslationText();
+			resetAll(true);
 			let response = await createVocabEntry.bind(null, data)();
 			if (response.errorMessage) {
 				setError(response.errorMessage);
 				return;
 			}
 		}
-	}
-
-	// used to control whether UserInput should be shown
-	function resetUserInput() {
-		updateSentence('');
-		Cookies.remove(SENTENCE_TO_BE_PROCESSED);
-		setError('');
-	}
-
-	function resetTranslationText() {
-		window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
-		setTranslation(data!); // For cases where the refetched translation is the same as before, it essentially resets the translation since the useEffect call would not be invoked.
 	}
 
 	return (
@@ -128,6 +144,8 @@ function SubmitNewCollectionEntry({
 				<p>{sentence}</p>
 				<h2>Translation</h2>
 				{translationNode}
+				<h3>Note</h3>
+				<Note note={note === null ? '' : note} setNote={setNote} />
 			</div>
 			<div>
 				<button
@@ -142,9 +160,7 @@ function SubmitNewCollectionEntry({
 				</button>
 				<button
 					onClick={() => {
-						resetTranslationText();
-						resetUserInput();
-						updateShouldClearUserInput(false);
+						resetAll(false);
 					}}
 				>
 					Cancel

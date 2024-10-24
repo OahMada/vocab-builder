@@ -1,7 +1,5 @@
 // https://www.radix-ui.com/primitives/docs/components/toast#abstract-parts
 
-// TODO lazy load toast
-
 'use client';
 
 import * as React from 'react';

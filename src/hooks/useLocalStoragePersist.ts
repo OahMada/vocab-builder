@@ -12,7 +12,8 @@ function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue,
 	React.useEffect(() => {
 		let savedValue = window.localStorage.getItem(localStorageKey);
 		if (stateSetter) {
-			stateSetter(savedValue ? JSON.parse(savedValue) : defaultValue); // Strangely I can't use Boolean(savedValue) here
+			let value = savedValue ? (typeof defaultValue === 'string' ? savedValue : JSON.parse(savedValue)) : defaultValue; // Strangely I can't use Boolean(savedValue) here
+			stateSetter(value);
 		} else if (stateUpdater) {
 			stateUpdater(savedValue);
 		}

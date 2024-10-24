@@ -2,10 +2,13 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
-import Toast from '@/components/Toast';
-import { UserInputSchema } from '@/lib/dataValidation';
+
 import { fetchSentenceRecord } from '@/actions';
+
+import { UserInputSchema } from '@/lib/dataValidation';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+
+import Toast from '@/components/Toast';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);

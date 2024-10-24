@@ -3,12 +3,14 @@
 import * as React from 'react';
 import Cookie from 'js-cookie';
 
+import { VocabEntry } from '@/components/Vocab/getVocabList';
+
+import { SENTENCE_TEXT } from '@/constants';
+
 import EntryListing from '@/components/EntryListing';
 import SubmitNewCollectionEntry from '@/components/SubmitNewCollectionEntry';
-import { VocabEntry } from '@/components/Vocab/getVocabList';
-import { SENTENCE_TO_BE_PROCESSED } from '@/constants';
 import UserInput from '@/components/UserInput';
-import ErrorBoundaryWrapper from '../ErrorBoundaryWrapper';
+import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import SWRConfigWrapper from '@/components/SWRConfigWrapper';
 
 function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabEntry[]; savedSentence: string | undefined }) {
@@ -21,7 +23,7 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 
 	function updateSentence(text: string) {
 		setSentence(text);
-		Cookie.set(SENTENCE_TO_BE_PROCESSED, text, {
+		Cookie.set(SENTENCE_TEXT, text, {
 			expires: 1000,
 		});
 	}

@@ -6,7 +6,7 @@ import { startTransition } from 'react';
 
 import { VocabEntry } from '../Vocab/getVocabList';
 
-import { FETCH_TRANSLATE_ROUTE, SENTENCE_TEXT, USER_EMAIL, TRANSLATION_TEXT, NOTE_TEXT } from '@/constants';
+import { FETCH_TRANSLATE_ROUTE, SENTENCE_TEXT, USER_EMAIL, TRANSLATION_TEXT, NOTE_TEXT, PHONETIC_SYMBOLS } from '@/constants';
 
 import { createVocabEntry } from '@/actions';
 
@@ -68,7 +68,12 @@ function SubmitNewCollectionEntry({
 		[data]
 	);
 	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: TRANSLATION_TEXT, valueToSave: translation, stateUpdater: updateTranslation });
-	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: NOTE_TEXT, valueToSave: note, stateSetter: setNote });
+	useLocalStoragePersist<string>({
+		defaultValue: '',
+		localStorageKey: NOTE_TEXT,
+		valueToSave: note,
+		stateSetter: React.useCallback((value: string) => setNote(value), []),
+	});
 
 	let translationNode: React.ReactNode;
 	if (isLoading || isValidating) {
@@ -92,13 +97,17 @@ function SubmitNewCollectionEntry({
 
 	function resetNoteText() {
 		window.localStorage.removeItem(NOTE_TEXT);
-		setNote('');
+	}
+
+	function resetPhoneticSymbols() {
+		window.localStorage.removeItem(PHONETIC_SYMBOLS);
 	}
 
 	function resetAll(clearUserInput: boolean) {
 		resetSentence();
 		resetTranslationText();
 		resetNoteText();
+		resetPhoneticSymbols();
 		setError('');
 		updateShouldClearUserInput(clearUserInput);
 	}
@@ -107,7 +116,7 @@ function SubmitNewCollectionEntry({
 		let newEntry = {
 			sentence,
 			translation,
-			// note, // TODO note editing functionality
+			note,
 			userEmail: USER_EMAIL,
 		};
 

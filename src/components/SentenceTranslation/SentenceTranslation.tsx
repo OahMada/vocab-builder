@@ -7,7 +7,7 @@ var Translation = function ({ updateTranslation, translation }: { updateTranslat
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
 		localStorageKey: 'translation-edit-mode',
-		stateSetter: setEditMode,
+		stateSetter: React.useCallback((value: boolean) => setEditMode(value), []),
 		valueToSave: editMode,
 	});
 

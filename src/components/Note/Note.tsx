@@ -7,7 +7,7 @@ function Note({ note, updateNote }: { note: string; updateNote: (note: string) =
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
 		localStorageKey: 'note-edit-mode',
-		stateSetter: setEditMode,
+		stateSetter: React.useCallback((value: boolean) => setEditMode(value), []),
 		valueToSave: editMode,
 	});
 	return (

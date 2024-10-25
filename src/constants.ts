@@ -5,6 +5,7 @@ export const USER_INPUT_SENTENCE = 'user-input-sentence';
 export const TRANSLATION_TEXT = 'translation-text';
 export const NOTE_TEXT = 'note-text';
 export const SENTENCE_TEXT = 'sentence-text';
+export const PHONETIC_SYMBOLS = 'phonetic-symbols';
 export const SENTENCE_SAMPLE = "We sat together at one summer's end,That beautiful mild woman, your close friend.";
 
 export const FETCH_TRANSLATE_ROUTE = process.env.NODE_ENV === 'development' ? '/api/fetch-translation?mock=true' : '/api/fetch-translation';

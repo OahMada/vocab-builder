@@ -6,13 +6,13 @@ import performAxiosRequest from '@/lib/performAxiosRequest';
 
 export async function POST(request: NextRequest) {
 	// for mock
-	// let searchParams = request.nextUrl.searchParams;
-	// let mock = searchParams.get('mock');
-	// if (mock === 'true') {
-	// 	await delay(2000);
-	// 	return new Response('/həˈləʊ/', { status: 200 });
-	// 	return new Response('Unexpected Error', { status: 400 });
-	// }
+	let searchParams = request.nextUrl.searchParams;
+	let mock = searchParams.get('mock');
+	if (mock === 'true') {
+		await delay(2000);
+		return new Response('/həˈləʊ/', { status: 200 });
+		return new Response('Unexpected Error', { status: 400 });
+	}
 
 	// // production logic
 	let { word } = await request.json();

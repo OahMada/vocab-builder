@@ -10,8 +10,8 @@ export async function POST(request: NextRequest) {
 	let mock = searchParams.get('mock');
 	if (mock === 'true') {
 		await delay(2000);
-		return new Response('Unexpected Error', { status: 400 });
 		return new Response('/həˈləʊ/', { status: 200 });
+		return new Response('Unexpected Error', { status: 400 });
 	}
 
 	// // production logic

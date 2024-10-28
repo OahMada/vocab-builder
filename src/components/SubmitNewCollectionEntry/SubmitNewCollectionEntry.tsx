@@ -93,7 +93,7 @@ function SubmitNewCollectionEntry({
 
 	function resetTranslationText() {
 		window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
-		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. it essentially resets the translation.
+		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. This essentially resets the translation.
 	}
 
 	function resetNoteText() {

@@ -22,7 +22,9 @@ var fetcher = async (url: string, word: string): Promise<string> => {
 };
 
 function Sentence({ sentence }: { sentence: string }) {
-	let wordArr = sentence.split(' ');
+	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
+	let segmentedText = segmenter.segment(sentence);
+
 	let [error, setError] = React.useState('');
 	let [phoneticSymbols, setPhoneticSymbols] = React.useState<null | PhoneticSymbols>(null);
 
@@ -53,16 +55,19 @@ function Sentence({ sentence }: { sentence: string }) {
 	return (
 		<>
 			<div>
-				{wordArr.map((word, index) => {
+				{[...segmentedText].map(({ segment, isWordLike }, index) => {
+					if (!isWordLike) {
+						return segment;
+					}
 					return (
 						<React.Fragment key={index}>
-							{phoneticSymbols && phoneticSymbols[word] ? (
+							{phoneticSymbols && phoneticSymbols[segment] ? (
 								<>
-									{word}
-									<PhoneticSymbol symbol={phoneticSymbols[word]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(word)} />
+									{segment}
+									<PhoneticSymbol symbol={phoneticSymbols[segment]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(segment)} />
 								</>
 							) : (
-								<Word triggerWord={word} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
+								<Word triggerWord={segment} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
 							)}
 						</React.Fragment>
 					);

@@ -19,12 +19,13 @@ export async function createVocabEntry(entry: unknown) {
 		};
 	}
 
-	let { sentence, translation, userEmail, note } = result.data;
+	let { sentence, translation, userEmail, note, sentencePlusPhoneticSymbols } = result.data;
 
 	try {
 		let data = await prisma.vocabEntry.create({
 			data: {
 				sentence,
+				sentencePlusPhoneticSymbols,
 				translation,
 				note,
 				user: {
@@ -61,7 +62,7 @@ export async function createVocabEntry(entry: unknown) {
 	}
 }
 
-export type FetchSentenceRecordReturn = ReturnType<typeof fetchSentenceRecord>;
+// export type FetchSentenceRecordReturn = ReturnType<typeof fetchSentenceRecord>;
 
 export async function fetchSentenceRecord(text: unknown) {
 	let result = UserInputSchema.safeParse(text);

@@ -10,6 +10,7 @@ export var PhoneticSymbolSchema = z.string().trim().max(45, {
 
 export var CreateVocabEntryInputSchema = z.object({
 	sentence: z.string(),
+	sentencePlusPhoneticSymbols: z.string(),
 	translation: z.string().min(1, { message: 'Please provide the translation text.' }),
 	note: z
 		.string()

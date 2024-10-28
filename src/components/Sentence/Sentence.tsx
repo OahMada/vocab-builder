@@ -6,13 +6,10 @@ import { FETCH_PHONETIC_SYMBOL_ROUTE, PHONETIC_SYMBOLS } from '@/constants';
 import useSWRImmutable from 'swr/immutable';
 import { getErrorMessage } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+import { PhoneticSymbols } from '@/types';
 
 import PopOver from '@/components/PopOver';
 import Toast from '../Toast';
-
-interface PhoneticSymbols {
-	[key: string]: string;
-}
 
 var fetcher = async (url: string, word: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -21,12 +18,13 @@ var fetcher = async (url: string, word: string): Promise<string> => {
 	return response.data;
 };
 
-function Sentence({ sentence }: { sentence: string }) {
-	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
-	let segmentedText = segmenter.segment(sentence);
-
+let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentData[] }>(function Sentence({ segmentedText }, ref) {
 	let [error, setError] = React.useState('');
 	let [phoneticSymbols, setPhoneticSymbols] = React.useState<null | PhoneticSymbols>(null);
+
+	React.useImperativeHandle(ref, () => {
+		return phoneticSymbols ?? {};
+	});
 
 	let updatePhoneticSymbols = React.useCallback((word: string, symbol: string) => {
 		setPhoneticSymbols((prevState) => {
@@ -76,7 +74,7 @@ function Sentence({ sentence }: { sentence: string }) {
 			{error && <Toast toastType='error' content={error} />}
 		</>
 	);
-}
+});
 
 export default Sentence;
 
@@ -143,7 +141,9 @@ function PhoneticSymbol({ symbol, removeOnePhoneticSymbol }: { symbol: string; r
 		<PopOver
 			trigger={
 				<button>
-					<code> {symbol}</code>
+					<small>
+						<code> {`(${symbol})`}</code>
+					</small>
 				</button>
 			}
 			open={popOverOpen}

@@ -6,7 +6,7 @@ import { delay } from '@/helpers';
 import { DATABASE_USER_ID, VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 
 var entrySelect = {
-	sentence: true,
+	sentencePlusPhoneticSymbols: true,
 	translation: true,
 	note: true,
 	id: true,

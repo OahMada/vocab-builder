@@ -1,3 +1,3 @@
-export type TranslationHandle = {
-	getTranslationText: () => string;
-};
+export interface PhoneticSymbols {
+	[key: string]: string;
+}

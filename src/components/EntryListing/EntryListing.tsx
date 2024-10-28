@@ -10,7 +10,7 @@ function EntryListing({ optimisticVocab }: { optimisticVocab: VocabEntry[] }) {
 			{optimisticVocab.map((entry) => {
 				return (
 					<div key={entry.id}>
-						<p>{entry.sentence}</p>
+						<p>{entry.sentencePlusPhoneticSymbols}</p>
 						<p>{entry.translation}</p>
 					</div>
 				);

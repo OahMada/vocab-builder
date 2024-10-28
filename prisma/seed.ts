@@ -5,6 +5,7 @@ const prisma = new PrismaClient();
 var initialVocabSheet: Prisma.VocabEntryCreateInput[] = [
 	{
 		sentence: 'sentence one',
+		sentencePlusPhoneticSymbols: 'sentence one',
 		translation: '翻译一',
 		user: {
 			connectOrCreate: {
@@ -21,6 +22,7 @@ var initialVocabSheet: Prisma.VocabEntryCreateInput[] = [
 	},
 	{
 		sentence: 'sentence two',
+		sentencePlusPhoneticSymbols: 'sentence two',
 		translation: '翻译二',
 		user: {
 			connect: {
@@ -30,6 +32,7 @@ var initialVocabSheet: Prisma.VocabEntryCreateInput[] = [
 	},
 	{
 		sentence: 'sentence three',
+		sentencePlusPhoneticSymbols: 'sentence three',
 		translation: '翻译三',
 		user: {
 			connect: {

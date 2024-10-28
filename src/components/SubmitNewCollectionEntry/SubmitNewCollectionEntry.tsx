@@ -14,6 +14,7 @@ import { createVocabEntry } from '@/actions';
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+import { PhoneticSymbols } from '@/types';
 
 import SentenceTranslation from '@/components/SentenceTranslation';
 import Toast from '@/components/Toast';
@@ -38,10 +39,14 @@ function SubmitNewCollectionEntry({
 	updateSentence: (text: string) => void;
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
+	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
+	let segmentedText = [...segmenter.segment(sentence)];
+
 	let [error, setError] = React.useState('');
 	let [translation, setTranslation] = React.useState<null | string>(null);
 	let [note, setNote] = React.useState<null | string>(null);
 	let { mutate } = useSWRConfig();
+	let phoneticSymbolRef = React.useRef<PhoneticSymbols>(null);
 
 	let {
 		data,
@@ -113,9 +118,27 @@ function SubmitNewCollectionEntry({
 		updateShouldClearUserInput(clearUserInput);
 	}
 
+	function constructSentencePlusPhoneticSymbols() {
+		let phoneticSymbols = phoneticSymbolRef.current;
+		if (phoneticSymbols === null) {
+			throw new Error('the value of phoneticSymbolRef.current is null.');
+		} else {
+			return segmentedText.reduce((acc, { segment, isWordLike }) => {
+				if (isWordLike && phoneticSymbols[segment]) {
+					return `${acc + segment} (${phoneticSymbols[segment]}) `;
+				}
+				return (acc += segment);
+			}, '');
+		}
+	}
+
 	async function handleSubmitNewEntry() {
+		let sentencePlusPhoneticSymbols = constructSentencePlusPhoneticSymbols();
+		console.log(sentencePlusPhoneticSymbols);
+
 		let newEntry = {
 			sentence,
+			sentencePlusPhoneticSymbols,
 			translation,
 			note,
 			userEmail: USER_EMAIL,
@@ -133,7 +156,7 @@ function SubmitNewCollectionEntry({
 				addOptimisticVocabEntry({
 					id: 'optimistic_entry',
 					note: data.note ?? '',
-					sentence: data.sentence,
+					sentencePlusPhoneticSymbols: data.sentencePlusPhoneticSymbols,
 					translation: data.translation,
 				});
 			});
@@ -152,7 +175,7 @@ function SubmitNewCollectionEntry({
 		<div>
 			<div>
 				<h2>New Vocabulary Entry</h2>
-				<Sentence sentence={sentence} />
+				<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />
 				<h2>Translation</h2>
 				{translationNode}
 				<h3>Note</h3>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import axios from 'axios';
+import { useSWRConfig } from 'swr';
 
 import { FETCH_PHONETIC_SYMBOL_ROUTE, PHONETIC_SYMBOLS } from '@/constants';
 import useSWRImmutable from 'swr/immutable';
@@ -7,6 +8,7 @@ import { getErrorMessage } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
 import PopOver from '@/components/PopOver';
+import Toast from '../Toast';
 
 interface PhoneticSymbols {
 	[key: string]: string;
@@ -19,8 +21,9 @@ var fetcher = async (url: string, word: string): Promise<string> => {
 	return response.data;
 };
 
-function Sentence({ sentence, updateError }: { sentence: string; updateError: (errorMessage: string) => void }) {
+function Sentence({ sentence }: { sentence: string }) {
 	let wordArr = sentence.split(' ');
+	let [error, setError] = React.useState('');
 	let [phoneticSymbols, setPhoneticSymbols] = React.useState<null | PhoneticSymbols>(null);
 
 	let updatePhoneticSymbols = React.useCallback((word: string, symbol: string) => {
@@ -38,6 +41,8 @@ function Sentence({ sentence, updateError }: { sentence: string; updateError: (e
 		};
 	}
 
+	let updateError = React.useCallback((errorMessage: string) => setError(errorMessage), []);
+
 	useLocalStoragePersist({
 		localStorageKey: PHONETIC_SYMBOLS,
 		defaultValue: React.useMemo(() => ({}), []),
@@ -46,22 +51,25 @@ function Sentence({ sentence, updateError }: { sentence: string; updateError: (e
 	});
 
 	return (
-		<div>
-			{wordArr.map((word, index) => {
-				return (
-					<React.Fragment key={index}>
-						{phoneticSymbols && phoneticSymbols[word] ? (
-							<>
-								{word}
-								<PhoneticSymbol symbol={phoneticSymbols[word]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(word)} />
-							</>
-						) : (
-							<Word triggerWord={word} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
-						)}
-					</React.Fragment>
-				);
-			})}
-		</div>
+		<>
+			<div>
+				{wordArr.map((word, index) => {
+					return (
+						<React.Fragment key={index}>
+							{phoneticSymbols && phoneticSymbols[word] ? (
+								<>
+									{word}
+									<PhoneticSymbol symbol={phoneticSymbols[word]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(word)} />
+								</>
+							) : (
+								<Word triggerWord={word} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
+							)}
+						</React.Fragment>
+					);
+				})}
+			</div>
+			{error && <Toast toastType='error' content={error} />}
+		</>
 	);
 }
 
@@ -79,7 +87,9 @@ function Word({
 	let [popOverOpen, setPopOverOpen] = React.useState(false);
 	let [shouldFetch, setShouldFetch] = React.useState<boolean>(false);
 
-	let { isLoading, data, mutate } = useSWRImmutable(
+	let { mutate } = useSWRConfig();
+
+	let { isLoading, data, error } = useSWRImmutable(
 		shouldFetch ? [FETCH_PHONETIC_SYMBOL_ROUTE, triggerWord] : null,
 		([url, word]) => fetcher(url, word),
 		{
@@ -89,39 +99,12 @@ function Word({
 				let errorMessage = getErrorMessage(error);
 				updateError(errorMessage);
 			},
-			onSuccess: (data) => {
-				console.log('onSuccess', data);
-			},
 		}
 	);
-
-	// TODO the symbol appears super snappy, where it come from? Is localStorage cache working?
-
-	// A failed attempt: it works, but it's ugly.
-	// useLocalStoragePersist({
-	// 	localStorageKey: PHONETIC_SYMBOLS,
-	// 	defaultValue: React.useMemo(() => ({}), []),
-	// 	valueToSave: React.useMemo(() => phoneticSymbols, [phoneticSymbols]),
-	// 	stateUpdater: React.useCallback(
-	// 		(savedValue: null | string) => {
-	// 			if (!savedValue) return;
-	// 			let savedSymbols = JSON.parse(savedValue) as PhoneticSymbols;
-	// 			if (!savedSymbols[triggerWord] && data) {
-	// 				setShouldFetch(false);
-	// 				setPopOverOpen(false);
-	// 				updatePhoneticSymbols(triggerWord, data);
-	// 			} else if (savedSymbols[triggerWord]) {
-	// 				updatePhoneticSymbols(triggerWord, savedSymbols[triggerWord]);
-	// 			}
-	// 		},
-	// 		[data, triggerWord, updatePhoneticSymbols]
-	// 	),
-	// });
 
 	// to ensure the once removed phonetic symbol can be added back.
 	React.useEffect(() => {
 		if (data) {
-			setShouldFetch(false);
 			setPopOverOpen(false);
 			updatePhoneticSymbols(triggerWord, data);
 		}
@@ -135,10 +118,10 @@ function Word({
 		>
 			<button
 				onClick={() => {
-					if (data) {
-						mutate(); // TODO in the case of error
-					} else {
-						setShouldFetch(true);
+					setShouldFetch(true);
+					if (error) {
+						updateError('');
+						mutate([FETCH_PHONETIC_SYMBOL_ROUTE, triggerWord]);
 					}
 				}}
 			>

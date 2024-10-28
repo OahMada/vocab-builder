@@ -1,5 +1,6 @@
 import * as React from 'react';
 import useSWRImmutable from 'swr/immutable';
+import { useSWRConfig } from 'swr';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { startTransition } from 'react';
@@ -40,12 +41,12 @@ function SubmitNewCollectionEntry({
 	let [error, setError] = React.useState('');
 	let [translation, setTranslation] = React.useState<null | string>(null);
 	let [note, setNote] = React.useState<null | string>(null);
+	let { mutate } = useSWRConfig();
 
 	let {
 		data,
 		error: swrError,
 		isLoading,
-		mutate,
 		isValidating,
 	} = useSWRImmutable([FETCH_TRANSLATE_ROUTE, sentence], ([url, sentence]) => fetcher(url, sentence), {
 		shouldRetryOnError: false,
@@ -151,7 +152,7 @@ function SubmitNewCollectionEntry({
 		<div>
 			<div>
 				<h2>New Vocabulary Entry</h2>
-				<Sentence sentence={sentence} updateError={(errorMessage: string) => setError(errorMessage)} />
+				<Sentence sentence={sentence} />
 				<h2>Translation</h2>
 				{translationNode}
 				<h3>Note</h3>
@@ -162,7 +163,7 @@ function SubmitNewCollectionEntry({
 					onClick={() => {
 						setError(''); // Otherwise, the submit button would stay disabled.
 						resetTranslationText();
-						mutate();
+						mutate([FETCH_TRANSLATE_ROUTE, sentence]);
 					}}
 					disabled={isLoading || isValidating}
 				>

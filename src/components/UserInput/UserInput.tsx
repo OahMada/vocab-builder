@@ -16,17 +16,17 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 	let [isLoading, startTransition] = React.useTransition();
 
 	let updateUserInput = React.useCallback(
-		function (savedText: null | string) {
+		function (text: string) {
 			if (clearUserInput) {
 				setUserInput('');
 			} else {
-				setUserInput(savedText);
+				setUserInput(text);
 			}
 		},
 		[clearUserInput]
 	);
 
-	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: USER_INPUT_SENTENCE, valueToSave: userInput, stateUpdater: updateUserInput });
+	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: USER_INPUT_SENTENCE, valueToSave: userInput, stateSetter: updateUserInput });
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		// TODO shift + enter to submit

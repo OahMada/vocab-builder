@@ -4,29 +4,37 @@ interface UseLocalStoragePersistProps<T> {
 	localStorageKey: string;
 	valueToSave: T | null;
 	defaultValue: T;
-	stateSetter?: (value: T) => void;
-	stateUpdater?: (jsonData: string | null) => void;
+	stateSetter: (value: T) => void;
 }
 
-function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue, stateSetter, stateUpdater }: UseLocalStoragePersistProps<T>): void {
+let map = new Map<string, any>();
+
+function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue, stateSetter }: UseLocalStoragePersistProps<T>): void {
 	// run once on component mount
 	React.useEffect(() => {
-		let savedValue = window.localStorage.getItem(localStorageKey);
-		if (stateSetter) {
-			let value = savedValue ? (typeof defaultValue === 'string' ? savedValue : JSON.parse(savedValue)) : defaultValue; // Strangely I can't use Boolean(savedValue) here
-			stateSetter(value);
-		} else if (stateUpdater) {
-			stateUpdater(savedValue);
-		}
-	}, [defaultValue, localStorageKey, stateSetter, stateUpdater]);
+		let savedAppData = JSON.parse(window.localStorage.getItem('app-data') ?? '[]');
+		savedAppData.map(([key, value]: [string, T]) => {
+			map.set(key, value);
+		});
+		let savedValue = map.get(localStorageKey);
+		let value = savedValue !== undefined ? savedValue : defaultValue;
+		stateSetter(value);
+	}, [defaultValue, localStorageKey, map, stateSetter]);
 
 	// Run every time the state changes.
 	React.useEffect(() => {
-		let value = typeof valueToSave === 'string' ? valueToSave : JSON.stringify(valueToSave);
 		if (typeof valueToSave === typeof defaultValue && valueToSave !== null) {
-			window.localStorage.setItem(localStorageKey, value);
+			console.log(map);
+			map.set(localStorageKey, valueToSave);
+			console.log(map);
+			window.localStorage.setItem('app-data', JSON.stringify(Array.from(map.entries())));
 		}
-	}, [defaultValue, localStorageKey, valueToSave]);
+	}, [defaultValue, localStorageKey, map, valueToSave]);
 }
 
 export default useLocalStoragePersist;
+
+export function deleteAppDataEntry(key: string) {
+	map.delete(key);
+	window.localStorage.setItem('app-data', JSON.stringify(Array.from(map.entries())));
+}

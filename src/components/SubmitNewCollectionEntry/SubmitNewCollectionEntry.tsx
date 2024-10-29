@@ -13,7 +13,7 @@ import { createVocabEntry } from '@/actions';
 
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
-import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+import useLocalStoragePersist, { deleteAppDataEntry } from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
 
 import SentenceTranslation from '@/components/SentenceTranslation';
@@ -63,17 +63,23 @@ function SubmitNewCollectionEntry({
 	});
 
 	let updateTranslation = React.useCallback(
-		function (savedText: null | string) {
-			if (data && !savedText) {
+		function (text: string) {
+			if (data && text === '') {
+				// empty string value is set by useLocalStoragePersist
 				setTranslation(data);
-			} else if (savedText) {
+			} else if (text) {
 				// To preserve user editing after a page refresh.
-				setTranslation(savedText);
+				setTranslation(text);
 			}
 		},
 		[data]
 	);
-	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: TRANSLATION_TEXT, valueToSave: translation, stateUpdater: updateTranslation });
+	useLocalStoragePersist<string>({
+		defaultValue: '',
+		localStorageKey: TRANSLATION_TEXT,
+		valueToSave: translation,
+		stateSetter: updateTranslation,
+	});
 	useLocalStoragePersist<string>({
 		defaultValue: '',
 		localStorageKey: NOTE_TEXT,
@@ -97,16 +103,16 @@ function SubmitNewCollectionEntry({
 	}
 
 	function resetTranslationText() {
-		window.localStorage.removeItem(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
+		deleteAppDataEntry(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
 		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. This essentially resets the translation.
 	}
 
 	function resetNoteText() {
-		window.localStorage.removeItem(NOTE_TEXT);
+		deleteAppDataEntry(NOTE_TEXT);
 	}
 
 	function resetPhoneticSymbols() {
-		window.localStorage.removeItem(PHONETIC_SYMBOLS);
+		deleteAppDataEntry(PHONETIC_SYMBOLS);
 	}
 
 	function resetAll(clearUserInput: boolean) {
@@ -211,3 +217,13 @@ function SubmitNewCollectionEntry({
 }
 
 export default SubmitNewCollectionEntry;
+
+/**
+ * cases where data is gonna change
+ * 1, a new sentence
+ * 		a, step one: reset after submitting => delete key in local storage; reset to old data
+ * 		b, component remount after user input => translation set to an empty string, and set to data when it's available
+ * 2, refetch translation
+ * 		a, step one: reset after clicking refetch button => delete key in local storage; reset to old data, not going to trigger useEffect call yet
+ * 		b, same data arrives, no effect call runs, just set to old data; or new data arrives, useEffect call runs,
+ */

@@ -125,7 +125,7 @@ function SubmitNewCollectionEntry({
 		} else {
 			return segmentedText.reduce((acc, { segment, isWordLike }) => {
 				if (isWordLike && phoneticSymbols[segment]) {
-					return `${acc + segment} (${phoneticSymbols[segment]}) `;
+					return `${acc + segment} <small> ${phoneticSymbols[segment]} </small> `;
 				}
 				return (acc += segment);
 			}, '');

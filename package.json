@@ -27,6 +27,7 @@
 		"axios": "^1.7.7",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.15",
+		"html-react-parser": "^5.1.18",
 		"js-cookie": "^3.0.5",
 		"new-component": "^5.0.3",
 		"next": "14.2.15",

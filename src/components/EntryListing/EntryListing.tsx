@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import parse from 'html-react-parser';
 
 import { VocabEntry } from '../Vocab/getVocabList';
 
@@ -8,9 +9,11 @@ function EntryListing({ optimisticVocab }: { optimisticVocab: VocabEntry[] }) {
 	return (
 		<section>
 			{optimisticVocab.map((entry) => {
+				let html = parse(`<p>${entry.sentencePlusPhoneticSymbols}</p>`);
+
 				return (
 					<div key={entry.id}>
-						<p>{entry.sentencePlusPhoneticSymbols}</p>
+						<p>{html}</p>
 						<p>{entry.translation}</p>
 					</div>
 				);

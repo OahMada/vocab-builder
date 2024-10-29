@@ -142,7 +142,7 @@ function PhoneticSymbol({ symbol, removeOnePhoneticSymbol }: { symbol: string; r
 			trigger={
 				<button>
 					<small>
-						<code> {`(${symbol})`}</code>
+						<code> {` ${symbol} `}</code>
 					</small>
 				</button>
 			}

@@ -48,7 +48,7 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<EntryListing optimisticVocab={optimisticVocab} />
+			<EntryListing vocab={optimisticVocab} />
 		</>
 	);
 }

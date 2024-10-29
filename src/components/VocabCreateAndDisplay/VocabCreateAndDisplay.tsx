@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Cookie from 'js-cookie';
 
-import { VocabEntry } from '@/components/Vocab/getVocabList';
+import { VocabEntry } from '@/types';
 
 import { SENTENCE_TEXT } from '@/constants';
 

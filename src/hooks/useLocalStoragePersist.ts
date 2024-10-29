@@ -24,9 +24,7 @@ function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue,
 	// Run every time the state changes.
 	React.useEffect(() => {
 		if (typeof valueToSave === typeof defaultValue && valueToSave !== null) {
-			console.log(map);
 			map.set(localStorageKey, valueToSave);
-			console.log(map);
 			window.localStorage.setItem('app-data', JSON.stringify(Array.from(map.entries())));
 		}
 	}, [defaultValue, localStorageKey, map, valueToSave]);

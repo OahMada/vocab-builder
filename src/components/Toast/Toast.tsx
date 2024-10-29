@@ -7,24 +7,20 @@ import * as ToastPrimitive from '@radix-ui/react-toast';
 import { XOctagon as ErrorIcon, AlertOctagon as InfoIcon, AlertTriangle as WarnIcon } from 'react-feather';
 import styled from 'styled-components';
 
+// https://github.com/radix-ui/primitives/discussions/1935#discussioncomment-4892471
+interface ToastProps extends React.ComponentPropsWithoutRef<typeof ToastPrimitive.Root> {
+	title?: string;
+	content: string;
+	toastType: ToastType;
+}
+
 type ToastType = 'error' | 'warn' | 'info';
 
 var StyledToastTitle = styled(ToastPrimitive.ToastTitle)``;
 var StyledToastDescription = styled(ToastPrimitive.ToastDescription)``;
 var StyledToastRoot = styled(ToastPrimitive.Root)``;
 
-function Toast({
-	title,
-	content,
-	toastType,
-	...props
-}: {
-	title?: React.ReactNode | string;
-	content: string;
-	toastType: ToastType;
-	// eslint-disable-next-line
-	[key: string]: any;
-}) {
+function Toast({ title, content, toastType, ...props }: ToastProps) {
 	let titleIcon: React.ReactNode;
 
 	switch (toastType) {

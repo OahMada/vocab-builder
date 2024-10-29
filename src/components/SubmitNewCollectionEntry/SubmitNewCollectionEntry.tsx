@@ -5,7 +5,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { startTransition } from 'react';
 
-import { VocabEntry } from '../Vocab/getVocabList';
+import { VocabEntry } from '@/types';
 
 import { FETCH_TRANSLATE_ROUTE, SENTENCE_TEXT, USER_EMAIL, TRANSLATION_TEXT, NOTE_TEXT, PHONETIC_SYMBOLS } from '@/constants';
 
@@ -140,8 +140,6 @@ function SubmitNewCollectionEntry({
 
 	async function handleSubmitNewEntry() {
 		let sentencePlusPhoneticSymbols = constructSentencePlusPhoneticSymbols();
-		console.log(sentencePlusPhoneticSymbols);
-
 		let newEntry = {
 			sentence,
 			sentencePlusPhoneticSymbols,

@@ -2,13 +2,15 @@
 
 import prisma from '@/lib/db';
 import { revalidateTag } from 'next/cache';
-import { Prisma } from '@prisma/client';
 
-import { CreateVocabEntryInputSchema, UserInputSchema } from '@/lib/dataValidation';
+import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryIdSchema } from '@/lib/dataValidation';
 import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
-import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
+import { constructZodErrorMessage } from '@/helpers';
+import { errorHandling } from './helpers';
 
-export async function createVocabEntry(entry: unknown) {
+export async function createVocabEntry(
+	entry: unknown
+): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string }; errorMessage?: string }> {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
 
 	if (result.error) {
@@ -38,25 +40,12 @@ export async function createVocabEntry(entry: unknown) {
 		return {
 			data: {
 				note: data.note,
-				sentence: data.sentence,
+				sentencePlusPhoneticSymbols: data.sentencePlusPhoneticSymbols,
 				translation: data.translation,
 			},
 		};
 	} catch (error) {
-		if (process.env.NODE_ENV === 'development') console.log(error);
-		if (error instanceof Prisma.PrismaClientKnownRequestError) {
-			// The .code property can be accessed in a type-safe manner
-			if (error.code === 'P2002') {
-				return { errorMessage: 'The very sentence has already been saved. Please update the existing one instead.' };
-			} else {
-				return { errorMessage: `${error.message}. Code: ${error.code}` };
-			}
-		} else if (error instanceof Prisma.PrismaClientInitializationError) {
-			return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
-		} else {
-			let errorMessage = getErrorMessage(error);
-			return { errorMessage };
-		}
+		return errorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -87,5 +76,35 @@ export async function fetchSentenceRecord(text: unknown) {
 		};
 	} else {
 		return null;
+	}
+}
+
+export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: string; sentence: string }; errorMessage?: string }> {
+	let result = VocabEntryIdSchema.safeParse(id);
+
+	if (result.error) {
+		let errorMessage = constructZodErrorMessage(result.error);
+
+		return {
+			errorMessage,
+		};
+	}
+
+	try {
+		let deletedEntry = await prisma.vocabEntry.delete({
+			where: {
+				id: result.data,
+			},
+		});
+		return {
+			data: {
+				id: deletedEntry.id,
+				sentence: deletedEntry.sentence,
+			},
+		};
+	} catch (error) {
+		return errorHandling(error);
+	} finally {
+		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
 }

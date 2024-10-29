@@ -170,7 +170,6 @@ function SubmitNewCollectionEntry({
 			let response = await createVocabEntry.bind(null, data)();
 			if (response.errorMessage) {
 				setError(response.errorMessage);
-				return;
 			}
 		}
 	}

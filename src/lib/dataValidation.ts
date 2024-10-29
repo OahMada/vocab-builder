@@ -21,4 +21,6 @@ export var CreateVocabEntryInputSchema = z.object({
 	userEmail: z.string().email().min(5),
 });
 
+export var VocabEntryIdSchema = z.string().trim();
+
 // type Inferred = z.infer<typeof CreateVocabEntryInputSchema>;

@@ -3,6 +3,11 @@ import parse from 'html-react-parser';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
+import { VocabEntryIdSchema } from '@/lib/dataValidation';
+
+import Toast from '@/components/Toast';
+import { constructZodErrorMessage } from '@/helpers';
+import { deleteVocabEntry } from '@/actions';
 
 type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
 interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
@@ -17,29 +22,49 @@ interface ContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.C
 }
 
 function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
-	let { note, sentencePlusPhoneticSymbols, translation } = entry;
+	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
+	let [error, setError] = React.useState('');
+
+	async function handleDeleteEntry() {
+		let result = VocabEntryIdSchema.safeParse(id);
+		if (result.error) {
+			let errorMessage = constructZodErrorMessage(result.error);
+			setError(errorMessage);
+			return;
+		} else {
+			let id = result.data;
+			let response = await deleteVocabEntry.bind(null, id)();
+
+			if (response.errorMessage) {
+				setError(response.errorMessage);
+			}
+		}
+	}
 
 	return (
-		<Accordion.Item value={`item-${index + 1}`}>
-			<AccordionTrigger>{html}</AccordionTrigger>
-			<AccordionContent>
-				<div>
-					<h2>Translation: </h2>
-					<p>{translation}</p>
-				</div>
-				{note && (
+		<>
+			<Accordion.Item value={`item-${index + 1}`}>
+				<AccordionTrigger>{html}</AccordionTrigger>
+				<AccordionContent>
 					<div>
-						<h2>Note: </h2>
-						<p>{note}</p>
+						<h2>Translation: </h2>
+						<p>{translation}</p>
 					</div>
-				)}
-				<div>
-					<button>Edit</button>
-					<button>Delete</button>
-				</div>
-			</AccordionContent>
-		</Accordion.Item>
+					{note && (
+						<div>
+							<h2>Note: </h2>
+							<p>{note}</p>
+						</div>
+					)}
+					<div>
+						<button>Edit</button>
+						<button onClick={handleDeleteEntry}>Delete</button>
+					</div>
+				</AccordionContent>
+			</Accordion.Item>
+			{error && <Toast toastType='error' content={error} />}
+		</>
 	);
 }
 
@@ -52,9 +77,12 @@ var AccordionTrigger = React.forwardRef<TriggerElement, TriggerProps>(({ childre
 		</Accordion.Trigger>
 	</Accordion.Header>
 ));
+AccordionTrigger.displayName = 'AccordionTrigger';
 
 var AccordionContent = React.forwardRef<ContentElement, ContentProps>(({ children, ...props }, forwardedRef) => (
 	<Accordion.Content {...props} ref={forwardedRef}>
 		<div>{children}</div>
 	</Accordion.Content>
 ));
+
+AccordionContent.displayName = 'AccordionContent';

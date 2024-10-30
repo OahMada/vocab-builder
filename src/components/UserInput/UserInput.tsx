@@ -9,7 +9,6 @@ import { UserInputSchema } from '@/lib/dataValidation';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
 import Toast from '@/components/Toast';
-import { getErrorMessage } from '@/helpers';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);

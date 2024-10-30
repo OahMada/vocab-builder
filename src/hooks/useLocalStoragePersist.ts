@@ -7,7 +7,7 @@ interface UseLocalStoragePersistProps<T> {
 	stateSetter: (value: T) => void;
 }
 
-let map = new Map<string, any>();
+let map = new Map();
 
 function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue, stateSetter }: UseLocalStoragePersistProps<T>): void {
 	// run once on component mount
@@ -19,7 +19,7 @@ function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue,
 		let savedValue = map.get(localStorageKey);
 		let value = savedValue !== undefined ? savedValue : defaultValue;
 		stateSetter(value);
-	}, [defaultValue, localStorageKey, map, stateSetter]);
+	}, [defaultValue, localStorageKey, stateSetter]);
 
 	// Run every time the state changes.
 	React.useEffect(() => {
@@ -27,7 +27,7 @@ function useLocalStoragePersist<T>({ localStorageKey, valueToSave, defaultValue,
 			map.set(localStorageKey, valueToSave);
 			window.localStorage.setItem('app-data', JSON.stringify(Array.from(map.entries())));
 		}
-	}, [defaultValue, localStorageKey, map, valueToSave]);
+	}, [defaultValue, localStorageKey, valueToSave]);
 }
 
 export default useLocalStoragePersist;

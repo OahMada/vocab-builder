@@ -4,7 +4,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
 import { VocabEntryIdSchema } from '@/lib/dataValidation';
-import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
+import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry } from '@/actions';
 
 import Toast from '@/components/Toast';

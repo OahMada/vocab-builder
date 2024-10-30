@@ -47,13 +47,11 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 				promise = fetchSentenceRecord(result.data);
 			});
 
-			try {
-				await promise!;
-				updateSentence(result.data);
-			} catch (error) {
-				let errorMessage = getErrorMessage(error);
-				setError(errorMessage);
+			let response = await promise!;
+			if (response?.errorMessage) {
+				setError(response.errorMessage);
 			}
+			updateSentence(result.data);
 		}
 	}
 

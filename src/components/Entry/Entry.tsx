@@ -48,11 +48,10 @@ function Entry({
 				optimisticallyDeleteVocabEntry(id);
 			});
 
-			try {
-				await deleteVocabEntry.bind(null, id)();
-			} catch (error) {
-				let errorMessage = getErrorMessage(error);
-				setError(errorMessage);
+			let response = await deleteVocabEntry.bind(null, id)();
+
+			if (response?.errorMessage) {
+				setError(response.errorMessage);
 			}
 		}
 	}

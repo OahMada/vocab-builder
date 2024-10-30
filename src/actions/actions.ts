@@ -10,13 +10,15 @@ import { errorHandling } from './helpers';
 
 export async function createVocabEntry(
 	entry: unknown
-): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string } }> {
+): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string }; errorMessage?: string }> {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
 
 	if (result.error) {
-		let message = constructZodErrorMessage(result.error);
+		let errorMessage = constructZodErrorMessage(result.error);
 
-		throw new Error(message);
+		return {
+			errorMessage,
+		};
 	}
 
 	let { sentence, translation, userEmail, note, sentencePlusPhoneticSymbols } = result.data;
@@ -43,7 +45,7 @@ export async function createVocabEntry(
 			},
 		};
 	} catch (error) {
-		throw errorHandling(error);
+		return errorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -55,8 +57,8 @@ export async function fetchSentenceRecord(text: unknown) {
 	let result = UserInputSchema.safeParse(text);
 
 	if (result.error) {
-		let message = constructZodErrorMessage(result.error);
-		throw new Error(message);
+		let errorMessage = constructZodErrorMessage(result.error);
+		return { errorMessage };
 	}
 
 	let sentence = result.data;
@@ -67,18 +69,18 @@ export async function fetchSentenceRecord(text: unknown) {
 		},
 	});
 	if (data) {
-		throw new Error('The sentence you try to submit is already present in your collection.');
+		return { errorMessage: 'The sentence you try to submit is already present in your collection.' };
 	} else {
 		return null;
 	}
 }
 
-export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: string; sentence: string } }> {
+export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: string; sentence: string }; errorMessage?: string }> {
 	let result = VocabEntryIdSchema.safeParse(id);
 
 	if (result.error) {
-		let message = constructZodErrorMessage(result.error);
-		throw new Error(message);
+		let errorMessage = constructZodErrorMessage(result.error);
+		return { errorMessage };
 	}
 
 	try {
@@ -94,7 +96,7 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: stri
 			},
 		};
 	} catch (error) {
-		throw errorHandling(error);
+		return errorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}

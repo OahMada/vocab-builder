@@ -178,11 +178,10 @@ function SubmitNewCollectionEntry({
 
 			// Put the resetting logic before the create action to get a snappy UI.
 			resetAll(true);
-			try {
-				await createVocabEntry.bind(null, data)();
-			} catch (error) {
-				let errorMessage = getErrorMessage(error);
-				setError(errorMessage);
+
+			let response = await createVocabEntry.bind(null, data)();
+			if (response?.errorMessage) {
+				setError(response.errorMessage);
 			}
 		}
 	}

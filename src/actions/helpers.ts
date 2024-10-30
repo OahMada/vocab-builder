@@ -6,14 +6,14 @@ export function errorHandling(error: unknown) {
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
 		// The .code property can be accessed in a type-safe manner
 		if (error.code === 'P2002') {
-			throw new Error('The very sentence has already been saved. Please update the existing one instead.');
+			return { errorMessage: 'The very sentence has already been saved. Please update the existing one instead.' };
 		} else {
-			throw new Error(`${error.message} Code: ${error.code}`);
+			return { errorMessage: `${error.message}. Code: ${error.code}` };
 		}
 	} else if (error instanceof Prisma.PrismaClientInitializationError) {
-		throw new Error(`${error.message} Code: ${error.errorCode}`);
+		return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
 	} else {
-		let message = getErrorMessage(error);
-		throw new Error(message);
+		let errorMessage = getErrorMessage(error);
+		return { errorMessage };
 	}
 }

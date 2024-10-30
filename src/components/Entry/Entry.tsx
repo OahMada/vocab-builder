@@ -3,13 +3,13 @@ import parse from 'html-react-parser';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
+import { OPTIMISTIC_ENTRY_ID } from '@/constants';
 import { VocabEntryIdSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry } from '@/actions';
 
-import Toast from '@/components/Toast';
 import DeleteEntry from '@/components/DeleteEntry';
-import { OPTIMISTIC_ENTRY_ID } from '@/constants';
+import EditEntry from '@/components/EditEntry';
 
 type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
 interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
@@ -73,7 +73,22 @@ function Entry({
 					</div>
 				)}
 				<div>
-					<button>Edit</button>
+					<EditEntry
+						input={
+							<>
+								<fieldset>
+									<label htmlFor='translation'>Name</label>
+									<input id='translation' defaultValue='Pedro Duarte' />
+								</fieldset>
+								<fieldset>
+									<label htmlFor='note'>Username</label>
+									<input id='note' defaultValue='@peduarte' />
+								</fieldset>
+							</>
+						}
+					>
+						<button>Edit</button>
+					</EditEntry>
 					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
 						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
 					</DeleteEntry>

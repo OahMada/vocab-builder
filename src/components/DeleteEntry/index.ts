@@ -1,2 +1,6 @@
-export * from './DeleteEntry';
-export { default } from './DeleteEntry';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+let DeleteEntry = dynamic(() => import('./DeleteEntry'));
+export default DeleteEntry;

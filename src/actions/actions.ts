@@ -3,7 +3,7 @@
 import prisma from '@/lib/db';
 import { revalidateTag } from 'next/cache';
 
-import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryIdSchema } from '@/lib/dataValidation';
+import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 import { constructZodErrorMessage } from '@/helpers';
 import { errorHandling } from './helpers';
@@ -24,7 +24,7 @@ export async function createVocabEntry(
 	let { sentence, translation, userEmail, note, sentencePlusPhoneticSymbols } = result.data;
 
 	try {
-		let data = await prisma.vocabEntry.create({
+		let response = await prisma.vocabEntry.create({
 			data: {
 				sentence,
 				sentencePlusPhoneticSymbols,
@@ -39,9 +39,9 @@ export async function createVocabEntry(
 		});
 		return {
 			data: {
-				note: data.note,
-				sentencePlusPhoneticSymbols: data.sentencePlusPhoneticSymbols,
-				translation: data.translation,
+				note: response.note,
+				sentencePlusPhoneticSymbols: response.sentencePlusPhoneticSymbols,
+				translation: response.translation,
 			},
 		};
 	} catch (error) {
@@ -63,19 +63,19 @@ export async function fetchSentenceRecord(text: unknown) {
 
 	let sentence = result.data;
 
-	let data = await prisma.vocabEntry.findUnique({
+	let response = await prisma.vocabEntry.findUnique({
 		where: {
 			sentence,
 		},
 	});
-	if (data) {
+	if (response) {
 		return { errorMessage: 'The sentence you try to submit is already present in your collection.' };
 	} else {
 		return null;
 	}
 }
 
-export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: string; sentence: string }; errorMessage?: string }> {
+export async function deleteVocabEntry(id: unknown): Promise<{ data?: { sentence: string }; errorMessage?: string }> {
 	let result = VocabEntryIdSchema.safeParse(id);
 
 	if (result.error) {
@@ -84,15 +84,48 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data?: { id: stri
 	}
 
 	try {
-		let deletedEntry = await prisma.vocabEntry.delete({
+		let response = await prisma.vocabEntry.delete({
 			where: {
 				id: result.data,
 			},
 		});
 		return {
 			data: {
-				id: deletedEntry.id,
-				sentence: deletedEntry.sentence,
+				sentence: response.sentence,
+			},
+		};
+	} catch (error) {
+		return errorHandling(error);
+	} finally {
+		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
+	}
+}
+
+export async function updateVocabEntry(data: unknown): Promise<{ data?: { translation: string; note: string }; errorMessage?: string }> {
+	let result = VocabEntryUpdatingDataSchema.safeParse(data);
+	if (result.error) {
+		return {
+			errorMessage: constructZodErrorMessage(result.error),
+		};
+	}
+
+	let { id, translation, note } = result.data;
+
+	try {
+		let response = await prisma.vocabEntry.update({
+			where: {
+				id,
+			},
+			data: {
+				translation,
+				note,
+			},
+		});
+
+		return {
+			data: {
+				translation: response.translation,
+				note: response.note,
 			},
 		};
 	} catch (error) {

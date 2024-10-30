@@ -10,10 +10,11 @@ export var PhoneticSymbolSchema = z.string().trim().max(45, {
 
 export var CreateVocabEntryInputSchema = z.object({
 	sentence: z.string(),
-	sentencePlusPhoneticSymbols: z.string(),
-	translation: z.string().min(1, { message: 'Please provide the translation text.' }),
+	sentencePlusPhoneticSymbols: z.string().trim(),
+	translation: z.string().trim().min(1, { message: 'Please provide the translation text.' }),
 	note: z
 		.string()
+		.trim()
 		.max(1000, {
 			message: 'Please keep the note shorter than 1,000 characters',
 		})
@@ -22,5 +23,17 @@ export var CreateVocabEntryInputSchema = z.object({
 });
 
 export var VocabEntryIdSchema = z.string().trim();
+
+export var VocabEntryUpdatingDataSchema = z.object({
+	id: z.string().trim(),
+	translation: z.string().trim().min(1, { message: 'Please provide the translation text.' }),
+	note: z
+		.string()
+		.trim()
+		.max(1000, {
+			message: 'Please keep the note shorter than 1,000 characters',
+		})
+		.optional(),
+});
 
 // type Inferred = z.infer<typeof CreateVocabEntryInputSchema>;

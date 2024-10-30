@@ -177,12 +177,13 @@ function SubmitNewCollectionEntry({
 			});
 
 			// Put the resetting logic before the create action to get a snappy UI.
-			resetAll(true);
 
 			let response = await createVocabEntry.bind(null, data)();
 			if (response?.errorMessage) {
 				setError(response.errorMessage);
+				return;
 			}
+			resetAll(true); // This needs to be at the last, or else any errors won't have the chance to show up since the UI would have switched away.
 		}
 	}
 

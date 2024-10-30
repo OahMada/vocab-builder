@@ -27,20 +27,22 @@ function Entry({
 	entry,
 	index,
 	optimisticallyDeleteVocabEntry,
+	updateError,
 }: {
 	entry: VocabEntry;
 	index: number;
 	optimisticallyDeleteVocabEntry: (action: string) => void;
+	updateError: (errMsg: string) => void;
 }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
-	let [error, setError] = React.useState('');
 
 	async function handleDeleteEntry() {
+		updateError(''); // So that error can keep showing up if the user repeats the same action.
 		let result = VocabEntryIdSchema.safeParse(id);
 		if (result.error) {
 			let errorMessage = constructZodErrorMessage(result.error);
-			setError(errorMessage);
+			updateError(errorMessage);
 			return;
 		} else {
 			let id = result.data;
@@ -51,36 +53,33 @@ function Entry({
 			let response = await deleteVocabEntry.bind(null, id)();
 
 			if (response?.errorMessage) {
-				setError(response.errorMessage);
+				updateError(response.errorMessage);
 			}
 		}
 	}
 
 	return (
-		<>
-			<Accordion.Item value={`item-${index + 1}`}>
-				<AccordionTrigger>{html}</AccordionTrigger>
-				<AccordionContent>
+		<Accordion.Item value={`item-${index + 1}`}>
+			<AccordionTrigger>{html}</AccordionTrigger>
+			<AccordionContent>
+				<div>
+					<h2>Translation: </h2>
+					<p>{translation}</p>
+				</div>
+				{note && (
 					<div>
-						<h2>Translation: </h2>
-						<p>{translation}</p>
+						<h2>Note: </h2>
+						<p>{note}</p>
 					</div>
-					{note && (
-						<div>
-							<h2>Note: </h2>
-							<p>{note}</p>
-						</div>
-					)}
-					<div>
-						<button>Edit</button>
-						<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
-							<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
-						</DeleteEntry>
-					</div>
-				</AccordionContent>
-			</Accordion.Item>
-			{error && <Toast toastType='error' content={error} />}
-		</>
+				)}
+				<div>
+					<button>Edit</button>
+					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
+						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
+					</DeleteEntry>
+				</div>
+			</AccordionContent>
+		</Accordion.Item>
 	);
 }
 

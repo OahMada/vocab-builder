@@ -15,7 +15,11 @@ import SWRConfigWrapper from '@/components/SWRConfigWrapper';
 
 function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabEntry[]; savedSentence: string | undefined }) {
 	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabList, (currentState: VocabEntry[], newEntry: VocabEntry) => {
-		return [newEntry, ...currentState.slice(0, -1)]; // Make sure there are always 5 entries that are returned.
+		if (currentState.length < 5) {
+			return [newEntry, ...currentState];
+		} else {
+			return [newEntry, ...currentState.slice(0, -1)]; // Make sure there are always 5 entries that are returned.
+		}
 	});
 
 	let [sentence, setSentence] = React.useState<string | undefined>(savedSentence);

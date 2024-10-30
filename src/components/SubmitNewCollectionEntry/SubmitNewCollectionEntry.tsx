@@ -7,7 +7,17 @@ import { startTransition } from 'react';
 
 import { VocabEntry } from '@/types';
 
-import { FETCH_TRANSLATE_ROUTE, SENTENCE_TEXT, USER_EMAIL, TRANSLATION_TEXT, NOTE_TEXT, PHONETIC_SYMBOLS } from '@/constants';
+import {
+	FETCH_TRANSLATE_ROUTE,
+	SENTENCE_TEXT,
+	USER_EMAIL,
+	TRANSLATION_TEXT,
+	NOTE_TEXT,
+	PHONETIC_SYMBOLS,
+	OPTIMISTIC_ENTRY_ID,
+	NOTE_EDIT_MODE,
+	TRANSLATION_EDIT_MODE,
+} from '@/constants';
 
 import { createVocabEntry } from '@/actions';
 
@@ -102,13 +112,15 @@ function SubmitNewCollectionEntry({
 		Cookies.remove(SENTENCE_TEXT);
 	}
 
-	function resetTranslationText() {
+	function resetTranslation() {
 		deleteAppDataEntry(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
+		deleteAppDataEntry(TRANSLATION_EDIT_MODE);
 		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. This essentially resets the translation.
 	}
 
-	function resetNoteText() {
+	function resetNote() {
 		deleteAppDataEntry(NOTE_TEXT);
+		deleteAppDataEntry(NOTE_EDIT_MODE);
 	}
 
 	function resetPhoneticSymbols() {
@@ -117,8 +129,8 @@ function SubmitNewCollectionEntry({
 
 	function resetAll(clearUserInput: boolean) {
 		resetSentence();
-		resetTranslationText();
-		resetNoteText();
+		resetTranslation();
+		resetNote();
 		resetPhoneticSymbols();
 		setError('');
 		updateShouldClearUserInput(clearUserInput);
@@ -158,7 +170,7 @@ function SubmitNewCollectionEntry({
 			startTransition(() => {
 				// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
 				addOptimisticVocabEntry({
-					id: 'optimistic_entry',
+					id: OPTIMISTIC_ENTRY_ID,
 					note: data.note ?? '',
 					sentencePlusPhoneticSymbols: data.sentencePlusPhoneticSymbols,
 					translation: data.translation,
@@ -188,7 +200,7 @@ function SubmitNewCollectionEntry({
 				<button
 					onClick={() => {
 						setError(''); // Otherwise, the submit button would stay disabled.
-						resetTranslationText();
+						resetTranslation();
 						mutate([FETCH_TRANSLATE_ROUTE, sentence]);
 					}}
 					disabled={isLoading || isValidating}

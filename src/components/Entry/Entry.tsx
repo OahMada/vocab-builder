@@ -4,10 +4,12 @@ import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
 import { VocabEntryIdSchema } from '@/lib/dataValidation';
-
-import Toast from '@/components/Toast';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry } from '@/actions';
+
+import Toast from '@/components/Toast';
+import DeleteEntry from '@/components/DeleteEntry';
+import { OPTIMISTIC_ENTRY_ID } from '@/constants';
 
 type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
 interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
@@ -59,7 +61,9 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 					)}
 					<div>
 						<button>Edit</button>
-						<button onClick={handleDeleteEntry}>Delete</button>
+						<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
+							<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
+						</DeleteEntry>
 					</div>
 				</AccordionContent>
 			</Accordion.Item>

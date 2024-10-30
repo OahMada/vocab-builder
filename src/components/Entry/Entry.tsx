@@ -4,7 +4,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
 import { VocabEntryIdSchema } from '@/lib/dataValidation';
-import { constructZodErrorMessage } from '@/helpers';
+import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
 import { deleteVocabEntry } from '@/actions';
 
 import Toast from '@/components/Toast';
@@ -23,7 +23,15 @@ interface ContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.C
 	children: React.ReactNode;
 }
 
-function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
+function Entry({
+	entry,
+	index,
+	optimisticallyDeleteVocabEntry,
+}: {
+	entry: VocabEntry;
+	index: number;
+	optimisticallyDeleteVocabEntry: (action: string) => void;
+}) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
 	let [error, setError] = React.useState('');
@@ -36,10 +44,15 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 			return;
 		} else {
 			let id = result.data;
-			let response = await deleteVocabEntry.bind(null, id)();
+			React.startTransition(() => {
+				optimisticallyDeleteVocabEntry(id);
+			});
 
-			if (response.errorMessage) {
-				setError(response.errorMessage);
+			try {
+				await deleteVocabEntry.bind(null, id)();
+			} catch (error) {
+				let errorMessage = getErrorMessage(error);
+				setError(errorMessage);
 			}
 		}
 	}

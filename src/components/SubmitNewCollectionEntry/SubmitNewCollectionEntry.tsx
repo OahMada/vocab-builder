@@ -3,7 +3,6 @@ import useSWRImmutable from 'swr/immutable';
 import { useSWRConfig } from 'swr';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { startTransition } from 'react';
 
 import { VocabEntry } from '@/types';
 
@@ -167,7 +166,7 @@ function SubmitNewCollectionEntry({
 			return;
 		} else {
 			let data = result.data;
-			startTransition(() => {
+			React.startTransition(() => {
 				// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
 				addOptimisticVocabEntry({
 					id: OPTIMISTIC_ENTRY_ID,
@@ -179,9 +178,11 @@ function SubmitNewCollectionEntry({
 
 			// Put the resetting logic before the create action to get a snappy UI.
 			resetAll(true);
-			let response = await createVocabEntry.bind(null, data)();
-			if (response.errorMessage) {
-				setError(response.errorMessage);
+			try {
+				await createVocabEntry.bind(null, data)();
+			} catch (error) {
+				let errorMessage = getErrorMessage(error);
+				setError(errorMessage);
 			}
 		}
 	}

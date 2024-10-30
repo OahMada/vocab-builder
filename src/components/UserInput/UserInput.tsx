@@ -9,6 +9,7 @@ import { UserInputSchema } from '@/lib/dataValidation';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
 import Toast from '@/components/Toast';
+import { getErrorMessage } from '@/helpers';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
@@ -31,6 +32,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		// TODO shift + enter to submit
 		e.preventDefault();
+		setError('');
 
 		let result = UserInputSchema.safeParse(userInput);
 		if (result.error) {
@@ -44,14 +46,14 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 			startTransition(() => {
 				promise = fetchSentenceRecord(result.data);
 			});
-			let response = await promise!;
-			if (response?.errorMessage) {
-				setError(response.errorMessage);
-				return;
-			}
 
-			setError('');
-			updateSentence(result.data);
+			try {
+				await promise!;
+				updateSentence(result.data);
+			} catch (error) {
+				let errorMessage = getErrorMessage(error);
+				setError(errorMessage);
+			}
 		}
 	}
 

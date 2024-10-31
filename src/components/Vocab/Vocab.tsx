@@ -10,7 +10,7 @@ import VocabCreateAndDisplay from '@/components/VocabCreateAndDisplay';
 
 async function Vocab() {
 	let vocabList = await getVocabList();
-	let sentence = cookies().get(SENTENCE_TEXT)?.value || undefined;
+	let sentence = (await cookies()).get(SENTENCE_TEXT)?.value || undefined;
 
 	return (
 		<StyledArticle>

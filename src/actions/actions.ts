@@ -112,6 +112,7 @@ export async function updateVocabEntry(data: unknown): Promise<{ data?: { transl
 	let { id, translation, note } = result.data;
 
 	try {
+		// throw new Error('error');
 		let response = await prisma.vocabEntry.update({
 			where: {
 				id,

@@ -3,24 +3,18 @@ import parse from 'html-react-parser';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
-import { OPTIMISTIC_ENTRY_ID } from '@/constants';
-import { VocabEntryIdSchema } from '@/lib/dataValidation';
+import { ENTRY_EDIT_MODE, ENTRY_UPDATING_DATA, OPTIMISTIC_ENTRY_ID } from '@/constants';
+import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
-import { deleteVocabEntry } from '@/actions';
+import { deleteVocabEntry, updateVocabEntry } from '@/actions';
+import useLocalStoragePersist, { deleteAppDataEntry } from '@/hooks/useLocalStoragePersist';
 
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
 
-type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
-interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
-	// className: string;
-	children: React.ReactNode;
-}
-
-type ContentElement = React.ElementRef<typeof Accordion.Content>;
-interface ContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.Content> {
-	// className: string;
-	children: React.ReactNode;
+interface EntryUpdatingData {
+	translation: string;
+	note: string;
 }
 
 function Entry({
@@ -36,6 +30,14 @@ function Entry({
 }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
+	let [updatingData, setUpdatingDate] = React.useState<EntryUpdatingData | null>(null);
+
+	useLocalStoragePersist({
+		defaultValue: React.useMemo(() => ({ translation, note }), []),
+		localStorageKey: ENTRY_UPDATING_DATA,
+		valueToSave: React.useMemo(() => updatingData, [updatingData]),
+		stateSetter: React.useCallback((value: EntryUpdatingData) => setUpdatingDate(value), []),
+	});
 
 	async function handleDeleteEntry() {
 		updateError(''); // So that error can keep showing up if the user repeats the same action.
@@ -58,6 +60,38 @@ function Entry({
 		}
 	}
 
+	async function handleEditEntry() {
+		updateError('');
+
+		if (!updatingData) {
+			throw new Error('the value of updatingData is null.');
+		}
+
+		if (updatingData.translation === translation && updatingData.note === note) {
+			return;
+		}
+
+		let result = VocabEntryUpdatingDataSchema.safeParse({ ...updatingData, id });
+
+		if (result.error) {
+			let errorMessage = constructZodErrorMessage(result.error);
+			updateError(errorMessage);
+			return;
+		} else {
+			let response = await updateVocabEntry.bind(null, result.data)();
+			if (response?.errorMessage) {
+				updateError(response.errorMessage);
+				return;
+			}
+		}
+
+		deleteAppDataEntry(ENTRY_EDIT_MODE);
+		deleteAppDataEntry(ENTRY_UPDATING_DATA);
+	}
+
+	// TODO make use of immer to update state
+	// TODO Make use of useOptimistic update after the server action has succeeded.
+
 	return (
 		<Accordion.Item value={`item-${index + 1}`}>
 			<AccordionTrigger>{html}</AccordionTrigger>
@@ -74,20 +108,29 @@ function Entry({
 				)}
 				<div>
 					<EditEntry
-						input={
+						handleEditEntry={handleEditEntry}
+						fieldSet={
 							<>
 								<fieldset>
-									<label htmlFor='translation'>Name</label>
-									<input id='translation' defaultValue='Pedro Duarte' />
+									<label htmlFor='translation'>Translation</label>
+									<textarea
+										id='translation'
+										value={updatingData?.translation}
+										onChange={(e) => setUpdatingDate({ note: updatingData?.note ?? note, translation: e.target.value })}
+									/>
 								</fieldset>
 								<fieldset>
-									<label htmlFor='note'>Username</label>
-									<input id='note' defaultValue='@peduarte' />
+									<label htmlFor='note'>Note</label>
+									<textarea
+										id='note'
+										value={updatingData?.note}
+										onChange={(e) => setUpdatingDate({ translation: updatingData?.translation ?? translation, note: e.target.value })}
+									/>
 								</fieldset>
 							</>
 						}
 					>
-						<button>Edit</button>
+						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Edit</button>
 					</EditEntry>
 					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
 						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
@@ -99,6 +142,18 @@ function Entry({
 }
 
 export default Entry;
+
+type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
+interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
+	// className: string;
+	children: React.ReactNode;
+}
+
+type ContentElement = React.ElementRef<typeof Accordion.Content>;
+interface ContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.Content> {
+	// className: string;
+	children: React.ReactNode;
+}
 
 var AccordionTrigger = React.forwardRef<TriggerElement, TriggerProps>(({ children, ...props }, forwardedRef) => (
 	<Accordion.Header>

@@ -69,8 +69,6 @@ function Entry({
 		}
 	}
 
-	// TODO make use of immer to update state
-
 	return (
 		<Accordion.Item value={`item-${index + 1}`}>
 			<AccordionTrigger>{html}</AccordionTrigger>

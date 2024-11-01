@@ -1,6 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
 import { useSWRConfig } from 'swr';
+import { produce } from 'immer';
 
 import { FETCH_PHONETIC_SYMBOL_ROUTE, PHONETIC_SYMBOLS } from '@/constants';
 import useSWRImmutable from 'swr/immutable';
@@ -28,15 +29,25 @@ let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentDa
 
 	let updatePhoneticSymbols = React.useCallback((word: string, symbol: string) => {
 		setPhoneticSymbols((prevState) => {
-			let nextSymbols = { ...prevState, [word]: symbol };
+			if (!prevState) {
+				throw new Error('The phoneticSymbols state was null.');
+			}
+			let nextSymbols = produce(prevState, (draft) => {
+				draft[word] = symbol;
+			});
+
 			return nextSymbols;
 		});
 	}, []);
 
 	function removeOnePhoneticSymbol(word: string) {
 		return () => {
-			let nextSymbols = { ...phoneticSymbols };
-			delete nextSymbols[word];
+			if (!phoneticSymbols) {
+				throw new Error('The phoneticSymbols state was null.');
+			}
+			let nextSymbols = produce(phoneticSymbols, (draft) => {
+				delete draft[word];
+			});
 			setPhoneticSymbols(nextSymbols);
 		};
 	}

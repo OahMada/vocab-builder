@@ -36,7 +36,7 @@ function EntryListing({ vocab }: { vocab: VocabEntry[] }) {
 	return (
 		<>
 			<Accordion.Root type='single' defaultValue='item-1' collapsible>
-				{optimisticVocab.map((entry, index) => {
+				{optimisticVocab.slice(0, 5).map((entry, index) => {
 					return (
 						<Entry
 							key={entry.id}

@@ -60,11 +60,7 @@ function Entry({
 				};
 			}
 			let res = await updateVocabEntry.bind(null, result.data)();
-
-			React.startTransition(() => {
-				optimisticallyModifyVocabEntry({ id, translation: data.translation, note: data.note });
-			});
-
+			optimisticallyModifyVocabEntry({ id, translation: data.translation, note: data.note });
 			return res;
 		}
 	}
@@ -100,10 +96,10 @@ function Entry({
 							</>
 						}
 					>
-						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Edit</button>
+						<button>Edit</button>
 					</EditEntry>
 					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
-						<button disabled={id === OPTIMISTIC_ENTRY_ID}>Delete</button>
+						<button>Delete</button>
 					</DeleteEntry>
 				</div>
 			</AccordionContent>

@@ -10,7 +10,7 @@ import { errorHandling } from './helpers';
 
 export async function createVocabEntry(
 	entry: unknown
-): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string }; errorMessage?: string }> {
+): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string; id: string }; errorMessage?: string }> {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
 
 	if (result.error) {
@@ -39,6 +39,7 @@ export async function createVocabEntry(
 		});
 		return {
 			data: {
+				id: response.id,
 				note: response.note,
 				sentencePlusPhoneticSymbols: response.sentencePlusPhoneticSymbols,
 				translation: response.translation,
@@ -51,7 +52,7 @@ export async function createVocabEntry(
 	}
 }
 
-// export type FetchSentenceRecordReturn = ReturnType<typeof fetchSentenceRecord>;
+export type CreateVocabEntryReturnType = ReturnType<typeof createVocabEntry>;
 
 export async function fetchSentenceRecord(text: unknown) {
 	let result = UserInputSchema.safeParse(text);

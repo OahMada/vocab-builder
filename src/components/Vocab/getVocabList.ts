@@ -23,7 +23,7 @@ var getVocabList = unstable_cache(
 			orderBy: {
 				createdAt: 'desc',
 			},
-			take: 5,
+			take: 6,
 		});
 	},
 	[VOCAB_LIST_VALIDATION_TAG],

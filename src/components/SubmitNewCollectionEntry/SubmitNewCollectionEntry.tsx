@@ -13,12 +13,11 @@ import {
 	TRANSLATION_TEXT,
 	NOTE_TEXT,
 	PHONETIC_SYMBOLS,
-	OPTIMISTIC_ENTRY_ID,
 	NOTE_EDIT_MODE,
 	TRANSLATION_EDIT_MODE,
 } from '@/constants';
 
-import { createVocabEntry } from '@/actions';
+import { createVocabEntry, CreateVocabEntryReturnType } from '@/actions';
 
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
@@ -50,6 +49,7 @@ function SubmitNewCollectionEntry({
 }) {
 	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
 	let segmentedText = [...segmenter.segment(sentence)];
+	let [isPending, startTransition] = React.useTransition();
 
 	// TODO another state to control whether or not submitting is allowed
 
@@ -168,22 +168,25 @@ function SubmitNewCollectionEntry({
 			return;
 		} else {
 			let data = result.data;
-			React.startTransition(() => {
-				// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
-				addOptimisticVocabEntry({
-					id: OPTIMISTIC_ENTRY_ID,
-					note: data.note ?? '',
-					sentencePlusPhoneticSymbols: data.sentencePlusPhoneticSymbols,
-					translation: data.translation,
-				});
+			let promise: CreateVocabEntryReturnType;
+			startTransition(() => {
+				promise = createVocabEntry.bind(null, data)();
 			});
-
-			// Put the resetting logic before the create action to get a snappy UI.
-
-			let response = await createVocabEntry.bind(null, data)();
+			let response = await promise!;
 			if (response?.errorMessage) {
 				setError(response.errorMessage);
 				return;
+			} else if (response.data) {
+				let addedEntry = response.data;
+				startTransition(() => {
+					// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
+					addOptimisticVocabEntry({
+						id: addedEntry.id,
+						note: addedEntry.note,
+						sentencePlusPhoneticSymbols: addedEntry.sentencePlusPhoneticSymbols,
+						translation: addedEntry.translation,
+					});
+				});
 			}
 			resetAll(true); // This needs to be at the last, or else any errors won't have the chance to show up since the UI would have switched away.
 		}
@@ -219,7 +222,7 @@ function SubmitNewCollectionEntry({
 				</button>
 				{!isLoading && (
 					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating}>
-						Finish Editing
+						{isPending ? 'Submitting...' : 'Finish'}
 					</button>
 				)}
 			</div>

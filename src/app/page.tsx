@@ -14,7 +14,7 @@ export default function Home() {
 				<Footer />
 			</Info>
 			<React.Suspense fallback='Loading...'>
-				{/* TODO a skeleton loading component for the fallback, which includes an input box */}
+				{/* TODO ~~a skeleton loading component for the fallback, which includes an input box~~ maybe I don't need a suspense here after all */}
 				<Vocab />
 			</React.Suspense>
 		</MainContentWrapper>

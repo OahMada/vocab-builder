@@ -4,7 +4,7 @@ import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
 import { OPTIMISTIC_ENTRY_ID } from '@/constants';
-import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
+import { VocabEntryIdSchema, VocabEntryUpdatingData, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
 import { RawFormData } from '@/types';
@@ -15,12 +15,12 @@ import EditEntry from '@/components/EditEntry';
 function Entry({
 	entry,
 	index,
-	optimisticallyDeleteVocabEntry,
+	optimisticallyModifyVocabEntry,
 	updateError,
 }: {
 	entry: VocabEntry;
 	index: number;
-	optimisticallyDeleteVocabEntry: (action: string) => void;
+	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
 	updateError: (errMsg: string) => void;
 }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
@@ -36,7 +36,7 @@ function Entry({
 		} else {
 			let id = result.data;
 			React.startTransition(() => {
-				optimisticallyDeleteVocabEntry(id);
+				optimisticallyModifyVocabEntry(id);
 			});
 
 			let response = await deleteVocabEntry.bind(null, id)();
@@ -59,12 +59,17 @@ function Entry({
 					data: { translation, note },
 				};
 			}
-			return await updateVocabEntry.bind(null, result.data)();
+			let res = await updateVocabEntry.bind(null, result.data)();
+
+			React.startTransition(() => {
+				optimisticallyModifyVocabEntry({ id, translation: data.translation, note: data.note });
+			});
+
+			return res;
 		}
 	}
 
 	// TODO make use of immer to update state
-	// TODO Make use of useOptimistic update after the server action has succeeded.
 
 	return (
 		<Accordion.Item value={`item-${index + 1}`}>

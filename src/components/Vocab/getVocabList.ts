@@ -21,7 +21,7 @@ var getVocabList = unstable_cache(
 			},
 			select: entrySelect,
 			orderBy: {
-				updatedAt: 'desc',
+				createdAt: 'desc',
 			},
 			take: 5,
 		});
@@ -34,4 +34,4 @@ var getVocabList = unstable_cache(
 
 export default getVocabList;
 
-// TODO do I need error handling here?
+// TODO do I need error handling here? Yes

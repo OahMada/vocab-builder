@@ -53,6 +53,7 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 				)}
 			</ErrorBoundaryWrapper>
 			<EntryListing vocab={optimisticVocab} />
+			{/* TODO there should be a error boundary around this */}
 		</>
 	);
 }

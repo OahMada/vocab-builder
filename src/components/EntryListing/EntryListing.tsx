@@ -3,15 +3,29 @@
 import * as React from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 
+import { VocabEntryUpdatingData } from '@/lib/dataValidation';
 import { VocabEntry } from '@/types';
 
 import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
 
 function EntryListing({ vocab }: { vocab: VocabEntry[] }) {
-	let [optimisticVocab, optimisticallyDeleteVocabEntry] = React.useOptimistic(vocab, (currentState: VocabEntry[], VocabEntryId: string) => {
-		return currentState.filter((vocab) => vocab.id !== VocabEntryId);
-	});
+	let [optimisticVocab, optimisticallyModifyVocabEntry] = React.useOptimistic(
+		vocab,
+		(currentState: VocabEntry[], optimisticValue: string | VocabEntryUpdatingData) => {
+			if (typeof optimisticValue === 'string') {
+				return currentState.filter((vocab) => vocab.id !== optimisticValue);
+			} else {
+				return currentState.map((entry) => {
+					if (entry.id === optimisticValue.id) {
+						return { ...entry, note: optimisticValue.note ?? '', translation: optimisticValue.translation };
+					} else {
+						return entry;
+					}
+				});
+			}
+		}
+	);
 
 	let [error, setError] = React.useState('');
 
@@ -28,7 +42,7 @@ function EntryListing({ vocab }: { vocab: VocabEntry[] }) {
 							key={entry.id}
 							entry={entry}
 							index={index}
-							optimisticallyDeleteVocabEntry={optimisticallyDeleteVocabEntry}
+							optimisticallyModifyVocabEntry={optimisticallyModifyVocabEntry}
 							updateError={updateError}
 						/>
 					);

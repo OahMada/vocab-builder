@@ -36,4 +36,4 @@ export var VocabEntryUpdatingDataSchema = z.object({
 		.optional(),
 });
 
-// type Inferred = z.infer<typeof CreateVocabEntryInputSchema>;
+export type VocabEntryUpdatingData = z.infer<typeof VocabEntryUpdatingDataSchema>;

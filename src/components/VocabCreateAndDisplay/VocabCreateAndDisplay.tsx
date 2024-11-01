@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Cookie from 'js-cookie';
+import Link from 'next/link';
 
 import { VocabEntry } from '@/types';
 
@@ -53,7 +54,7 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 				)}
 			</ErrorBoundaryWrapper>
 			<EntryListing vocab={optimisticVocab} />
-			{/* TODO there should be a error boundary around this */}
+			<Link href='/vocab-listing'>View All</Link>
 		</>
 	);
 }

@@ -3,34 +3,37 @@
 import * as React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
-import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
-import { ENTRY_EDIT_MODE } from '@/constants';
+import { UpdateVocabEntryReturnType } from '@/actions';
 
 function EditEntry({
 	children,
 	fieldSet,
 	handleEditEntry,
+	updateError,
 }: {
 	children: React.ReactNode;
 	fieldSet: React.ReactNode;
-	handleEditEntry: () => Promise<void>;
+	handleEditEntry: () => UpdateVocabEntryReturnType;
+	updateError: (errMsg: string) => void;
 }) {
 	let [open, setOpen] = React.useState<boolean | null>(null);
-
-	useLocalStoragePersist({
-		defaultValue: false,
-		localStorageKey: ENTRY_EDIT_MODE,
-		valueToSave: open,
-		stateSetter: React.useCallback((value: boolean) => setOpen(value), []),
-	});
+	let [isPending, startTransition] = React.useTransition();
 
 	async function clientAction() {
-		await handleEditEntry();
-		// TODO Need a way to stop closing the popover in the case of an error.
+		updateError('');
+
+		let promise: UpdateVocabEntryReturnType;
+		startTransition(() => {
+			promise = handleEditEntry();
+		});
+
+		let response = await promise!;
+		if (response?.errorMessage) {
+			updateError(response.errorMessage);
+			return;
+		}
 		setOpen(false);
 	}
-
-	// TODO make use of useFormData
 
 	return (
 		<Dialog.Root open={open ?? false} onOpenChange={setOpen}>
@@ -42,7 +45,7 @@ function EditEntry({
 					<Dialog.Description>You can only update the translation and note of an entry.</Dialog.Description>
 					<form action={clientAction}>
 						{fieldSet}
-						<button>Save</button>
+						<button>{isPending ? 'Saving' : 'Save'}</button>
 					</form>
 					<Dialog.Close asChild>
 						<button aria-label='Close'>X</button>

@@ -135,3 +135,5 @@ export async function updateVocabEntry(data: unknown): Promise<{ data?: { transl
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
 }
+
+export type UpdateVocabEntryReturnType = ReturnType<typeof updateVocabEntry>;

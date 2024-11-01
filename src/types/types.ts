@@ -6,3 +6,8 @@ export interface PhoneticSymbols {
 }
 
 export type VocabEntry = Prisma.VocabEntryGetPayload<{ select: typeof entrySelect }>;
+
+export interface EntryUpdatingData {
+	translation: string;
+	note: string;
+}

@@ -51,6 +51,8 @@ function SubmitNewCollectionEntry({
 	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
 	let segmentedText = [...segmenter.segment(sentence)];
 
+	// TODO another state to control whether or not submitting is allowed
+
 	let [error, setError] = React.useState('');
 	let [translation, setTranslation] = React.useState<null | string>(null);
 	let [note, setNote] = React.useState<null | string>(null);

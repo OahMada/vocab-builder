@@ -8,8 +8,6 @@ export const SENTENCE_TEXT = 'sentence-text';
 export const PHONETIC_SYMBOLS = 'phonetic-symbols';
 export const NOTE_EDIT_MODE = 'note-edit-mode';
 export const TRANSLATION_EDIT_MODE = 'translation-edit-mode';
-export const ENTRY_EDIT_MODE = 'entry-edit-mode';
-export const ENTRY_UPDATING_DATA = 'entry-updating-data';
 
 export const SENTENCE_SAMPLE = "We sat together at one summer's end,That beautiful mild woman, your close friend.";
 

@@ -49,6 +49,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 			let response = await promise!;
 			if (response?.errorMessage) {
 				setError(response.errorMessage);
+				return;
 			}
 			updateSentence(result.data);
 		}

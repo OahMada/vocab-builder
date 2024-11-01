@@ -7,7 +7,7 @@ import { OPTIMISTIC_ENTRY_ID } from '@/constants';
 import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
-import { EntryUpdatingData } from '@/types';
+import { RawFormData } from '@/types';
 
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
@@ -25,7 +25,6 @@ function Entry({
 }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
-	let [updatingData, setUpdatingDate] = React.useState<EntryUpdatingData>({ translation, note });
 
 	async function handleDeleteEntry() {
 		updateError(''); // So that error can keep showing up if the user repeats the same action.
@@ -48,11 +47,8 @@ function Entry({
 		}
 	}
 
-	async function handleEditEntry() {
-		if (!updatingData) {
-			throw new Error('the value of updatingData is null.');
-		}
-		let result = VocabEntryUpdatingDataSchema.safeParse({ ...updatingData, id });
+	async function handleEditEntry(formData: RawFormData) {
+		let result = VocabEntryUpdatingDataSchema.safeParse({ ...formData, id });
 		if (result.error) {
 			let errorMessage = constructZodErrorMessage(result.error);
 			return { errorMessage };
@@ -92,19 +88,11 @@ function Entry({
 							<>
 								<fieldset>
 									<label htmlFor='translation'>Translation</label>
-									<textarea
-										id='translation'
-										value={updatingData?.translation}
-										onChange={(e) => setUpdatingDate({ note: updatingData?.note ?? note, translation: e.target.value })}
-									/>
+									<textarea name='translation' id='translation' defaultValue={translation} />
 								</fieldset>
 								<fieldset>
 									<label htmlFor='note'>Note</label>
-									<textarea
-										id='note'
-										value={updatingData?.note}
-										onChange={(e) => setUpdatingDate({ translation: updatingData?.translation ?? translation, note: e.target.value })}
-									/>
+									<textarea name='note' id='note' defaultValue={note} />
 								</fieldset>
 							</>
 						}

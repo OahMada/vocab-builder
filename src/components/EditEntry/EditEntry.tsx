@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
 import { UpdateVocabEntryReturnType } from '@/actions';
+import { RawFormData } from '@/types';
 
 function EditEntry({
 	children,
@@ -13,18 +14,23 @@ function EditEntry({
 }: {
 	children: React.ReactNode;
 	fieldSet: React.ReactNode;
-	handleEditEntry: () => UpdateVocabEntryReturnType;
+	handleEditEntry: (formData: RawFormData) => UpdateVocabEntryReturnType;
 	updateError: (errMsg: string) => void;
 }) {
 	let [open, setOpen] = React.useState<boolean | null>(null);
 	let [isPending, startTransition] = React.useTransition();
 
-	async function clientAction() {
+	async function clientAction(formData: FormData) {
 		updateError('');
+
+		let rawFormData = {
+			translation: formData.get('translation'),
+			note: formData.get('note'),
+		};
 
 		let promise: UpdateVocabEntryReturnType;
 		startTransition(() => {
-			promise = handleEditEntry();
+			promise = handleEditEntry(rawFormData);
 		});
 
 		let response = await promise!;
@@ -45,7 +51,7 @@ function EditEntry({
 					<Dialog.Description>You can only update the translation and note of an entry.</Dialog.Description>
 					<form action={clientAction}>
 						{fieldSet}
-						<button>{isPending ? 'Saving' : 'Save'}</button>
+						<button>{isPending ? 'Saving...' : 'Save'}</button>
 					</form>
 					<Dialog.Close asChild>
 						<button aria-label='Close'>X</button>

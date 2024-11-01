@@ -11,3 +11,7 @@ export interface EntryUpdatingData {
 	translation: string;
 	note: string;
 }
+
+export interface RawFormData {
+	[index: string]: FormDataEntryValue | null;
+}

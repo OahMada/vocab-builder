@@ -173,10 +173,10 @@ function SubmitNewCollectionEntry({
 				promise = createVocabEntry.bind(null, data)();
 			});
 			let response = await promise!;
-			if (response?.errorMessage) {
+			if ('errorMessage' in response) {
 				setError(response.errorMessage);
 				return;
-			} else if (response.data) {
+			} else {
 				let addedEntry = response.data;
 				startTransition(() => {
 					// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.

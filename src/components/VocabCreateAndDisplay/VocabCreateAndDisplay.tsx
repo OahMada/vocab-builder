@@ -14,8 +14,8 @@ import UserInput from '@/components/UserInput';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import SWRConfigWrapper from '@/components/SWRConfigWrapper';
 
-function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabEntry[]; savedSentence: string | undefined }) {
-	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabList, (currentState: VocabEntry[], newEntry: VocabEntry) => {
+function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabEntry[]; savedSentence: string | undefined }) {
+	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabData, (currentState: VocabEntry[], newEntry: VocabEntry) => {
 		if (currentState.length < 5) {
 			return [newEntry, ...currentState];
 		} else {
@@ -53,7 +53,7 @@ function VocabCreateAndDisplay({ vocabList, savedSentence }: { vocabList: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<EntryListing vocab={optimisticVocab} />
+			<EntryListing vocabData={optimisticVocab} />
 			<Link href='/vocab-listing'>View All</Link>
 		</>
 	);

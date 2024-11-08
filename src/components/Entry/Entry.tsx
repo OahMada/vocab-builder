@@ -3,7 +3,6 @@ import parse from 'html-react-parser';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
-import { OPTIMISTIC_ENTRY_ID } from '@/constants';
 import { VocabEntryIdSchema, VocabEntryUpdatingData, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
@@ -41,7 +40,7 @@ function Entry({
 
 			let response = await deleteVocabEntry.bind(null, id)();
 
-			if (response?.errorMessage) {
+			if ('errorMessage' in response) {
 				updateError(response.errorMessage);
 			}
 		}

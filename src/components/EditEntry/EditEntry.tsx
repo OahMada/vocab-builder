@@ -34,7 +34,7 @@ function EditEntry({
 		});
 
 		let response = await promise!;
-		if (response?.errorMessage) {
+		if ('errorMessage' in response) {
 			updateError(response.errorMessage);
 			return;
 		}

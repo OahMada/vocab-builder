@@ -1,16 +1,18 @@
 'use server';
 
+import { revalidateTag, unstable_cache } from 'next/cache';
+
 import prisma from '@/lib/db';
-import { revalidateTag } from 'next/cache';
 
 import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
-import { VOCAB_LIST_VALIDATION_TAG } from '@/constants';
-import { constructZodErrorMessage } from '@/helpers';
-import { errorHandling } from './helpers';
+import { DATABASE_USER_ID, ENTRIES_PER_PAGE, VOCAB_LIST_VALIDATION_TAG } from '@/constants';
+import { constructZodErrorMessage, delay } from '@/helpers';
+import { errorHandling } from '@/helpers';
+import { entrySelect, VocabEntry } from '@/types';
 
 export async function createVocabEntry(
 	entry: unknown
-): Promise<{ data?: { note: string; sentencePlusPhoneticSymbols: string; translation: string; id: string }; errorMessage?: string }> {
+): Promise<{ data: { note: string; sentencePlusPhoneticSymbols: string; translation: string; id: string } } | { errorMessage: string }> {
 	let result = CreateVocabEntryInputSchema.safeParse(entry);
 
 	if (result.error) {
@@ -76,7 +78,7 @@ export async function fetchSentenceRecord(text: unknown) {
 	}
 }
 
-export async function deleteVocabEntry(id: unknown): Promise<{ data?: { sentence: string }; errorMessage?: string }> {
+export async function deleteVocabEntry(id: unknown): Promise<{ data: { sentence: string } } | { errorMessage: string }> {
 	let result = VocabEntryIdSchema.safeParse(id);
 
 	if (result.error) {
@@ -102,7 +104,7 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data?: { sentence
 	}
 }
 
-export async function updateVocabEntry(data: unknown): Promise<{ data?: { translation: string; note: string }; errorMessage?: string }> {
+export async function updateVocabEntry(data: unknown): Promise<{ data: { translation: string; note: string } } | { errorMessage: string }> {
 	let result = VocabEntryUpdatingDataSchema.safeParse(data);
 	if (result.error) {
 		return {
@@ -138,3 +140,58 @@ export async function updateVocabEntry(data: unknown): Promise<{ data?: { transl
 }
 
 export type UpdateVocabEntryReturnType = ReturnType<typeof updateVocabEntry>;
+
+export var getVocabData: (limit: number) => Promise<{ data: VocabEntry[] } | { errorMessage: string }> = unstable_cache(
+	async (limit: number) => {
+		if (process.env.NODE_ENV === 'development') await delay(3000);
+
+		try {
+			let data = await prisma.vocabEntry.findMany({
+				where: {
+					userId: DATABASE_USER_ID,
+				},
+				select: entrySelect,
+				orderBy: {
+					createdAt: 'desc',
+				},
+				take: limit,
+			});
+			return { data };
+		} catch (error) {
+			return errorHandling(error);
+		}
+	},
+	[VOCAB_LIST_VALIDATION_TAG],
+	{
+		tags: [VOCAB_LIST_VALIDATION_TAG],
+	}
+);
+
+export var getPaginatedVocabData: (cursor: string) => Promise<{ data: VocabEntry[] } | { errorMessage: string }> = unstable_cache(
+	async (cursor: string) => {
+		if (process.env.NODE_ENV === 'development') await delay(3000);
+		try {
+			let data = await prisma.vocabEntry.findMany({
+				where: {
+					userId: DATABASE_USER_ID,
+				},
+				select: entrySelect,
+				orderBy: {
+					createdAt: 'desc',
+				},
+				take: ENTRIES_PER_PAGE,
+				skip: 1,
+				cursor: {
+					id: cursor,
+				},
+			});
+			return { data };
+		} catch (error) {
+			return errorHandling(error);
+		}
+	},
+	[VOCAB_LIST_VALIDATION_TAG],
+	{
+		tags: [VOCAB_LIST_VALIDATION_TAG],
+	}
+);

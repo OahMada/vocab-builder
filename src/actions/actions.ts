@@ -38,14 +38,10 @@ export async function createVocabEntry(
 					},
 				},
 			},
+			select: entrySelect,
 		});
 		return {
-			data: {
-				id: response.id,
-				note: response.note,
-				sentencePlusPhoneticSymbols: response.sentencePlusPhoneticSymbols,
-				translation: response.translation,
-			},
+			data: response,
 		};
 	} catch (error) {
 		return errorHandling(error);
@@ -78,7 +74,7 @@ export async function fetchSentenceRecord(text: unknown) {
 	}
 }
 
-export async function deleteVocabEntry(id: unknown): Promise<{ data: { sentence: string } } | { errorMessage: string }> {
+export async function deleteVocabEntry(id: unknown): Promise<{ data: VocabEntry } | { errorMessage: string }> {
 	let result = VocabEntryIdSchema.safeParse(id);
 
 	if (result.error) {
@@ -86,16 +82,17 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data: { sentence:
 		return { errorMessage };
 	}
 
+	if (process.env.NODE_ENV === 'development') await delay(3000);
+
 	try {
 		let response = await prisma.vocabEntry.delete({
 			where: {
 				id: result.data,
 			},
+			select: entrySelect,
 		});
 		return {
-			data: {
-				sentence: response.sentence,
-			},
+			data: response,
 		};
 	} catch (error) {
 		return errorHandling(error);
@@ -104,7 +101,9 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data: { sentence:
 	}
 }
 
-export async function updateVocabEntry(data: unknown): Promise<{ data: { translation: string; note: string } } | { errorMessage: string }> {
+export type DeleteVocabEntryReturnType = ReturnType<typeof deleteVocabEntry>;
+
+export async function updateVocabEntry(data: unknown): Promise<{ data: VocabEntry } | { errorMessage: string }> {
 	let result = VocabEntryUpdatingDataSchema.safeParse(data);
 	if (result.error) {
 		return {
@@ -124,13 +123,11 @@ export async function updateVocabEntry(data: unknown): Promise<{ data: { transla
 				translation,
 				note,
 			},
+			select: entrySelect,
 		});
 
 		return {
-			data: {
-				translation: response.translation,
-				note: response.note,
-			},
+			data: response,
 		};
 	} catch (error) {
 		return errorHandling(error);

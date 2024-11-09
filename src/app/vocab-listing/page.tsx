@@ -4,6 +4,7 @@ import { getVocabData } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
 
 import EntryListing from '@/components/EntryListing';
+import VocabDataProvider from '@/components/VocabDataProvider';
 
 export default async function VocabListing() {
 	let vocabData = await getVocabData(ENTRIES_PER_PAGE);
@@ -13,5 +14,9 @@ export default async function VocabListing() {
 	}
 
 	let lastEntryId = vocabData.data.at(-1)?.id;
-	return <EntryListing vocabData={vocabData.data} page={'vocab-listing'} initialCursor={lastEntryId} />;
+	return (
+		<VocabDataProvider initialState={vocabData.data}>
+			<EntryListing initialCursor={lastEntryId} />;
+		</VocabDataProvider>
+	);
 }

@@ -2,23 +2,67 @@ import * as React from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import styled from 'styled-components';
 
-function DeleteEntry({ children, handleDeleteEntry }: { children: React.ReactNode; handleDeleteEntry: () => Promise<void> }) {
+import { VocabEntry, VocabEntryUpdatingData } from '@/types';
+import { DeleteVocabEntryReturnType } from '@/actions';
+import { useVocabDataProvider } from '@/components/VocabDataProvider';
+
+function DeleteEntry({
+	children,
+	handleDeleteEntry,
+	updateError,
+	optimisticallyModifyVocabEntry,
+}: {
+	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
+	updateError: (errMsg: string) => void;
+	children: React.ReactNode;
+	handleDeleteEntry: () => Promise<
+		| {
+				data: VocabEntry;
+		  }
+		| {
+				errorMessage: string;
+		  }
+	>;
+}) {
+	let [open, setOpen] = React.useState(false);
+	let [isPending, startTransition] = React.useTransition();
+	let provider = useVocabDataProvider();
+
+	async function clientAction() {
+		updateError('');
+
+		let promise: DeleteVocabEntryReturnType;
+
+		startTransition(() => {
+			promise = handleDeleteEntry();
+		});
+
+		let response = await promise!;
+		if ('errorMessage' in response) {
+			updateError(response.errorMessage);
+			return;
+		}
+		optimisticallyModifyVocabEntry(response.data.id);
+		if (provider?.dispatch) {
+			provider.dispatch({ type: 'delete', payload: response.data.id });
+		}
+		setOpen(false);
+	}
+
 	return (
-		<AlertDialog.Root>
+		<AlertDialog.Root open={open} onOpenChange={setOpen}>
 			<AlertDialog.Trigger asChild>{children}</AlertDialog.Trigger>
 			<AlertDialog.Portal>
 				<StyledOverlay />
 				<AlertDialog.Content>
 					<AlertDialog.Title>Are you sure you want to delete this sentence?</AlertDialog.Title>
 					<AlertDialog.Description>You will have to add the sentence again later if needed.</AlertDialog.Description>
-					<div style={{ display: 'flex', gap: 25, justifyContent: 'flex-end' }}>
+					<form style={{ display: 'flex', gap: 25, justifyContent: 'flex-end' }} action={clientAction}>
 						<AlertDialog.Cancel asChild>
-							<button>Cancel</button>
+							<button type='button'>Cancel</button>
 						</AlertDialog.Cancel>
-						<AlertDialog.Action asChild>
-							<button onClick={handleDeleteEntry}>Delete</button>
-						</AlertDialog.Action>
-					</div>
+						<button>{isPending ? 'Deleting' : 'Delete'}</button>
+					</form>
 				</AlertDialog.Content>
 			</AlertDialog.Portal>
 		</AlertDialog.Root>

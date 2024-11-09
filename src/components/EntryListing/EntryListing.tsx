@@ -2,22 +2,28 @@
 
 import * as React from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
-import { produce } from 'immer';
 
-import { VocabEntryUpdatingData } from '@/lib/dataValidation';
-import { VocabEntry, PageOptions } from '@/types';
+import { VocabEntry, VocabEntryUpdatingData } from '@/types';
 import { getPaginatedVocabData } from '@/actions';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
 import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
+import { ENTRIES_PER_PAGE } from '@/constants';
+import { useVocabDataProvider } from '@/components/VocabDataProvider';
 
-function EntryListing({ vocabData, page = 'root', initialCursor }: { vocabData: VocabEntry[]; page?: PageOptions; initialCursor?: string }) {
+function EntryListing({ initialCursor }: { initialCursor?: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(true);
-	let [cursor, setCursor] = React.useState(initialCursor);
+	let [cursor, setCursor] = React.useState(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
+	let provider = useVocabDataProvider();
 
-	let [vocabEntries, setVocabEntries] = React.useState(vocabData);
+	if (!provider) {
+		throw new Error('EntryListing has to be rendered within VocabDataProvider.');
+	}
+
+	let [isOnscreen, scrollTrigger] = useIntersectionObserver();
 	let [optimisticVocabEntries, optimisticallyModifyVocabEntry] = React.useOptimistic(
-		vocabEntries,
+		provider.state,
 		(currentState: VocabEntry[], optimisticValue: string | VocabEntryUpdatingData) => {
 			if (typeof optimisticValue === 'string') {
 				return currentState.filter((vocab) => vocab.id !== optimisticValue);
@@ -40,7 +46,9 @@ function EntryListing({ vocabData, page = 'root', initialCursor }: { vocabData: 
 
 	async function handleQueryPagination() {
 		if (!cursor) {
-			throw new Error('There is no cursor supplied for database query pagination.');
+			// this happens in the case of an empty dataset.
+			setHaveMoreData(false);
+			return;
 		}
 		let response = await getPaginatedVocabData(cursor);
 
@@ -48,19 +56,23 @@ function EntryListing({ vocabData, page = 'root', initialCursor }: { vocabData: 
 			updateError(response.errorMessage);
 			return;
 		}
+		provider?.dispatch({ type: 'add', payload: response.data });
 
-		if (response.data.length === 0) {
+		if (response.data.length === 0 || response.data.length < ENTRIES_PER_PAGE) {
 			setHaveMoreData(false);
 			return;
 		}
 
-		let nextVocabEntries = produce(vocabEntries, (draft) => {
-			return draft.concat(response.data);
-		});
-		setVocabEntries(nextVocabEntries);
 		let lastEntry = response.data.at(-1)!; // since the empty array is ruled out
 		setCursor(lastEntry.id);
 	}
+
+	React.useEffect(() => {
+		async function fetchMoreData() {
+			await handleQueryPagination();
+		}
+		if (isOnscreen && haveMoreData) fetchMoreData();
+	}, [isOnscreen, haveMoreData]);
 
 	return (
 		<>
@@ -76,9 +88,9 @@ function EntryListing({ vocabData, page = 'root', initialCursor }: { vocabData: 
 						/>
 					);
 				})}
-				{page === 'vocab-listing' && (
-					<div>
-						<button onClick={handleQueryPagination}>Get More</button>
+				{haveMoreData && (
+					<div ref={scrollTrigger}>
+						<p>Loading...</p>
 					</div>
 				)}
 			</Accordion.Root>

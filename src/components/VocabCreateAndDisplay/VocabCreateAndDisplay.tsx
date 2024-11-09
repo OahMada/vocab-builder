@@ -8,7 +8,7 @@ import { VocabEntry } from '@/types';
 
 import { SENTENCE_TEXT } from '@/constants';
 
-import EntryListing from '@/components/EntryListing';
+import SimplerEntryListing from '@/components/SimplerEntryListing';
 import SubmitNewCollectionEntry from '@/components/SubmitNewCollectionEntry';
 import UserInput from '@/components/UserInput';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
@@ -53,7 +53,7 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<EntryListing vocabData={optimisticVocab} />
+			<SimplerEntryListing vocabData={optimisticVocab} />
 			<Link href='/vocab-listing'>View All</Link>
 		</>
 	);

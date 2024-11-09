@@ -1,4 +1,7 @@
 import { Prisma } from '@prisma/client';
+import { z } from 'zod';
+
+import { VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 
 export var entrySelect = {
 	sentencePlusPhoneticSymbols: true,
@@ -22,4 +25,4 @@ export interface RawFormData {
 	[index: string]: FormDataEntryValue | null;
 }
 
-export type PageOptions = 'root' | 'vocab-listing';
+export type VocabEntryUpdatingData = z.infer<typeof VocabEntryUpdatingDataSchema>;

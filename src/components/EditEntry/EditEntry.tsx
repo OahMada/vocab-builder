@@ -4,21 +4,25 @@ import * as React from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 
 import { UpdateVocabEntryReturnType } from '@/actions';
-import { RawFormData } from '@/types';
+import { RawFormData, VocabEntryUpdatingData } from '@/types';
+import { useVocabDataProvider } from '@/components/VocabDataProvider';
 
 function EditEntry({
 	children,
 	fieldSet,
 	handleEditEntry,
 	updateError,
+	optimisticallyModifyVocabEntry,
 }: {
 	children: React.ReactNode;
+	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
 	fieldSet: React.ReactNode;
 	handleEditEntry: (formData: RawFormData) => UpdateVocabEntryReturnType;
 	updateError: (errMsg: string) => void;
 }) {
-	let [open, setOpen] = React.useState<boolean | null>(null);
+	let [open, setOpen] = React.useState<boolean>(false);
 	let [isPending, startTransition] = React.useTransition();
+	let provider = useVocabDataProvider();
 
 	async function clientAction(formData: FormData) {
 		updateError('');
@@ -38,11 +42,15 @@ function EditEntry({
 			updateError(response.errorMessage);
 			return;
 		}
+		optimisticallyModifyVocabEntry({ id: response.data.id, translation: response.data.translation, note: response.data.note });
+		if (provider?.dispatch) {
+			provider.dispatch({ type: 'update', payload: response.data });
+		}
 		setOpen(false);
 	}
 
 	return (
-		<Dialog.Root open={open ?? false} onOpenChange={setOpen}>
+		<Dialog.Root open={open} onOpenChange={setOpen}>
 			<Dialog.Trigger asChild>{children}</Dialog.Trigger>
 			<Dialog.Portal>
 				<Dialog.Overlay />

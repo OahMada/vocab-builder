@@ -3,10 +3,10 @@ import parse from 'html-react-parser';
 import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
-import { VocabEntryIdSchema, VocabEntryUpdatingData, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
+import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
-import { RawFormData } from '@/types';
+import { RawFormData, VocabEntryUpdatingData } from '@/types';
 
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
@@ -26,23 +26,14 @@ function Entry({
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
 
 	async function handleDeleteEntry() {
-		updateError(''); // So that error can keep showing up if the user repeats the same action.
 		let result = VocabEntryIdSchema.safeParse(id);
 		if (result.error) {
 			let errorMessage = constructZodErrorMessage(result.error);
-			updateError(errorMessage);
-			return;
+			return { errorMessage };
 		} else {
 			let id = result.data;
-			React.startTransition(() => {
-				optimisticallyModifyVocabEntry(id);
-			});
-
 			let response = await deleteVocabEntry.bind(null, id)();
-
-			if ('errorMessage' in response) {
-				updateError(response.errorMessage);
-			}
+			return response;
 		}
 	}
 
@@ -55,11 +46,10 @@ function Entry({
 			let data = result.data;
 			if (data.translation === translation && data.note === note) {
 				return {
-					data: { translation, note },
+					data: { translation, note, id, sentencePlusPhoneticSymbols },
 				};
 			}
 			let res = await updateVocabEntry.bind(null, result.data)();
-			optimisticallyModifyVocabEntry({ id, translation: data.translation, note: data.note });
 			return res;
 		}
 	}
@@ -82,6 +72,7 @@ function Entry({
 					<EditEntry
 						updateError={updateError}
 						handleEditEntry={handleEditEntry}
+						optimisticallyModifyVocabEntry={optimisticallyModifyVocabEntry}
 						fieldSet={
 							<>
 								<fieldset>
@@ -97,7 +88,11 @@ function Entry({
 					>
 						<button>Edit</button>
 					</EditEntry>
-					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
+					<DeleteEntry
+						handleDeleteEntry={handleDeleteEntry}
+						updateError={updateError}
+						optimisticallyModifyVocabEntry={optimisticallyModifyVocabEntry}
+					>
 						<button>Delete</button>
 					</DeleteEntry>
 				</div>

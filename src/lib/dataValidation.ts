@@ -35,5 +35,3 @@ export var VocabEntryUpdatingDataSchema = z.object({
 		})
 		.optional(),
 });
-
-export type VocabEntryUpdatingData = z.infer<typeof VocabEntryUpdatingDataSchema>;

@@ -10,8 +10,8 @@ import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
-import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: string; initialHaveMoreData: boolean }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);

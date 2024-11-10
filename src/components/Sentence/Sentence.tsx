@@ -10,7 +10,7 @@ import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
 
 import PopOver from '@/components/PopOver';
-import Toast from '../Toast';
+import Toast from '@/components/Toast';
 
 var fetcher = async (url: string, word: string): Promise<string> => {
 	let response = await axios.post(url, {

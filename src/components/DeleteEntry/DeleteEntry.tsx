@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { VocabEntry } from '@/types';
 import { DeleteVocabEntryReturnType } from '@/actions';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
-import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function DeleteEntry({
 	children,

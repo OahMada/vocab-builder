@@ -55,11 +55,13 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<ErrorMessageProvider>
-				<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
-					<SimplerEntryListing />
-				</OptimisticVocabEntriesProvider>
-			</ErrorMessageProvider>
+			<React.Suspense fallback={<p>Loading</p>}>
+				<ErrorMessageProvider>
+					<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
+						<SimplerEntryListing />
+					</OptimisticVocabEntriesProvider>
+				</ErrorMessageProvider>
+			</React.Suspense>
 			<Link href='/vocab-listing'>View All</Link>
 		</>
 	);

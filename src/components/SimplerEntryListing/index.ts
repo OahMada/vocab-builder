@@ -1,2 +1,6 @@
-export * from './SimplerEntryListing';
-export { default } from './SimplerEntryListing';
+'use client';
+
+import dynamic from 'next/dynamic';
+
+let SimplerEntryListing = dynamic(() => import('./SimplerEntryListing'));
+export default SimplerEntryListing;

@@ -18,10 +18,12 @@ export default async function VocabListing() {
 
 	let lastEntryId = vocabData.data.at(-1)?.id;
 	return (
-		<ErrorMessageProvider>
-			<VocabDataProvider initialState={vocabData.data}>
-				<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />;
-			</VocabDataProvider>
-		</ErrorMessageProvider>
+		<React.Suspense fallback={<p>Loading...</p>}>
+			<ErrorMessageProvider>
+				<VocabDataProvider initialState={vocabData.data}>
+					<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />;
+				</VocabDataProvider>
+			</ErrorMessageProvider>
+		</React.Suspense>
 	);
 }

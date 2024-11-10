@@ -196,7 +196,10 @@ function SubmitNewCollectionEntry({
 		<div>
 			<div>
 				<h2>New Vocabulary Entry</h2>
-				<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />
+				{/* There's some loading because I've setup PopOver component to lazy load. */}
+				<React.Suspense fallback={<p>Loading...</p>}>
+					<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />
+				</React.Suspense>
 				<h2>Translation</h2>
 				{translationNode}
 				<h3>Note</h3>

@@ -3,13 +3,13 @@
 import * as React from 'react';
 import * as Accordion from '@radix-ui/react-accordion';
 
-import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
+import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 
 import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
-function EntryListing() {
+function SimplerEntryListing() {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
 	let { errorMsg } = useErrorMessageContext();
 
@@ -24,4 +24,4 @@ function EntryListing() {
 		</>
 	);
 }
-export default EntryListing;
+export default SimplerEntryListing;

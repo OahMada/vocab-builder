@@ -6,8 +6,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { UpdateVocabEntryReturnType } from '@/actions';
 import { RawFormData } from '@/types';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
-import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function EditEntry({
 	children,

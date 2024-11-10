@@ -6,22 +6,12 @@ import { VocabEntry } from '@/types';
 import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
-import { RawFormData, VocabEntryUpdatingData } from '@/types';
+import { RawFormData } from '@/types';
 
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
 
-function Entry({
-	entry,
-	index,
-	optimisticallyModifyVocabEntry,
-	updateError,
-}: {
-	entry: VocabEntry;
-	index: number;
-	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
-	updateError: (errMsg: string) => void;
-}) {
+function Entry({ entry, index, updateError }: { entry: VocabEntry; index: number; updateError: (errMsg: string) => void }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
 
@@ -72,7 +62,6 @@ function Entry({
 					<EditEntry
 						updateError={updateError}
 						handleEditEntry={handleEditEntry}
-						optimisticallyModifyVocabEntry={optimisticallyModifyVocabEntry}
 						fieldSet={
 							<>
 								<fieldset>
@@ -88,11 +77,7 @@ function Entry({
 					>
 						<button>Edit</button>
 					</EditEntry>
-					<DeleteEntry
-						handleDeleteEntry={handleDeleteEntry}
-						updateError={updateError}
-						optimisticallyModifyVocabEntry={optimisticallyModifyVocabEntry}
-					>
+					<DeleteEntry handleDeleteEntry={handleDeleteEntry} updateError={updateError}>
 						<button>Delete</button>
 					</DeleteEntry>
 				</div>

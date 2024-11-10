@@ -2,17 +2,16 @@ import * as React from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import styled from 'styled-components';
 
-import { VocabEntry, VocabEntryUpdatingData } from '@/types';
+import { VocabEntry } from '@/types';
 import { DeleteVocabEntryReturnType } from '@/actions';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
+import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
 
 function DeleteEntry({
 	children,
 	handleDeleteEntry,
 	updateError,
-	optimisticallyModifyVocabEntry,
 }: {
-	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
 	updateError: (errMsg: string) => void;
 	children: React.ReactNode;
 	handleDeleteEntry: () => Promise<{ data: VocabEntry } | { errorMessage: string }>;
@@ -20,6 +19,7 @@ function DeleteEntry({
 	let [open, setOpen] = React.useState(false);
 	let [isPending, startTransition] = React.useTransition();
 	let provider = useVocabDataProvider();
+	let { optimisticModifyState } = useOptimisticVocabEntriesContext();
 
 	async function clientAction() {
 		updateError('');
@@ -35,7 +35,7 @@ function DeleteEntry({
 			updateError(response.errorMessage);
 			return;
 		}
-		optimisticallyModifyVocabEntry(response.data.id);
+		optimisticModifyState(response.data.id);
 		if (provider?.dispatch) {
 			provider.dispatch({ type: 'delete', payload: response.data.id });
 		}

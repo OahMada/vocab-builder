@@ -1,8 +1,10 @@
 'use client';
 
-import { VocabEntry } from '@/types';
-import { produce } from 'immer';
 import * as React from 'react';
+import { produce } from 'immer';
+
+import { VocabEntry } from '@/types';
+import OptimisticVocabEntriesProvider from '@/components/OptimisticVocabEntriesProvider';
 
 type ActionType = { type: 'add'; payload: VocabEntry[] } | { type: 'update'; payload: VocabEntry } | { type: 'delete'; payload: string };
 
@@ -37,7 +39,11 @@ function reducer(state: VocabEntry[], action: ActionType) {
 function VocabDataProvider({ children, initialState }: { children: React.ReactNode; initialState: VocabEntry[] }) {
 	let [state, dispatch] = React.useReducer(reducer, initialState);
 	let value = React.useMemo(() => ({ state, dispatch }), [state]);
-	return <VocabDataContext.Provider value={value}>{children}</VocabDataContext.Provider>;
+	return (
+		<VocabDataContext.Provider value={value}>
+			<OptimisticVocabEntriesProvider initialState={state}>{children}</OptimisticVocabEntriesProvider>
+		</VocabDataContext.Provider>
+	);
 }
 
 export function useVocabDataProvider() {

@@ -13,6 +13,7 @@ import SubmitNewCollectionEntry from '@/components/SubmitNewCollectionEntry';
 import UserInput from '@/components/UserInput';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import SWRConfigWrapper from '@/components/SWRConfigWrapper';
+import OptimisticVocabEntriesProvider from '../OptimisticVocabEntriesProvider';
 
 function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabEntry[]; savedSentence: string | undefined }) {
 	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabData, (currentState: VocabEntry[], newEntry: VocabEntry) => {
@@ -53,7 +54,9 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<SimplerEntryListing vocabData={optimisticVocab} />
+			<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
+				<SimplerEntryListing />
+			</OptimisticVocabEntriesProvider>
 			<Link href='/vocab-listing'>View All</Link>
 		</>
 	);

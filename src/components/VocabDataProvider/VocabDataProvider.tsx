@@ -36,9 +36,7 @@ function reducer(state: VocabEntry[], action: ActionType) {
 
 function VocabDataProvider({ children, initialState }: { children: React.ReactNode; initialState: VocabEntry[] }) {
 	let [state, dispatch] = React.useReducer(reducer, initialState);
-
 	let value = React.useMemo(() => ({ state, dispatch }), [state]);
-
 	return <VocabDataContext.Provider value={value}>{children}</VocabDataContext.Provider>;
 }
 

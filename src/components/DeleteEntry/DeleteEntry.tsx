@@ -15,14 +15,7 @@ function DeleteEntry({
 	optimisticallyModifyVocabEntry: (action: string | VocabEntryUpdatingData) => void;
 	updateError: (errMsg: string) => void;
 	children: React.ReactNode;
-	handleDeleteEntry: () => Promise<
-		| {
-				data: VocabEntry;
-		  }
-		| {
-				errorMessage: string;
-		  }
-	>;
+	handleDeleteEntry: () => Promise<{ data: VocabEntry } | { errorMessage: string }>;
 }) {
 	let [open, setOpen] = React.useState(false);
 	let [isPending, startTransition] = React.useTransition();

@@ -14,11 +14,13 @@ export default async function VocabListing() {
 		return <div>{vocabData.errorMessage}</div>;
 	}
 
+	let initialHaveMoreData = vocabData.data.length === ENTRIES_PER_PAGE; // if lesser, there is no more data.
+
 	let lastEntryId = vocabData.data.at(-1)?.id;
 	return (
 		<ErrorMessageProvider>
 			<VocabDataProvider initialState={vocabData.data}>
-				<EntryListing initialCursor={lastEntryId} />;
+				<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />;
 			</VocabDataProvider>
 		</ErrorMessageProvider>
 	);

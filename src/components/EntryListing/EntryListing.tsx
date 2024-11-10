@@ -13,8 +13,8 @@ import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
 import { useErrorMessageContext } from '../ErrorMessageProvider';
 
-function EntryListing({ initialCursor }: { initialCursor?: string }) {
-	let [haveMoreData, setHaveMoreData] = React.useState(true);
+function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: string; initialHaveMoreData: boolean }) {
+	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
 	let [cursor, setCursor] = React.useState(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
 	let [isOnscreen, scrollTrigger] = useIntersectionObserver();
 

@@ -18,4 +18,4 @@ export const USER_EMAIL = 'adam@gmail.com';
 export const DATABASE_USER_ID = '670bf138f51931ba3ec85d84';
 
 export const VOCAB_LIST_VALIDATION_TAG = 'vocab-list';
-export const ENTRIES_PER_PAGE = 3;
+export const ENTRIES_PER_PAGE = 10;

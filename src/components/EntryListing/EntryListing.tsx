@@ -27,35 +27,38 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 
 	let { errorMsg, updateError } = useErrorMessageContext();
 
-	async function handleQueryPagination() {
-		if (!cursor) {
-			// this happens in the case of an empty dataset.
-			setHaveMoreData(false);
-			return;
-		}
-		let response = await getPaginatedVocabData(cursor);
+	let handleQueryPagination = React.useCallback(
+		async function () {
+			if (!cursor) {
+				// this happens in the case of an empty dataset.
+				setHaveMoreData(false);
+				return;
+			}
+			let response = await getPaginatedVocabData(cursor);
 
-		if ('errorMessage' in response) {
-			updateError(response.errorMessage);
-			return;
-		}
-		provider?.dispatch({ type: 'add', payload: response.data });
+			if ('errorMessage' in response) {
+				updateError(response.errorMessage);
+				return;
+			}
+			provider?.dispatch({ type: 'add', payload: response.data });
 
-		if (response.data.length === 0 || response.data.length < ENTRIES_PER_PAGE) {
-			setHaveMoreData(false);
-			return;
-		}
+			if (response.data.length === 0 || response.data.length < ENTRIES_PER_PAGE) {
+				setHaveMoreData(false);
+				return;
+			}
 
-		let lastEntry = response.data.at(-1)!; // since the empty array is ruled out
-		setCursor(lastEntry.id);
-	}
+			let lastEntry = response.data.at(-1)!; // since the empty array is ruled out
+			setCursor(lastEntry.id);
+		},
+		[cursor, provider, updateError]
+	);
 
 	React.useEffect(() => {
 		async function fetchMoreData() {
 			await handleQueryPagination();
 		}
 		if (isOnscreen && haveMoreData) fetchMoreData();
-	}, [isOnscreen, haveMoreData]);
+	}, [haveMoreData, isOnscreen, handleQueryPagination]);
 
 	return (
 		<>

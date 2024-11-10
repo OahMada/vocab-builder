@@ -62,7 +62,9 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</OptimisticVocabEntriesProvider>
 				</ErrorMessageProvider>
 			</React.Suspense>
-			<Link href='/vocab-listing'>View All</Link>
+			<Link href='/vocab-listing' prefetch={true}>
+				View All
+			</Link>
 		</>
 	);
 }

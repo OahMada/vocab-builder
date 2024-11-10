@@ -24,4 +24,4 @@ function SimplerEntryListing() {
 		</>
 	);
 }
-export default SimplerEntryListing;
+export default React.memo(SimplerEntryListing);

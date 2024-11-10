@@ -35,7 +35,7 @@ function OptimisticVocabEntriesProvider({ children, initialState }: { children: 
 		}
 	);
 
-	let value = React.useMemo(() => ({ optimisticState, optimisticModifyState }), [optimisticState]);
+	let value = React.useMemo(() => ({ optimisticState, optimisticModifyState }), [optimisticModifyState, optimisticState]);
 
 	return <OptimisticVocabEntriesContext.Provider value={value}>{children}</OptimisticVocabEntriesContext.Provider>;
 }

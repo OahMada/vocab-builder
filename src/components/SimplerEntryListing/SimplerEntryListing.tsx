@@ -7,23 +7,20 @@ import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvi
 
 import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
+import { useErrorMessageContext } from '../ErrorMessageProvider';
 
 function EntryListing() {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
-
-	let [error, setError] = React.useState('');
-	function updateError(errMsg: string) {
-		setError(errMsg);
-	}
+	let { errorMsg } = useErrorMessageContext();
 
 	return (
 		<>
 			<Accordion.Root type='single' defaultValue='item-1' collapsible>
 				{optimisticState.slice(0, 5).map((entry, index) => {
-					return <Entry key={entry.id} entry={entry} index={index} updateError={updateError} />;
+					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
 			</Accordion.Root>
-			{error && <Toast toastType='error' content={error} />}
+			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</>
 	);
 }

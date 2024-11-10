@@ -7,22 +7,22 @@ import { UpdateVocabEntryReturnType } from '@/actions';
 import { RawFormData } from '@/types';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '../ErrorMessageProvider';
 
 function EditEntry({
 	children,
 	fieldSet,
 	handleEditEntry,
-	updateError,
 }: {
 	children: React.ReactNode;
 	fieldSet: React.ReactNode;
 	handleEditEntry: (formData: RawFormData) => UpdateVocabEntryReturnType;
-	updateError: (errMsg: string) => void;
 }) {
 	let [open, setOpen] = React.useState<boolean>(false);
 	let [isPending, startTransition] = React.useTransition();
 	let provider = useVocabDataProvider();
 	let { optimisticModifyState } = useOptimisticVocabEntriesContext();
+	let { updateError } = useErrorMessageContext();
 
 	async function clientAction(formData: FormData) {
 		updateError('');

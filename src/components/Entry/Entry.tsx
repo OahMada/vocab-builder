@@ -11,7 +11,7 @@ import { RawFormData } from '@/types';
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
 
-function Entry({ entry, index, updateError }: { entry: VocabEntry; index: number; updateError: (errMsg: string) => void }) {
+function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
 
@@ -60,7 +60,6 @@ function Entry({ entry, index, updateError }: { entry: VocabEntry; index: number
 				)}
 				<div>
 					<EditEntry
-						updateError={updateError}
 						handleEditEntry={handleEditEntry}
 						fieldSet={
 							<>
@@ -77,7 +76,7 @@ function Entry({ entry, index, updateError }: { entry: VocabEntry; index: number
 					>
 						<button>Edit</button>
 					</EditEntry>
-					<DeleteEntry handleDeleteEntry={handleDeleteEntry} updateError={updateError}>
+					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
 						<button>Delete</button>
 					</DeleteEntry>
 				</div>

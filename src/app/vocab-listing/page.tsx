@@ -5,6 +5,7 @@ import { ENTRIES_PER_PAGE } from '@/constants';
 
 import EntryListing from '@/components/EntryListing';
 import VocabDataProvider from '@/components/VocabDataProvider';
+import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 
 export default async function VocabListing() {
 	let vocabData = await getVocabData(ENTRIES_PER_PAGE);
@@ -15,8 +16,10 @@ export default async function VocabListing() {
 
 	let lastEntryId = vocabData.data.at(-1)?.id;
 	return (
-		<VocabDataProvider initialState={vocabData.data}>
-			<EntryListing initialCursor={lastEntryId} />;
-		</VocabDataProvider>
+		<ErrorMessageProvider>
+			<VocabDataProvider initialState={vocabData.data}>
+				<EntryListing initialCursor={lastEntryId} />;
+			</VocabDataProvider>
+		</ErrorMessageProvider>
 	);
 }

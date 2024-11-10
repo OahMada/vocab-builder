@@ -11,6 +11,7 @@ import Toast from '@/components/Toast';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '../ErrorMessageProvider';
 
 function EntryListing({ initialCursor }: { initialCursor?: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(true);
@@ -24,10 +25,7 @@ function EntryListing({ initialCursor }: { initialCursor?: string }) {
 	}
 	let { optimisticState } = useOptimisticVocabEntriesContext();
 
-	let [error, setError] = React.useState('');
-	function updateError(errMsg: string) {
-		setError(errMsg);
-	}
+	let { errorMsg, updateError } = useErrorMessageContext();
 
 	async function handleQueryPagination() {
 		if (!cursor) {
@@ -63,7 +61,7 @@ function EntryListing({ initialCursor }: { initialCursor?: string }) {
 		<>
 			<Accordion.Root type='single' defaultValue='item-1' collapsible>
 				{optimisticState.slice(0, 5).map((entry, index) => {
-					return <Entry key={entry.id} entry={entry} index={index} updateError={updateError} />;
+					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
 				{haveMoreData && (
 					<div ref={scrollTrigger}>
@@ -71,7 +69,7 @@ function EntryListing({ initialCursor }: { initialCursor?: string }) {
 					</div>
 				)}
 			</Accordion.Root>
-			{error && <Toast toastType='error' content={error} />}
+			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</>
 	);
 }

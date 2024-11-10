@@ -6,13 +6,12 @@ import { VocabEntry } from '@/types';
 import { DeleteVocabEntryReturnType } from '@/actions';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '../OptimisticVocabEntriesProvider';
+import { useErrorMessageContext } from '../ErrorMessageProvider';
 
 function DeleteEntry({
 	children,
 	handleDeleteEntry,
-	updateError,
 }: {
-	updateError: (errMsg: string) => void;
 	children: React.ReactNode;
 	handleDeleteEntry: () => Promise<{ data: VocabEntry } | { errorMessage: string }>;
 }) {
@@ -20,6 +19,7 @@ function DeleteEntry({
 	let [isPending, startTransition] = React.useTransition();
 	let provider = useVocabDataProvider();
 	let { optimisticModifyState } = useOptimisticVocabEntriesContext();
+	let { updateError } = useErrorMessageContext();
 
 	async function clientAction() {
 		updateError('');

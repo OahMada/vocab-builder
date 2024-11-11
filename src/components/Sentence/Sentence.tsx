@@ -126,7 +126,7 @@ function Word({
 
 	return (
 		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
-			<PopoverTrigger>
+			<PopoverTrigger asChild>
 				<button aria-label={`Fetch the phonetic symbol for the word ${triggerWord}`}>{triggerWord}</button>
 			</PopoverTrigger>
 			<PopoverContent>

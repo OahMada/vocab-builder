@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Cookie from 'js-cookie';
-import Link from 'next/link';
 
 import { VocabEntry } from '@/types';
 
@@ -15,6 +14,7 @@ import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
 import SWRConfigWrapper from '@/components/SWRConfigWrapper';
 import OptimisticVocabEntriesProvider from '@/components/OptimisticVocabEntriesProvider';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
+import CustomLink from '@/components/CustomLink';
 
 function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabEntry[]; savedSentence: string | undefined }) {
 	let [optimisticVocab, addOptimisticVocabEntry] = React.useOptimistic(vocabData, (currentState: VocabEntry[], newEntry: VocabEntry) => {
@@ -62,9 +62,11 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</OptimisticVocabEntriesProvider>
 				</ErrorMessageProvider>
 			</React.Suspense>
-			<Link href='/vocab-listing' prefetch={true}>
-				View All
-			</Link>
+			<div>
+				<CustomLink href='/vocab-listing' prefetch={true}>
+					View All
+				</CustomLink>
+			</div>
 		</>
 	);
 }

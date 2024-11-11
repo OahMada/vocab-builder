@@ -1,6 +1,5 @@
 import * as React from 'react';
 import parse from 'html-react-parser';
-import * as Accordion from '@radix-ui/react-accordion';
 
 import { VocabEntry } from '@/types';
 import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
@@ -10,6 +9,7 @@ import { RawFormData } from '@/types';
 
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
+import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/Accordion';
 
 function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
@@ -45,7 +45,7 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	}
 
 	return (
-		<Accordion.Item value={`item-${index + 1}`}>
+		<AccordionItem value={`item-${index + 1}`}>
 			<AccordionTrigger>{html}</AccordionTrigger>
 			<AccordionContent>
 				<div>
@@ -81,37 +81,8 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 					</DeleteEntry>
 				</div>
 			</AccordionContent>
-		</Accordion.Item>
+		</AccordionItem>
 	);
 }
 
 export default Entry;
-
-type TriggerElement = React.ElementRef<typeof Accordion.Trigger>;
-interface TriggerProps extends React.ComponentPropsWithoutRef<typeof Accordion.Trigger> {
-	// className: string;
-	children: React.ReactNode;
-}
-
-type ContentElement = React.ElementRef<typeof Accordion.Content>;
-interface ContentProps extends React.ComponentPropsWithoutRef<typeof Accordion.Content> {
-	// className: string;
-	children: React.ReactNode;
-}
-
-var AccordionTrigger = React.forwardRef<TriggerElement, TriggerProps>(({ children, ...props }, forwardedRef) => (
-	<Accordion.Header>
-		<Accordion.Trigger {...props} ref={forwardedRef}>
-			{children}
-		</Accordion.Trigger>
-	</Accordion.Header>
-));
-AccordionTrigger.displayName = 'AccordionTrigger';
-
-var AccordionContent = React.forwardRef<ContentElement, ContentProps>(({ children, ...props }, forwardedRef) => (
-	<Accordion.Content {...props} ref={forwardedRef}>
-		<div>{children}</div>
-	</Accordion.Content>
-));
-
-AccordionContent.displayName = 'AccordionContent';

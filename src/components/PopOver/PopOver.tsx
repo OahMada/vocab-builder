@@ -1,28 +1,24 @@
+'use client';
+
 import * as Popover from '@radix-ui/react-popover';
 import * as React from 'react';
 
-function PopOver({
-	trigger,
-	children,
-	open,
-	onOpenChange,
-}: {
-	trigger: React.ReactNode;
+type ContentElement = React.ElementRef<typeof Popover.Content>;
+interface ContentProps extends React.ComponentPropsWithoutRef<typeof Popover.Content> {
+	// className: string;
 	children: React.ReactNode;
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}) {
-	return (
-		<Popover.Root open={open} onOpenChange={onOpenChange}>
-			<Popover.Trigger asChild>{trigger}</Popover.Trigger>
-			<Popover.Portal>
-				<Popover.Content sideOffset={5} side='top'>
-					{children}
-					<Popover.Arrow />
-				</Popover.Content>
-			</Popover.Portal>
-		</Popover.Root>
-	);
 }
 
-export default PopOver;
+export var PopoverRoot = Popover.Root;
+export var PopoverTrigger = Popover.Trigger;
+
+export var PopoverContent = React.forwardRef<ContentElement, ContentProps>(({ children, ...props }, forwardedRef) => (
+	<Popover.Portal>
+		<Popover.Content sideOffset={5} {...props} ref={forwardedRef} side='top'>
+			{children}
+			<Popover.Arrow />
+		</Popover.Content>
+	</Popover.Portal>
+));
+
+PopoverContent.displayName = 'PopoverContent';

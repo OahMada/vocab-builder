@@ -1,13 +1,13 @@
 'use client';
 
 import * as React from 'react';
-import * as Accordion from '@radix-ui/react-accordion';
 
 import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 
 import Entry from '@/components/Entry';
 import Toast from '@/components/Toast';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import { AccordionRoot } from '@/components/Accordion';
 
 function SimplerEntryListing() {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
@@ -15,11 +15,11 @@ function SimplerEntryListing() {
 
 	return (
 		<>
-			<Accordion.Root type='single' defaultValue='item-1' collapsible>
+			<AccordionRoot type='single' defaultValue='item-1' collapsible>
 				{optimisticState.slice(0, 5).map((entry, index) => {
 					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
-			</Accordion.Root>
+			</AccordionRoot>
 			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</>
 	);

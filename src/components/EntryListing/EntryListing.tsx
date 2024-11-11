@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as Accordion from '@radix-ui/react-accordion';
 
 import { getPaginatedVocabData } from '@/actions';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
@@ -12,6 +11,7 @@ import { ENTRIES_PER_PAGE } from '@/constants';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import { AccordionRoot } from '@/components/Accordion';
 
 function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: string; initialHaveMoreData: boolean }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
@@ -62,7 +62,7 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 
 	return (
 		<>
-			<Accordion.Root type='single' defaultValue='item-1' collapsible>
+			<AccordionRoot type='single' defaultValue='item-1' collapsible>
 				{optimisticState.slice(0, 5).map((entry, index) => {
 					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
@@ -71,7 +71,7 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 						<p>Loading...</p>
 					</div>
 				)}
-			</Accordion.Root>
+			</AccordionRoot>
 			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</>
 	);

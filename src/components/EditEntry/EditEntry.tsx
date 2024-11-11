@@ -1,13 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import * as Dialog from '@radix-ui/react-dialog';
 
 import { UpdateVocabEntryReturnType } from '@/actions';
 import { RawFormData } from '@/types';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+
+import { DialogContent, DialogRoot, DialogTrigger } from '@/components/Dialog';
 
 function EditEntry({
 	children,
@@ -50,23 +51,15 @@ function EditEntry({
 	}
 
 	return (
-		<Dialog.Root open={open} onOpenChange={setOpen}>
-			<Dialog.Trigger asChild>{children}</Dialog.Trigger>
-			<Dialog.Portal>
-				<Dialog.Overlay />
-				<Dialog.Content>
-					<Dialog.Title>Edit Vocab Entry</Dialog.Title>
-					<Dialog.Description>You can only update the translation and note of an entry.</Dialog.Description>
-					<form action={clientAction}>
-						{fieldSet}
-						<button>{isPending ? 'Saving...' : 'Save'}</button>
-					</form>
-					<Dialog.Close asChild>
-						<button aria-label='Close'>X</button>
-					</Dialog.Close>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+		<DialogRoot open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>{children}</DialogTrigger>
+			<DialogContent title='Edit Vocab Entry' description='You can only update the translation and note of an entry.'>
+				<form action={clientAction}>
+					{fieldSet}
+					<button>{isPending ? 'Saving...' : 'Save'}</button>
+				</form>
+			</DialogContent>
+		</DialogRoot>
 	);
 }
 

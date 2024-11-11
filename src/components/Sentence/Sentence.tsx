@@ -9,7 +9,7 @@ import { getErrorMessage } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
 
-import PopOver from '@/components/PopOver';
+import { PopoverContent, PopoverRoot, PopoverTrigger } from '@/components/PopOver';
 import Toast from '@/components/Toast';
 
 var fetcher = async (url: string, word: string): Promise<string> => {
@@ -125,23 +125,24 @@ function Word({
 	}, [data, triggerWord, updatePhoneticSymbols]);
 
 	return (
-		<PopOver
-			trigger={<button aria-label={`Fetch the phonetic symbol for the word ${triggerWord}`}>{triggerWord}</button>}
-			open={popOverOpen}
-			onOpenChange={(open) => setPopOverOpen(open)}
-		>
-			<button
-				onClick={() => {
-					setShouldFetch(true);
-					if (error) {
-						updateError('');
-						mutate([FETCH_PHONETIC_SYMBOL_ROUTE, triggerWord]);
-					}
-				}}
-			>
-				{isLoading ? 'Loading' : 'Get IPA'}
-			</button>
-		</PopOver>
+		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
+			<PopoverTrigger>
+				<button aria-label={`Fetch the phonetic symbol for the word ${triggerWord}`}>{triggerWord}</button>
+			</PopoverTrigger>
+			<PopoverContent>
+				<button
+					onClick={() => {
+						setShouldFetch(true);
+						if (error) {
+							updateError('');
+							mutate([FETCH_PHONETIC_SYMBOL_ROUTE, triggerWord]);
+						}
+					}}
+				>
+					{isLoading ? 'Loading' : 'Get IPA'}
+				</button>
+			</PopoverContent>
+		</PopoverRoot>
 	);
 }
 
@@ -149,25 +150,24 @@ function PhoneticSymbol({ symbol, removeOnePhoneticSymbol }: { symbol: string; r
 	let [popOverOpen, setPopOverOpen] = React.useState(false);
 
 	return (
-		<PopOver
-			trigger={
+		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
+			<PopoverTrigger>
 				<button>
 					<small>
 						<code> {` ${symbol} `}</code>
 					</small>
 				</button>
-			}
-			open={popOverOpen}
-			onOpenChange={(open) => setPopOverOpen(open)}
-		>
-			<button
-				onClick={() => {
-					removeOnePhoneticSymbol();
-					setPopOverOpen(false);
-				}}
-			>
-				Remove
-			</button>
-		</PopOver>
+			</PopoverTrigger>
+			<PopoverContent>
+				<button
+					onClick={() => {
+						removeOnePhoneticSymbol();
+						setPopOverOpen(false);
+					}}
+				>
+					Remove
+				</button>
+			</PopoverContent>
+		</PopoverRoot>
 	);
 }

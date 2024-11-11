@@ -46,7 +46,7 @@ function Toast({ title, content, toastType, ...props }: ToastProps) {
 			</StyledToastTitle>
 			<StyledToastDescription>{content}</StyledToastDescription>
 			<ToastPrimitive.Close aria-label='Close'>
-				<span aria-hidden>×</span>
+				<span aria-hidden>x</span>
 			</ToastPrimitive.Close>
 		</StyledToastRoot>
 	);

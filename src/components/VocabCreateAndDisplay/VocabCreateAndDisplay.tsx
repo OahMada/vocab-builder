@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Cookie from 'js-cookie';
+import Link from 'next/link';
 
 import { VocabEntry } from '@/types';
 
@@ -28,16 +29,16 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 	let [sentence, setSentence] = React.useState<string | undefined>(savedSentence);
 	let [shouldClearUserInput, setShouldClearUserInput] = React.useState(false);
 
-	function updateSentence(text: string) {
+	let updateSentence = React.useCallback(function (text: string) {
 		setSentence(text);
 		Cookie.set(SENTENCE_TEXT, text, {
 			expires: 1000,
 		});
-	}
+	}, []);
 
-	function updateShouldClearUserInput(value: boolean) {
+	let updateShouldClearUserInput = React.useCallback(function (value: boolean) {
 		setShouldClearUserInput(value);
-	}
+	}, []);
 
 	return (
 		<>
@@ -63,9 +64,15 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 				</ErrorMessageProvider>
 			</React.Suspense>
 			<div>
-				<CustomLink href='/vocab-listing' prefetch={true}>
-					View All
-				</CustomLink>
+				{sentence ? (
+					<Link href='/vocab-listing' prefetch={true}>
+						View All
+					</Link>
+				) : (
+					<CustomLink href='/vocab-listing' prefetch={true}>
+						View All
+					</CustomLink>
+				)}
 			</div>
 		</>
 	);

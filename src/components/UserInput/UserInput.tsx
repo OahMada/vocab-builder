@@ -7,6 +7,7 @@ import { fetchSentenceRecord } from '@/actions';
 
 import { UserInputSchema } from '@/lib/dataValidation';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+import useKeyboard from '@/hooks/useKeyboard';
 
 import Toast from '@/components/Toast';
 
@@ -14,6 +15,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 	let [error, setError] = React.useState('');
 	let [isLoading, startTransition] = React.useTransition();
+	let isKeyPressed = useKeyboard(['Shift', 'Enter']); // Press shift + enter to submit
 
 	let updateUserInput = React.useCallback(
 		function (text: string) {
@@ -28,32 +30,42 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 
 	useLocalStoragePersist<string>({ defaultValue: '', localStorageKey: USER_INPUT_SENTENCE, valueToSave: userInput, stateSetter: updateUserInput });
 
-	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		// TODO shift + enter to submit
-		e.preventDefault();
-		setError('');
-
-		let result = UserInputSchema.safeParse(userInput);
-		if (result.error) {
-			let formattedError = result.error.format();
-			setError(formattedError._errors[0]);
-		} else {
-			// Check the uniqueness of the sentence before submitting.
-			// https://medium.com/@mguleryuz3/next-js-14-app-router-server-actions-with-react-usetransition-a-new-era-for-fullstack-2798e58bb793
-			let promise: ReturnType<typeof fetchSentenceRecord>;
-
-			startTransition(() => {
-				promise = fetchSentenceRecord(result.data);
-			});
-
-			let response = await promise!;
-			if (response?.errorMessage) {
-				setError(response.errorMessage);
-				return;
+	let handleSubmit = React.useCallback(
+		async function (e?: React.FormEvent<HTMLFormElement>) {
+			if (e) {
+				e.preventDefault();
 			}
-			updateSentence(result.data);
+			setError('');
+
+			let result = UserInputSchema.safeParse(userInput);
+			if (result.error) {
+				let formattedError = result.error.format();
+				setError(formattedError._errors[0]);
+			} else {
+				// Check the uniqueness of the sentence before submitting.
+				// https://medium.com/@mguleryuz3/next-js-14-app-router-server-actions-with-react-usetransition-a-new-era-for-fullstack-2798e58bb793
+				let promise: ReturnType<typeof fetchSentenceRecord>;
+
+				startTransition(() => {
+					promise = fetchSentenceRecord(result.data);
+				});
+
+				let response = await promise!;
+				if (response?.errorMessage) {
+					setError(response.errorMessage);
+					return;
+				}
+				updateSentence(result.data);
+			}
+		},
+		[updateSentence, userInput]
+	);
+
+	React.useEffect(() => {
+		if (isKeyPressed) {
+			handleSubmit();
 		}
-	}
+	}, [handleSubmit, isKeyPressed]);
 
 	return (
 		<>
@@ -64,7 +76,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					onChange={(e) => {
 						setUserInput(e.target.value);
 					}}
-					placeholder='Input the sentence here...'
+					placeholder='You can also press Shift + Enter to submit.'
 					required={true}
 					rows={3}
 					name='user-input' // Browser would complain if this is omitted.

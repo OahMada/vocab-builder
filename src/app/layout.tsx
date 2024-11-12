@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { SITE_TITLE, SITE_DESC } from '@/constants';
 
@@ -31,7 +32,7 @@ export default function RootLayout({
 								<AppSetting />
 								<Footer />
 							</Info>
-							{children}
+							<NuqsAdapter>{children}</NuqsAdapter>
 						</MainContentWrapper>
 					</ToastProvider>
 				</StyledComponentsRegistry>

@@ -1,3 +1,5 @@
+// https://web.dev/articles/route-prefetching-in-nextjs#prefetching_with_custom_routing
+
 'use client';
 
 import * as React from 'react';

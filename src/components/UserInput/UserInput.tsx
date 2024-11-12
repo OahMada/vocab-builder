@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
-import { USER_INPUT_SENTENCE, SENTENCE_SAMPLE } from '@/constants';
+import { USER_INPUT_SENTENCE } from '@/constants';
 
 import { fetchSentenceRecord } from '@/actions';
 
@@ -61,6 +61,12 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 		[updateSentence, userInput]
 	);
 
+	async function handleGetClipboard() {
+		// https://www.sitepoint.com/clipboard-api/
+		let content = await navigator.clipboard.readText();
+		setUserInput(content);
+	}
+
 	React.useEffect(() => {
 		if (isKeyPressed) {
 			handleSubmit();
@@ -80,15 +86,11 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					required={true}
 					rows={3}
 					name='user-input' // Browser would complain if this is omitted.
+					autoFocus={true}
 				/>
 				<div className='btns'>
-					<button
-						type='button'
-						onClick={() => {
-							setUserInput(SENTENCE_SAMPLE);
-						}}
-					>
-						Sample
+					<button type='button' onClick={handleGetClipboard}>
+						Get Clipboard
 					</button>
 					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>

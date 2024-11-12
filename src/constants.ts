@@ -1,6 +1,5 @@
 export const SITE_TITLE = 'Vocab Builder';
 export const SITE_DESC = 'A tool to help build vocabulary for reciting with Anki.';
-export const SENTENCE_SAMPLE = "We sat together at one summer's end,That beautiful mild woman, your close friend.";
 
 export const USER_INPUT_SENTENCE = 'user-input-sentence';
 export const SENTENCE_TEXT = 'sentence-text';

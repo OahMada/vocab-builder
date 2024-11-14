@@ -28,7 +28,7 @@ export function getErrorMessage(error: unknown): string {
 }
 
 export function errorHandling(error: unknown) {
-	if (process.env.NODE_ENV === 'development') console.log(error);
+	if (process.env.NODE_ENV === 'development') console.log(JSON.stringify(error));
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
 		// The .code property can be accessed in a type-safe manner
 		if (error.code === 'P2002') {

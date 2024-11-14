@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { SearchParams } from 'nuqs/server';
 
-import { getVocabData } from '@/actions';
+import { getVocabData, performVocabSearch } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { searchParamsCache } from '@/lib/nuqs';
 
@@ -11,10 +11,15 @@ import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
 
 export default async function VocabListing({ searchParams }: { searchParams: Promise<SearchParams> }) {
-	let params = searchParamsCache.parse(await searchParams);
-	console.log(params.search);
+	let { search } = searchParamsCache.parse(await searchParams);
+	console.log(search);
 
 	let vocabData = await getVocabData(ENTRIES_PER_PAGE);
+
+	if (search) {
+		let searchVocabData = await performVocabSearch(search);
+		console.log(searchVocabData);
+	}
 
 	if ('errorMessage' in vocabData) {
 		return <div>{vocabData.errorMessage}</div>;

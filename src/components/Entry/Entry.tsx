@@ -2,7 +2,7 @@ import * as React from 'react';
 import parse from 'html-react-parser';
 
 import { VocabEntry } from '@/types';
-import { VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
+import { VocabEntryStringSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage } from '@/helpers';
 import { deleteVocabEntry, updateVocabEntry } from '@/actions';
 import { RawFormData } from '@/types';
@@ -16,7 +16,7 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	let html = parse(`${sentencePlusPhoneticSymbols}`);
 
 	async function handleDeleteEntry() {
-		let result = VocabEntryIdSchema.safeParse(id);
+		let result = VocabEntryStringSchema.safeParse(id);
 		if (result.error) {
 			let errorMessage = constructZodErrorMessage(result.error);
 			return { errorMessage };

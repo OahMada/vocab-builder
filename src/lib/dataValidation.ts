@@ -22,7 +22,7 @@ export var CreateVocabEntryInputSchema = z.object({
 	userEmail: z.string().email().min(5),
 });
 
-export var VocabEntryIdSchema = z.string().trim();
+export var VocabEntryStringSchema = z.string().trim();
 
 export var VocabEntryUpdatingDataSchema = z.object({
 	id: z.string().trim(),

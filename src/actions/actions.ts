@@ -4,7 +4,7 @@ import { revalidateTag, unstable_cache } from 'next/cache';
 
 import prisma from '@/lib/db';
 
-import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryIdSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
+import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryStringSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { DATABASE_USER_ID, ENTRIES_PER_PAGE, VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 import { constructZodErrorMessage, delay } from '@/helpers';
 import { errorHandling } from '@/helpers';
@@ -75,7 +75,7 @@ export async function fetchSentenceRecord(text: unknown) {
 }
 
 export async function deleteVocabEntry(id: unknown): Promise<{ data: VocabEntry } | { errorMessage: string }> {
-	let result = VocabEntryIdSchema.safeParse(id);
+	let result = VocabEntryStringSchema.safeParse(id);
 
 	if (result.error) {
 		let errorMessage = constructZodErrorMessage(result.error);
@@ -182,6 +182,85 @@ export var getPaginatedVocabData: (cursor: string) => Promise<{ data: VocabEntry
 					id: cursor,
 				},
 			});
+			return { data };
+		} catch (error) {
+			return errorHandling(error);
+		}
+	},
+	[VOCAB_LIST_VALIDATION_TAG],
+	{
+		tags: [VOCAB_LIST_VALIDATION_TAG],
+	}
+);
+
+export var performVocabSearch: (searchTerm: unknown) => Promise<{ data: VocabEntry[] } | { errorMessage: string }> = unstable_cache(
+	async function (searchTerm) {
+		let result = VocabEntryStringSchema.safeParse(searchTerm);
+		if (result.error) {
+			return {
+				errorMessage: constructZodErrorMessage(result.error),
+			};
+		}
+
+		let term = result.data;
+
+		try {
+			let data = (await prisma.vocabEntry.aggregateRaw({
+				pipeline: [
+					{
+						$search: {
+							index: 'full-text-index',
+							compound: {
+								should: [
+									{
+										autocomplete: {
+											path: 'sentence',
+											query: term,
+											tokenOrder: 'any',
+											fuzzy: {
+												maxEdits: 2,
+												prefixLength: 1,
+												maxExpansions: 256,
+											},
+										},
+									},
+									{
+										text: {
+											query: term,
+											path: 'note',
+										},
+									},
+									{
+										text: {
+											query: term,
+											path: 'translation',
+										},
+									},
+								],
+								minimumShouldMatch: 1,
+							},
+							sort: { score: { $meta: 'searchScore' } },
+						},
+					},
+					{ $limit: ENTRIES_PER_PAGE },
+					{
+						$addFields: {
+							id: { $toString: '$_id' },
+							sentencePlusPhoneticSymbols: '$sentence_plus_phonetic_symbols',
+						},
+					},
+					{
+						$project: {
+							_id: 0,
+							id: 1,
+							sentencePlusPhoneticSymbols: 1,
+							translation: 1,
+							note: 1,
+							score: { $meta: 'searchScore' },
+						},
+					},
+				],
+			})) as unknown as VocabEntry[];
 			return { data };
 		} catch (error) {
 			return errorHandling(error);

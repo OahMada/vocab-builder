@@ -63,7 +63,7 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 	return (
 		<>
 			<AccordionRoot type='single' defaultValue='item-1' collapsible>
-				{optimisticState.slice(0, 5).map((entry, index) => {
+				{optimisticState.map((entry, index) => {
 					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
 				{haveMoreData && (

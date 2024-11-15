@@ -272,3 +272,20 @@ export var performVocabSearch: (searchTerm: unknown) => Promise<{ data: VocabEnt
 		tags: [VOCAB_LIST_VALIDATION_TAG],
 	}
 );
+
+export var countVocab: () => Promise<{ data: number } | { errorMessage: string }> = unstable_cache(
+	async function () {
+		try {
+			let vocabCount = await prisma.vocabEntry.count();
+			return {
+				data: vocabCount,
+			};
+		} catch (error) {
+			return errorHandling(error);
+		}
+	},
+	[VOCAB_LIST_VALIDATION_TAG],
+	{
+		tags: [VOCAB_LIST_VALIDATION_TAG],
+	}
+);

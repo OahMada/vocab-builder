@@ -10,6 +10,7 @@ import VocabDataProvider from '@/components/VocabDataProvider';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
 import SearchResults from '@/components/SearchResults';
+import VocabCount from '@/components/VocabCount';
 
 export default async function VocabListing({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	let { search } = searchParamsCache.parse(await searchParams);
@@ -26,13 +27,18 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 	return (
 		<div>
 			<SearchVocab />
-			<React.Suspense fallback={<p>Loading...</p>}>
-				<ErrorMessageProvider>
-					<VocabDataProvider initialState={vocabData.data}>
-						<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />
-					</VocabDataProvider>
-				</ErrorMessageProvider>
-			</React.Suspense>
+			<div>
+				<React.Suspense fallback={<p>Loading...</p>}>
+					<VocabCount />
+				</React.Suspense>
+				<React.Suspense fallback={<p>Loading...</p>}>
+					<ErrorMessageProvider>
+						<VocabDataProvider initialState={vocabData.data}>
+							<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />
+						</VocabDataProvider>
+					</ErrorMessageProvider>
+				</React.Suspense>
+			</div>
 
 			{search && (
 				<React.Suspense fallback={<p>Searching...</p>}>

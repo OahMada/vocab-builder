@@ -1,12 +1,25 @@
 import * as React from 'react';
+import { cookies } from 'next/headers';
 
-import Vocab from '@/components/Vocab';
+import { SENTENCE_TEXT } from '@/constants';
 
-export default function Home() {
+import { getVocabData } from '@/actions';
+
+import StyledArticle from '@/components/StyledArticle';
+import VocabCreateAndDisplay from '@/components/VocabCreateAndDisplay';
+
+async function Vocab() {
+	let vocabData = await getVocabData(6);
+	let sentence = (await cookies()).get(SENTENCE_TEXT)?.value || undefined;
+
+	if ('errorMessage' in vocabData) {
+		return <div>{vocabData.errorMessage}</div>;
+	}
 	return (
-		<React.Suspense fallback='Loading...'>
-			{/* TODO a skeleton loading component for the fallback, which includes an input box*/}
-			<Vocab />
-		</React.Suspense>
+		<StyledArticle>
+			<VocabCreateAndDisplay vocabData={vocabData.data} savedSentence={sentence} />
+		</StyledArticle>
 	);
 }
+
+export default Vocab;

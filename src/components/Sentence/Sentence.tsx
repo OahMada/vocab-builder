@@ -151,7 +151,7 @@ function PhoneticSymbol({ symbol, removeOnePhoneticSymbol }: { symbol: string; r
 
 	return (
 		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
-			<PopoverTrigger>
+			<PopoverTrigger asChild>
 				<button>
 					<small>
 						<code> {` ${symbol} `}</code>

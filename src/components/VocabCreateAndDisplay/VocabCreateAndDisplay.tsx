@@ -59,7 +59,7 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 			<React.Suspense fallback={<p>Loading</p>}>
 				<ErrorMessageProvider>
 					<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
-						<SimplerEntryListing />
+						<SimplerEntryListing trim={true} />
 					</OptimisticVocabEntriesProvider>
 				</ErrorMessageProvider>
 			</React.Suspense>

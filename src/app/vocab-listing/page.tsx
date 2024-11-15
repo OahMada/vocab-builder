@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { SearchParams } from 'nuqs/server';
 
-import { getVocabData, performVocabSearch } from '@/actions';
+import { getVocabData } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { searchParamsCache } from '@/lib/nuqs';
 
@@ -9,17 +9,12 @@ import EntryListing from '@/components/EntryListing';
 import VocabDataProvider from '@/components/VocabDataProvider';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
+import SearchResults from '@/components/SearchResults';
 
 export default async function VocabListing({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	let { search } = searchParamsCache.parse(await searchParams);
-	console.log(search);
 
 	let vocabData = await getVocabData(ENTRIES_PER_PAGE);
-
-	if (search) {
-		let searchVocabData = await performVocabSearch(search);
-		console.log(searchVocabData);
-	}
 
 	if ('errorMessage' in vocabData) {
 		return <div>{vocabData.errorMessage}</div>;
@@ -38,6 +33,12 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 					</VocabDataProvider>
 				</ErrorMessageProvider>
 			</React.Suspense>
+
+			{search && (
+				<React.Suspense fallback={<p>Searching...</p>}>
+					<SearchResults searchTerm={search} />
+				</React.Suspense>
+			)}
 		</div>
 	);
 }

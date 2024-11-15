@@ -203,6 +203,7 @@ export var performVocabSearch: (searchTerm: unknown) => Promise<{ data: VocabEnt
 		}
 
 		let term = result.data;
+		if (process.env.NODE_ENV === 'development') await delay(3000);
 
 		try {
 			let data = (await prisma.vocabEntry.aggregateRaw({

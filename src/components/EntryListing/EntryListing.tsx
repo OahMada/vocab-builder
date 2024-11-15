@@ -17,7 +17,6 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
 	let [cursor, setCursor] = React.useState(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
 	let [isOnscreen, scrollTrigger] = useIntersectionObserver();
-
 	let provider = useVocabDataProvider();
 
 	if (!provider) {

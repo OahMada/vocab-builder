@@ -10,8 +10,9 @@ var SearchVocab = () => {
 	let isKeyPressed = useKeyboard('Enter');
 
 	var [search, setSearch] = useQueryState('search', searchParser);
+	let inputRef = React.useRef<HTMLInputElement | null>(null);
 
-	let handleSearch = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value), 3000);
+	let handleSearch = useDebouncedCallback((event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value), 1000);
 
 	React.useEffect(() => {
 		if (isKeyPressed) {
@@ -21,7 +22,18 @@ var SearchVocab = () => {
 
 	return (
 		<div>
-			<input placeholder='Search vocab' onChange={handleSearch} defaultValue={search} />
+			<input placeholder='Search vocab' onChange={handleSearch} defaultValue={search} ref={inputRef} />
+			<button
+				onClick={() => {
+					setSearch(null);
+					if (!inputRef.current) {
+						throw new Error('inputRef.current is null');
+					}
+					inputRef.current.value = '';
+				}}
+			>
+				Clear
+			</button>
 		</div>
 	);
 };

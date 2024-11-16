@@ -92,6 +92,14 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					<button type='button' onClick={handleGetClipboard}>
 						Get Clipboard
 					</button>
+					<button
+						type='button'
+						onClick={() => {
+							setUserInput('');
+						}}
+					>
+						Clear
+					</button>
 					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>
 			</StyledForm>

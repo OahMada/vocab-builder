@@ -28,6 +28,7 @@ var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, up
 						}}
 						ref={forwardedRef}
 					/>
+					<button onClick={() => updateNote('')}>Clear</button>
 					<button onClick={() => setEditMode(false)}>Done</button>
 				</>
 			) : (

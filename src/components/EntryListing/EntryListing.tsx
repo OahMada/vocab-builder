@@ -15,31 +15,32 @@ import { AccordionRoot } from '@/components/Accordion';
 
 function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: string; initialHaveMoreData: boolean }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
-	let [cursor, setCursor] = React.useState(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
+	let cursorRef = React.useRef(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
 	let [isOnscreen, scrollTrigger] = useIntersectionObserver();
-	let provider = useVocabDataProvider();
+	let vocabDataProvider = useVocabDataProvider();
 
-	if (!provider) {
+	if (!vocabDataProvider) {
 		throw new Error('EntryListing has to be rendered within VocabDataProvider.');
 	}
-	let { optimisticState } = useOptimisticVocabEntriesContext();
+	let dispatch = vocabDataProvider.dispatch; // vocabDataProvider would change after the dispatch call, so it's better to take dispatch out.
 
+	let { optimisticState } = useOptimisticVocabEntriesContext();
 	let { errorMsg, updateError } = useErrorMessageContext();
 
 	let handleQueryPagination = React.useCallback(
 		async function () {
-			if (!cursor) {
+			if (!cursorRef.current) {
 				// this happens in the case of an empty dataset.
 				setHaveMoreData(false);
 				return;
 			}
-			let response = await getPaginatedVocabData(cursor);
+			let response = await getPaginatedVocabData(cursorRef.current);
 
 			if ('errorMessage' in response) {
 				updateError(response.errorMessage);
 				return;
 			}
-			provider?.dispatch({ type: 'add', payload: response.data });
+			dispatch({ type: 'add', payload: response.data });
 
 			if (response.data.length === 0 || response.data.length < ENTRIES_PER_PAGE) {
 				setHaveMoreData(false);
@@ -47,9 +48,9 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 			}
 
 			let lastEntry = response.data.at(-1)!; // since the empty array is ruled out
-			setCursor(lastEntry.id);
+			cursorRef.current = lastEntry.id;
 		},
-		[cursor, provider, updateError]
+		[dispatch, updateError]
 	);
 
 	React.useEffect(() => {

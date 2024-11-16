@@ -3,7 +3,12 @@ import * as React from 'react';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { NOTE_EDIT_MODE } from '@/constants';
 
-function Note({ note, updateNote }: { note: string; updateNote: (note: string) => void }) {
+interface NoteProps {
+	note: string;
+	updateNote: (note: string) => void;
+}
+
+var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, updateNote }, forwardedRef) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
@@ -21,6 +26,7 @@ function Note({ note, updateNote }: { note: string; updateNote: (note: string) =
 						onChange={(e) => {
 							updateNote(e.target.value);
 						}}
+						ref={forwardedRef}
 					/>
 					<button onClick={() => setEditMode(false)}>Done</button>
 				</>
@@ -32,6 +38,8 @@ function Note({ note, updateNote }: { note: string; updateNote: (note: string) =
 			)}
 		</div>
 	);
-}
+});
+
+Note.displayName = 'Note';
 
 export default Note;

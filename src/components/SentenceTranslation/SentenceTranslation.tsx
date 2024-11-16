@@ -2,7 +2,15 @@ import * as React from 'react';
 
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 
-var Translation = function ({ updateTranslation, translation }: { updateTranslation: (translation: string) => void; translation: string }) {
+interface SentenceTranslationProps {
+	updateTranslation: (translation: string) => void;
+	translation: string;
+}
+
+var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslationProps>(function (
+	{ updateTranslation, translation },
+	forwardedRef
+) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
@@ -21,6 +29,7 @@ var Translation = function ({ updateTranslation, translation }: { updateTranslat
 							updateTranslation(e.target.value);
 						}}
 						name='translation-text'
+						ref={forwardedRef}
 					/>
 					<button
 						type='button'
@@ -45,6 +54,8 @@ var Translation = function ({ updateTranslation, translation }: { updateTranslat
 			)}
 		</div>
 	);
-};
+});
 
-export default Translation;
+SentenceTranslation.displayName = 'SentenceTranslation';
+
+export default SentenceTranslation;

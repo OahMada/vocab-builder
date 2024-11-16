@@ -2,8 +2,9 @@
 
 import * as React from 'react';
 import { useQueryState } from 'nuqs';
-import { searchParser } from '@/lib/nuqs';
 import { useDebouncedCallback } from 'use-debounce';
+
+import { searchParser } from '@/lib/nuqs';
 import useKeyboard from '@/hooks/useKeyboard';
 
 var SearchVocab = () => {
@@ -29,7 +30,7 @@ var SearchVocab = () => {
 					if (!inputRef.current) {
 						throw new Error('inputRef.current is null');
 					}
-					inputRef.current.value = '';
+					inputRef.current.value = ''; // because the input is uncontrolled
 				}}
 			>
 				Clear

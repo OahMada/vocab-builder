@@ -3,6 +3,7 @@ import useSWRImmutable from 'swr/immutable';
 import { useSWRConfig } from 'swr';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { produce } from 'immer';
 
 import { VocabEntry } from '@/types';
 
@@ -29,6 +30,11 @@ import Toast from '@/components/Toast';
 import Note from '@/components/Note';
 import Sentence from '@/components/Sentence';
 
+interface EditingState {
+	noteEditing: boolean;
+	translationEditing: boolean;
+}
+
 var fetcher = async (url: string, sentence: string): Promise<string> => {
 	let response = await axios.post(url, {
 		sentence,
@@ -47,11 +53,29 @@ function SubmitNewCollectionEntry({
 	updateSentence: (text: string) => void;
 	updateShouldClearUserInput: (value: boolean) => void;
 }) {
+	let [isPending, startTransition] = React.useTransition();
 	let segmenter = new Intl.Segmenter([], { granularity: 'word' });
 	let segmentedText = [...segmenter.segment(sentence)];
-	let [isPending, startTransition] = React.useTransition();
 
-	// TODO another state to control whether or not submitting is allowed
+	let [editingState, setEditingState] = React.useState<EditingState>({
+		noteEditing: false,
+		translationEditing: false,
+	});
+	let isEditing = editingState.noteEditing || editingState.translationEditing;
+
+	function handleUpdateEditingState(key: keyof EditingState, node: HTMLTextAreaElement | null) {
+		let newState: EditingState;
+		if (node) {
+			newState = produce(editingState, (draft) => {
+				draft[key] = true;
+			});
+		} else {
+			newState = produce(editingState, (draft) => {
+				draft[key] = false;
+			});
+		}
+		setEditingState(newState);
+	}
 
 	let [error, setError] = React.useState('');
 	let [translation, setTranslation] = React.useState<null | string>(null);
@@ -98,42 +122,25 @@ function SubmitNewCollectionEntry({
 		stateSetter: React.useCallback((value: string) => setNote(value), []),
 	});
 
-	let translationNode: React.ReactNode;
-	if (isLoading || isValidating) {
-		translationNode = <p>Translating...</p>;
-	} else if (swrError) {
-		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
-	} else if (translation) {
-		translationNode = <SentenceTranslation updateTranslation={(translation: string) => setTranslation(translation)} translation={translation} />;
-	}
-
-	// used to control whether UserInput should be shown
-	function resetSentence() {
-		updateSentence('');
-		Cookies.remove(SENTENCE_TEXT);
-	}
-
 	function resetTranslation() {
 		deleteAppDataEntry(TRANSLATION_TEXT); // To meet the condition for the useEffect call to reset the translation as new data.
 		deleteAppDataEntry(TRANSLATION_EDIT_MODE);
 		if (data) setTranslation(data); // For cases where the refetched translation is the same as before, since the useEffect call would not be invoked. This essentially resets the translation.
 	}
 
-	function resetNote() {
+	function reset(clearUserInput: boolean) {
+		// used to control whether UserInput should be shown
+		updateSentence('');
+		Cookies.remove(SENTENCE_TEXT);
+
+		resetTranslation();
+
 		deleteAppDataEntry(NOTE_TEXT);
 		deleteAppDataEntry(NOTE_EDIT_MODE);
-	}
-
-	function resetPhoneticSymbols() {
 		deleteAppDataEntry(PHONETIC_SYMBOLS);
-	}
 
-	function resetAll(clearUserInput: boolean) {
-		resetSentence();
-		resetTranslation();
-		resetNote();
-		resetPhoneticSymbols();
 		setError('');
+
 		updateShouldClearUserInput(clearUserInput);
 	}
 
@@ -166,30 +173,46 @@ function SubmitNewCollectionEntry({
 			let errorMessage = constructZodErrorMessage(result.error);
 			setError(errorMessage);
 			return;
-		} else {
-			let data = result.data;
-			let promise: CreateVocabEntryReturnType;
-			startTransition(() => {
-				promise = createVocabEntry.bind(null, data)();
-			});
-			let response = await promise!;
-			if ('errorMessage' in response) {
-				setError(response.errorMessage);
-				return;
-			} else {
-				let addedEntry = response.data;
-				startTransition(() => {
-					// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
-					addOptimisticVocabEntry({
-						id: addedEntry.id,
-						note: addedEntry.note,
-						sentencePlusPhoneticSymbols: addedEntry.sentencePlusPhoneticSymbols,
-						translation: addedEntry.translation,
-					});
-				});
-			}
-			resetAll(true); // This needs to be at the last, or else any errors won't have the chance to show up since the UI would have switched away.
 		}
+
+		let data = result.data;
+		let promise: CreateVocabEntryReturnType;
+		startTransition(() => {
+			promise = createVocabEntry.bind(null, data)();
+		});
+		let response = await promise!;
+		if ('errorMessage' in response) {
+			setError(response.errorMessage);
+			return;
+		}
+
+		let addedEntry = response.data;
+		startTransition(() => {
+			// If not wrapped in startTransition, there would be an error: An optimistic state update occurred outside a transition or action. To fix, move the update to an action, or wrap with startTransition.
+			addOptimisticVocabEntry({
+				id: addedEntry.id,
+				note: addedEntry.note,
+				sentencePlusPhoneticSymbols: addedEntry.sentencePlusPhoneticSymbols,
+				translation: addedEntry.translation,
+			});
+		});
+
+		reset(true); // This needs to be at the last, or else any errors won't have the chance to show up since the UI would have switched away.
+	}
+
+	let translationNode: React.ReactNode;
+	if (isLoading || isValidating) {
+		translationNode = <p>Translating...</p>;
+	} else if (swrError) {
+		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
+	} else if (translation) {
+		translationNode = (
+			<SentenceTranslation
+				updateTranslation={(translation: string) => setTranslation(translation)}
+				translation={translation}
+				ref={handleUpdateEditingState.bind(null, 'translationEditing')}
+			/>
+		);
 	}
 
 	return (
@@ -203,7 +226,11 @@ function SubmitNewCollectionEntry({
 				<h2>Translation</h2>
 				{translationNode}
 				<h3>Note</h3>
-				<Note note={note === null ? '' : note} updateNote={(note: string) => setNote(note)} />
+				<Note
+					note={note === null ? '' : note}
+					updateNote={(note: string) => setNote(note)}
+					ref={handleUpdateEditingState.bind(null, 'noteEditing')}
+				/>
 			</div>
 			<div>
 				<button
@@ -218,13 +245,13 @@ function SubmitNewCollectionEntry({
 				</button>
 				<button
 					onClick={() => {
-						resetAll(false);
+						reset(false);
 					}}
 				>
 					Cancel
 				</button>
 				{!isLoading && (
-					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating}>
+					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating || isEditing}>
 						{isPending ? 'Submitting...' : 'Finish'}
 					</button>
 				)}

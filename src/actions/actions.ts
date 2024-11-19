@@ -2,13 +2,12 @@
 
 import { revalidateTag, unstable_cache } from 'next/cache';
 
-import prisma from '@/lib/db';
+import prisma, { errorHandling, entrySelect } from '@/lib/db';
 
 import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryStringSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { DATABASE_USER_ID, ENTRIES_PER_PAGE, VOCAB_LIST_VALIDATION_TAG } from '@/constants';
 import { constructZodErrorMessage, delay } from '@/helpers';
-import { errorHandling } from '@/helpers';
-import { entrySelect, VocabEntry } from '@/types';
+import { VocabEntry } from '@/types';
 
 export async function createVocabEntry(
 	entry: unknown

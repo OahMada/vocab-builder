@@ -1,5 +1,8 @@
+import 'server-only';
+
 import { getErrorMessage } from '@/helpers';
 import axios, { isAxiosError } from 'axios';
+import { NextResponse } from 'next/server';
 
 const API_KEY = process.env.OPENAI_API_KEY;
 const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
@@ -23,25 +26,23 @@ export default async function performAxiosRequest(data: string, content: string)
 
 	try {
 		let { data, status, statusText } = await axios(AxiosConfig);
-		return new Response(JSON.stringify(data['choices'][0]['message']['content']), { status, statusText });
+		return new NextResponse(JSON.stringify(data['choices'][0]['message']['content']), { status, statusText });
 	} catch (error) {
 		if (process.env.NODE_ENV === 'development') console.log(error);
 		// https://axios-http.com/docs/handling_errors
 		if (isAxiosError(error)) {
 			if (error.response) {
-				return new Response(JSON.stringify(error.response.data ? error.response.data : 'Something went wrong, please try again later'), {
+				return new NextResponse(JSON.stringify(error.response.data ? error.response.data : 'Something went wrong, please try again later'), {
 					status: error.response.status,
 					statusText: error.response.statusText,
 				});
-			} else if (error.request) {
-				// The request was made but no response was received
-				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
-				return new Response('Something went wrong, please try again later', { status: 500 });
+			} else {
+				return new NextResponse('Something went wrong, please try again later', { status: 500 });
 			}
 		} else {
 			// Something happened in setting up the request that triggered an Error
 			let errorMessage = getErrorMessage(error);
-			return new Response(JSON.stringify(errorMessage), { status: 500 });
+			return new NextResponse(JSON.stringify(errorMessage), { status: 500 });
 		}
 	}
 }

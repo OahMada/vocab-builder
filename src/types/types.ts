@@ -1,14 +1,10 @@
 import { Prisma } from '@prisma/client';
 import { searchParamsCache } from '@/lib/nuqs';
 
-export var entrySelect = {
-	sentencePlusPhoneticSymbols: true,
-	translation: true,
-	note: true,
-	id: true,
-} satisfies Prisma.VocabEntrySelect;
+import { userSelect, entrySelect } from '@/lib/db';
 
 export type VocabEntry = Prisma.VocabEntryGetPayload<{ select: typeof entrySelect }>;
+export type User = Prisma.UserGetPayload<{ select: typeof userSelect }>;
 
 export interface PhoneticSymbols {
 	[key: string]: string;

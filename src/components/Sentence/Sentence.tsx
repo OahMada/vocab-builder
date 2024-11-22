@@ -5,7 +5,7 @@ import { produce } from 'immer';
 
 import { FETCH_PHONETIC_SYMBOL_ROUTE, PHONETIC_SYMBOLS } from '@/constants';
 import useSWRImmutable from 'swr/immutable';
-import { getErrorMessage } from '@/helpers';
+import { getErrorMessageFromError } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
 
@@ -110,7 +110,7 @@ function Word({
 			shouldRetryOnError: false,
 			onError: (error) => {
 				if (process.env.NODE_ENV === 'development') console.log(error);
-				let errorMessage = getErrorMessage(error);
+				let errorMessage = getErrorMessageFromError(error);
 				updateError(errorMessage);
 			},
 		}

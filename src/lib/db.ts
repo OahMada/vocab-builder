@@ -3,9 +3,9 @@
 import 'server-only';
 
 import { PrismaClient, Prisma } from '@prisma/client';
-import { getErrorMessage } from '@/helpers';
+import { getErrorMessageFromError } from '@/helpers';
 
-export function errorHandling(error: unknown) {
+export function PrismaErrorHandling(error: unknown) {
 	if (process.env.NODE_ENV === 'development') console.log(JSON.stringify(error));
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
 		// The .code property can be accessed in a type-safe manner
@@ -17,7 +17,7 @@ export function errorHandling(error: unknown) {
 	} else if (error instanceof Prisma.PrismaClientInitializationError) {
 		return { errorMessage: `${error.message}. Code: ${error.errorCode}` };
 	} else {
-		let errorMessage = getErrorMessage(error);
+		let errorMessage = getErrorMessageFromError(error);
 		return { errorMessage };
 	}
 }
@@ -42,9 +42,3 @@ export var entrySelect = {
 	note: true,
 	id: true,
 } satisfies Prisma.VocabEntrySelect;
-
-export var userSelect = {
-	name: true,
-	id: true,
-	email: true,
-} satisfies Prisma.UserSelect;

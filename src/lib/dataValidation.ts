@@ -49,3 +49,12 @@ export var SignupFormSchema = z.object({
 		// })
 		.trim(),
 });
+
+export type SignupFormSchemaType = z.infer<typeof SignupFormSchema>;
+
+export var SigninFormSchema = z.object({
+	email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
+	password: z.string().min(8, { message: 'Password must be at least 8 characters long' }).max(32, 'Password must be less than 32 characters').trim(),
+});
+
+export type SigninFormSchemaType = z.infer<typeof SigninFormSchema>;

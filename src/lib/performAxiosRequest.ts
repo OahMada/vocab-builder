@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { getErrorMessage } from '@/helpers';
+import { getErrorMessageFromError } from '@/helpers';
 import axios, { isAxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
@@ -41,7 +41,7 @@ export default async function performAxiosRequest(data: string, content: string)
 			}
 		} else {
 			// Something happened in setting up the request that triggered an Error
-			let errorMessage = getErrorMessage(error);
+			let errorMessage = getErrorMessageFromError(error);
 			return new NextResponse(JSON.stringify(errorMessage), { status: 500 });
 		}
 	}

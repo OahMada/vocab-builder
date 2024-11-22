@@ -1,9 +1,11 @@
 import * as React from 'react';
 import type { SearchParams } from 'nuqs/server';
+import { redirect } from 'next/navigation';
 
 import { getVocabData } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { searchParamsCache } from '@/lib/nuqs';
+import { auth } from '@/auth';
 
 import EntryListing from '@/components/EntryListing';
 import VocabDataProvider from '@/components/VocabDataProvider';
@@ -13,6 +15,11 @@ import SearchResults from '@/components/SearchResults';
 import VocabCount from '@/components/VocabCount';
 
 export default async function VocabListing({ searchParams }: { searchParams: Promise<SearchParams> }) {
+	let session = await auth();
+	if (!session?.user) {
+		redirect('/signin?callbackUrl=/vocab-listing');
+	}
+
 	let { search } = searchParamsCache.parse(await searchParams);
 
 	let vocabData = await getVocabData(ENTRIES_PER_PAGE);

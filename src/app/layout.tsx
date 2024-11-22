@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import { SessionProvider } from 'next-auth/react';
 
 import { SITE_TITLE, SITE_DESC } from '@/constants';
 
@@ -27,13 +28,15 @@ export default function RootLayout({
 			<body>
 				<StyledComponentsRegistry>
 					<ToastProvider>
-						<MainContentWrapper>
-							<Info>
-								<AppSetting />
-								<Footer />
-							</Info>
-							<NuqsAdapter>{children}</NuqsAdapter>
-						</MainContentWrapper>
+						<SessionProvider>
+							<MainContentWrapper>
+								<Info>
+									<AppSetting />
+									<Footer />
+								</Info>
+								<NuqsAdapter>{children}</NuqsAdapter>
+							</MainContentWrapper>
+						</SessionProvider>
 					</ToastProvider>
 				</StyledComponentsRegistry>
 			</body>

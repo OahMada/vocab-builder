@@ -2,7 +2,7 @@
 
 import { revalidateTag, unstable_cache } from 'next/cache';
 
-import prisma, { errorHandling, entrySelect } from '@/lib/db';
+import prisma, { PrismaErrorHandling, entrySelect } from '@/lib/db';
 
 import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryStringSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
 import { DATABASE_USER_ID, ENTRIES_PER_PAGE, VOCAB_LIST_VALIDATION_TAG } from '@/constants';
@@ -43,7 +43,7 @@ export async function createVocabEntry(
 			data: response,
 		};
 	} catch (error) {
-		return errorHandling(error);
+		return PrismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -94,7 +94,7 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data: VocabEntry 
 			data: response,
 		};
 	} catch (error) {
-		return errorHandling(error);
+		return PrismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -129,7 +129,7 @@ export async function updateVocabEntry(data: unknown): Promise<{ data: VocabEntr
 			data: response,
 		};
 	} catch (error) {
-		return errorHandling(error);
+		return PrismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -154,7 +154,7 @@ export var getVocabData: (limit: number) => Promise<{ data: VocabEntry[] } | { e
 			});
 			return { data };
 		} catch (error) {
-			return errorHandling(error);
+			return PrismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],
@@ -183,7 +183,7 @@ export var getPaginatedVocabData: (cursor: string) => Promise<{ data: VocabEntry
 			});
 			return { data };
 		} catch (error) {
-			return errorHandling(error);
+			return PrismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],
@@ -263,7 +263,7 @@ export var performVocabSearch: (searchTerm: unknown) => Promise<{ data: VocabEnt
 			})) as unknown as VocabEntry[];
 			return { data };
 		} catch (error) {
-			return errorHandling(error);
+			return PrismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],
@@ -280,7 +280,7 @@ export var countVocab: () => Promise<{ data: number } | { errorMessage: string }
 				data: vocabCount,
 			};
 		} catch (error) {
-			return errorHandling(error);
+			return PrismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],

@@ -21,7 +21,7 @@ import {
 import { createVocabEntry, CreateVocabEntryReturnType } from '@/actions';
 
 import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
-import { constructZodErrorMessage, getErrorMessage } from '@/helpers';
+import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
 import useLocalStoragePersist, { deleteAppDataEntry } from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
 
@@ -92,7 +92,7 @@ function SubmitNewCollectionEntry({
 		shouldRetryOnError: false,
 		onError: (error) => {
 			if (process.env.NODE_ENV === 'development') console.log(error);
-			let errorMessage = getErrorMessage(error);
+			let errorMessage = getErrorMessageFromError(error);
 			setError(errorMessage);
 		},
 	});

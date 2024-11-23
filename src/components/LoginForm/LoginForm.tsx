@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 
 import { SigninFormSchema, SigninFormSchemaType } from '@/lib/dataValidation';
-import { Login } from '@/actions';
+import { credentialsLogin } from '@/actions';
 
 function LoginForm() {
 	const {
@@ -20,7 +20,7 @@ function LoginForm() {
 
 	let router = useRouter();
 	const onSubmit: SubmitHandler<SigninFormSchemaType> = async (data) => {
-		let response = await Login(data);
+		let response = await credentialsLogin(data);
 
 		if (response && 'errorMessage' in response) {
 			console.log(response.errorMessage);

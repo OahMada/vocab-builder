@@ -4,6 +4,9 @@ import 'server-only';
 
 import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import GitHub from 'next-auth/providers/github';
+
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcryptjs';
 import { Prisma } from '@prisma/client';
@@ -26,6 +29,8 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 	return {
 		adapter,
 		providers: [
+			Google,
+			GitHub,
 			Credentials({
 				async authorize(credentials) {
 					if (credentials === null) return null;
@@ -98,11 +103,21 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 			},
 		},
 		pages: {
-			error: '/login',
 			signIn: '/login',
 			newUser: '/',
 		},
 		debug: process.env.NODE_ENV === 'development',
+		logger: {
+			error(code, ...message) {
+				console.error(code, message);
+			},
+			warn(code, ...message) {
+				console.warn(code, message);
+			},
+			debug(code, ...message) {
+				console.debug(code, message);
+			},
+		},
 		events: {
 			async signOut(message) {
 				if ('session' in message && message.session?.sessionToken) {

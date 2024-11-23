@@ -58,3 +58,5 @@ export var SigninFormSchema = z.object({
 });
 
 export type SigninFormSchemaType = z.infer<typeof SigninFormSchema>;
+
+export var SocialLoginFormSchema = z.union([z.literal('google'), z.literal('github')]);

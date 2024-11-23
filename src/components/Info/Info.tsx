@@ -11,7 +11,13 @@ var StyledSection = styled.section`
 `;
 
 function Info({ children }: { children: React.ReactNode }) {
-	return <StyledSection>{children}</StyledSection>;
+	return (
+		<StyledSection>
+			<h1>Vocab Build</h1>
+			<p>Build your vocabulary with ease.</p>
+			<div>{children}</div>
+		</StyledSection>
+	);
 }
 
 export default Info;

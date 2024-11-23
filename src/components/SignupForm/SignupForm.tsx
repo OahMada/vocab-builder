@@ -6,7 +6,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { SignupFormSchema, SignupFormSchemaType } from '@/lib/dataValidation';
-import { Signup } from '@/actions';
+import { signup } from '@/actions';
 
 function SignupForm() {
 	const {
@@ -21,7 +21,7 @@ function SignupForm() {
 	let router = useRouter();
 
 	const onSubmit: SubmitHandler<SignupFormSchemaType> = async (data) => {
-		let response = await Signup(data);
+		let response = await signup(data);
 
 		if ('errorMessage' in response) {
 			console.log(response.errorMessage);

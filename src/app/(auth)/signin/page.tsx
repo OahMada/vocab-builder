@@ -1,9 +1,11 @@
-import Link from 'next/link';
 import * as React from 'react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+
+import { auth } from '@/auth';
 
 import LoginForm from '@/components/LoginForm';
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+import OAuthLogin from '@/components/OAuthLogin';
 
 export default async function SignInPage() {
 	let session = await auth();
@@ -20,6 +22,7 @@ export default async function SignInPage() {
 					<Link href='/signup'>Sign Up</Link>
 				</p>
 			</div>
+			<OAuthLogin />
 		</div>
 	);
 }

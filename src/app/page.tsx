@@ -13,7 +13,7 @@ import VocabCreateAndDisplay from '@/components/VocabCreateAndDisplay';
 async function Vocab() {
 	let session = await auth();
 
-	console.log(session);
+	console.log('vocab page session', session);
 
 	if (!session?.user) {
 		redirect('/signin');

@@ -5,10 +5,10 @@ import bcrypt from 'bcryptjs';
 
 import { signIn, signOut } from '@/auth';
 import prisma, { PrismaErrorHandling } from '@/lib/db';
-import { SigninFormSchemaType, SignupFormSchema } from '@/lib/dataValidation';
+import { SigninFormSchemaType, SignupFormSchema, SocialLoginFormSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
 
-export async function Login(data: SigninFormSchemaType) {
+export async function credentialsLogin(data: SigninFormSchemaType) {
 	try {
 		await signIn('credentials', { ...data, redirect: false });
 	} catch (error) {
@@ -23,7 +23,7 @@ export async function Login(data: SigninFormSchemaType) {
 	}
 }
 
-export async function Signup(data: unknown) {
+export async function signup(data: unknown) {
 	let result = SignupFormSchema.safeParse(data);
 
 	if (result.error) {
@@ -70,4 +70,16 @@ export async function Signup(data: unknown) {
 	} catch (error) {
 		return PrismaErrorHandling(error);
 	}
+}
+
+export async function socialLogin(data: FormData) {
+	let result = SocialLoginFormSchema.safeParse(data.get('action'));
+	if (result.error) {
+		let errorMessage = constructZodErrorMessage(result.error);
+		return {
+			errorMessage,
+		};
+	}
+
+	await signIn(result.data);
 }

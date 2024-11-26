@@ -51,9 +51,8 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 								accounts: true,
 							},
 						});
-
 						if (user) {
-							// TODO why index 0?
+							// why index 0? because there would be only one record.
 							if (user.accounts[0].provider !== 'credentials') {
 								throw new InvalidLoginError(`Please sign in with ${user.accounts[0].provider}`);
 							}
@@ -87,19 +86,17 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 						sessionToken,
 						expires,
 					});
-
 					token.sessionId = session.sessionToken;
 				}
-
 				return token;
 			},
 		},
 		jwt: {
-			maxAge: 60 * 60 * 24 * 30,
-			async encode(arg) {
-				// TODO
-				console.log(this.encode);
-				return (arg.token?.sessionId as string) ?? this.encode!(arg);
+			async encode({ token }) {
+				return token?.sessionId as string;
+			},
+			async decode() {
+				return null;
 			},
 		},
 		pages: {
@@ -109,20 +106,21 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 		debug: process.env.NODE_ENV === 'development',
 		logger: {
 			error(code, ...message) {
-				console.error(code, message);
+				console.error('logger1', code, message);
+				console.log('logger1', code.cause);
 			},
 			warn(code, ...message) {
-				console.warn(code, message);
+				console.warn('logger2', code, message);
 			},
 			debug(code, ...message) {
-				console.debug(code, message);
+				console.debug('logger3', code, message);
 			},
 		},
 		events: {
 			async signOut(message) {
 				if ('session' in message && message.session?.sessionToken) {
-					// TODO why deleteMany?
 					await prisma.session.deleteMany({
+						// using delete would cause an error, not sure why. There do might be multiple session records, if user tried to login on different webpages.
 						where: {
 							sessionToken: message.session?.sessionToken,
 						},

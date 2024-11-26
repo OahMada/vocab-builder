@@ -4,7 +4,6 @@ import { auth, signOut } from '@/auth';
 
 async function AppSetting() {
 	let session = await auth();
-	console.log('App Setting', session?.user);
 
 	return (
 		<StyledSection>

@@ -3,7 +3,7 @@
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 
-import { signIn, signOut } from '@/auth';
+import { signIn } from '@/auth';
 import prisma, { PrismaErrorHandling } from '@/lib/db';
 import { SigninFormSchemaType, SignupFormSchema, SocialLoginFormSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
@@ -12,14 +12,7 @@ export async function credentialsLogin(data: SigninFormSchemaType) {
 	try {
 		await signIn('credentials', { ...data, redirect: false });
 	} catch (error) {
-		// TODO what the error is like?
-		console.log(error);
-
-		// if (error instanceof AuthError) {
-		// 	return PrismaErrorHandling(error.cause?.err);
-		// } else {
 		return { errorMessage: getErrorMessageFromError(error) };
-		// }
 	}
 }
 
@@ -72,8 +65,8 @@ export async function signup(data: unknown) {
 	}
 }
 
-export async function socialLogin(data: FormData) {
-	let result = SocialLoginFormSchema.safeParse(data.get('action'));
+export async function socialLogin(data: unknown, callback: string) {
+	let result = SocialLoginFormSchema.safeParse(data);
 	if (result.error) {
 		let errorMessage = constructZodErrorMessage(result.error);
 		return {
@@ -81,5 +74,22 @@ export async function socialLogin(data: FormData) {
 		};
 	}
 
-	await signIn(result.data);
+	try {
+		await signIn(result.data, {
+			redirectTo: callback,
+		});
+	} catch (error) {
+		// Signin can fail for a number of reasons, such as the user
+		// not existing, or the user not having the correct role.
+		// In some cases, you may want to redirect to a custom error
+		if (error instanceof AuthError) {
+			return { errorMessage: getErrorMessageFromError(error) };
+		}
+
+		// Otherwise if a redirects happens Next.js can handle it
+		// so you can just re-thrown the error and let Next.js handle it.
+		// Docs:
+		// https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
+		throw error;
+	}
 }

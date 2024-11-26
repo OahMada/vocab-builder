@@ -25,6 +25,7 @@ function SignupForm() {
 
 		if ('errorMessage' in response) {
 			console.log(response.errorMessage);
+			return;
 		}
 
 		router.replace('/');

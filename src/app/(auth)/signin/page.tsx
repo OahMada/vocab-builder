@@ -12,7 +12,6 @@ export default async function SignInPage() {
 	if (session?.user) {
 		redirect('/');
 	}
-
 	return (
 		<div>
 			<LoginForm />

@@ -100,7 +100,7 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 			},
 		},
 		pages: {
-			signIn: '/login',
+			signIn: '/signin',
 			newUser: '/',
 		},
 		debug: process.env.NODE_ENV === 'development',

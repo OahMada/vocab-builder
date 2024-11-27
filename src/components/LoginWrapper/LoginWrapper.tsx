@@ -21,7 +21,11 @@ function LoginWrapper() {
 					<Link href='/signup'>Sign Up</Link>
 				</p>
 			</div>
-			{errorMsg && <Toast toastType='error' content={errorMsg} />}
+			{errorMsg && (
+				<React.Suspense fallback='loading'>
+					<Toast toastType='error' content={errorMsg} />
+				</React.Suspense>
+			)}
 		</div>
 	);
 }

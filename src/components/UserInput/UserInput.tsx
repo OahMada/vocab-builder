@@ -104,7 +104,11 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>
 			</StyledForm>
-			{errorMsg && <Toast toastType='error' content={errorMsg} />}
+			{errorMsg && (
+				<React.Suspense fallback='loading'>
+					<Toast toastType='error' content={errorMsg} />
+				</React.Suspense>
+			)}
 		</>
 	);
 }

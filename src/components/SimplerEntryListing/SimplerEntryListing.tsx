@@ -24,7 +24,11 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
 			</AccordionRoot>
-			{errorMsg && <Toast toastType='error' content={errorMsg} />}
+			{errorMsg && (
+				<React.Suspense fallback='loading'>
+					<Toast toastType='error' content={errorMsg} />
+				</React.Suspense>
+			)}
 		</>
 	);
 }

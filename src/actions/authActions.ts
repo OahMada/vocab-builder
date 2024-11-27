@@ -3,18 +3,10 @@
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
 
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
 import prisma, { PrismaErrorHandling } from '@/lib/db';
 import { SigninFormSchemaType, SignupFormSchema, SocialLoginFormSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
-
-export async function credentialsLogin(data: SigninFormSchemaType) {
-	try {
-		await signIn('credentials', { ...data, redirect: false });
-	} catch (error) {
-		return { errorMessage: getErrorMessageFromError(error) };
-	}
-}
 
 export async function signup(data: unknown): Promise<{ data: string } | { errorMessage: string }> {
 	let result = SignupFormSchema.safeParse(data);
@@ -65,6 +57,14 @@ export async function signup(data: unknown): Promise<{ data: string } | { errorM
 	}
 }
 
+export async function credentialsLogin(data: SigninFormSchemaType) {
+	try {
+		await signIn('credentials', { ...data, redirect: false });
+	} catch (error) {
+		return { errorMessage: getErrorMessageFromError(error) };
+	}
+}
+
 export async function socialLogin(data: unknown, callback: string) {
 	let result = SocialLoginFormSchema.safeParse(data);
 	if (result.error) {
@@ -90,6 +90,17 @@ export async function socialLogin(data: unknown, callback: string) {
 		// so you can just re-thrown the error and let Next.js handle it.
 		// Docs:
 		// https://nextjs.org/docs/app/api-reference/functions/redirect#server-component
+		throw error;
+	}
+}
+
+export async function signout() {
+	try {
+		await signOut();
+	} catch (error) {
+		if (error instanceof AuthError) {
+			return { errorMessage: getErrorMessageFromError(error) };
+		}
 		throw error;
 	}
 }

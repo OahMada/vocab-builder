@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { SignupFormSchema, SignupFormSchemaType } from '@/lib/dataValidation';
 import { signup } from '@/actions';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function SignupForm() {
 	const {

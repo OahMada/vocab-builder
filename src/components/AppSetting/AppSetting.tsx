@@ -1,24 +1,26 @@
-import * as React from 'react';
-import StyledSection from './styledSection';
-import { auth, signOut } from '@/auth';
+'use client';
 
-async function AppSetting() {
-	let session = await auth();
+import * as React from 'react';
+import styled from 'styled-components';
+
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import Toast from '@/components/Toast';
+
+function AppSetting({ children }: { children: React.ReactNode }) {
+	let { errorMsg } = useErrorMessageContext();
 
 	return (
-		<StyledSection>
-			<h2>Hello, {session?.user?.name}</h2>
-			<form
-				action={async () => {
-					'use server';
-					await signOut();
-				}}
-			>
-				<button type='button'>Edit Info</button>
-				<button type='submit'>Logout</button>
-			</form>
-		</StyledSection>
+		<StyledDiv>
+			{children}
+			{errorMsg && (
+				<React.Suspense fallback='loading'>
+					<Toast toastType='error' content={errorMsg} />
+				</React.Suspense>
+			)}
+		</StyledDiv>
 	);
 }
+
+var StyledDiv = styled.div``;
 
 export default AppSetting;

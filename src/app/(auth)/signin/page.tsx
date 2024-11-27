@@ -1,11 +1,10 @@
 import * as React from 'react';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
 
-import LoginForm from '@/components/LoginForm';
-import OAuthLogin from '@/components/OAuthLogin';
+import LoginWrapper from '@/components/LoginWrapper';
+import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 
 export default async function SignInPage() {
 	let session = await auth();
@@ -13,15 +12,8 @@ export default async function SignInPage() {
 		redirect('/');
 	}
 	return (
-		<div>
-			<LoginForm />
-			<div>
-				<p>
-					Don&apos;t have an account yet?&nbsp;
-					<Link href='/signup'>Sign Up</Link>
-				</p>
-			</div>
-			<OAuthLogin />
-		</div>
+		<ErrorMessageProvider>
+			<LoginWrapper />
+		</ErrorMessageProvider>
 	);
 }

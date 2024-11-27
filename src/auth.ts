@@ -104,18 +104,18 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 			newUser: '/',
 		},
 		debug: process.env.NODE_ENV === 'development',
-		logger: {
-			error(code, ...message) {
-				console.error('logger1', code, message);
-				console.log('logger1', code.cause);
-			},
-			warn(code, ...message) {
-				console.warn('logger2', code, message);
-			},
-			debug(code, ...message) {
-				console.debug('logger3', code, message);
-			},
-		},
+		// logger: {
+		// 	error(code, ...message) {
+		// 		console.error('logger1', code, message);
+		// 		console.log('logger1', code.cause);
+		// 	},
+		// 	warn(code, ...message) {
+		// 		console.warn('logger2', code, message);
+		// 	},
+		// 	debug(code, ...message) {
+		// 		console.debug('logger3', code, message);
+		// 	},
+		// },
 		events: {
 			async signOut(message) {
 				if ('session' in message && message.session?.sessionToken) {

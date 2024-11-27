@@ -8,14 +8,15 @@ import { fetchSentenceRecord } from '@/actions';
 import { UserInputSchema } from '@/lib/dataValidation';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import useKeyboard from '@/hooks/useKeyboard';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import Toast from '@/components/Toast';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
-	let [error, setError] = React.useState('');
 	let [isLoading, startTransition] = React.useTransition();
 	let isKeyPressed = useKeyboard(['Shift', 'Enter']); // Press shift + enter to submit
+	let { errorMsg, updateError } = useErrorMessageContext();
 
 	let updateUserInput = React.useCallback(
 		function (text: string) {
@@ -35,12 +36,12 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 			if (e) {
 				e.preventDefault();
 			}
-			setError('');
+			updateError('');
 
 			let result = UserInputSchema.safeParse(userInput);
 			if (result.error) {
 				let formattedError = result.error.format();
-				setError(formattedError._errors[0]);
+				updateError(formattedError._errors[0]);
 			} else {
 				// Check the uniqueness of the sentence before submitting.
 				// https://medium.com/@mguleryuz3/next-js-14-app-router-server-actions-with-react-usetransition-a-new-era-for-fullstack-2798e58bb793
@@ -52,13 +53,13 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 
 				let response = await promise!;
 				if (response?.errorMessage) {
-					setError(response.errorMessage);
+					updateError(response.errorMessage);
 					return;
 				}
 				updateSentence(result.data);
 			}
 		},
-		[updateSentence, userInput]
+		[updateError, updateSentence, userInput]
 	);
 
 	async function handleGetClipboard() {
@@ -103,7 +104,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>
 			</StyledForm>
-			{error && <Toast toastType='error' content={error} />}
+			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</>
 	);
 }

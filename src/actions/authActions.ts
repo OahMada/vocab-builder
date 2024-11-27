@@ -16,7 +16,7 @@ export async function credentialsLogin(data: SigninFormSchemaType) {
 	}
 }
 
-export async function signup(data: unknown) {
+export async function signup(data: unknown): Promise<{ data: string } | { errorMessage: string }> {
 	let result = SignupFormSchema.safeParse(data);
 
 	if (result.error) {

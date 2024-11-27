@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { SignupFormSchema, SignupFormSchemaType } from '@/lib/dataValidation';
 import { signup } from '@/actions';
+import { useErrorMessageContext } from '../ErrorMessageProvider';
 
 function SignupForm() {
 	const {
@@ -19,12 +20,14 @@ function SignupForm() {
 	});
 
 	let router = useRouter();
+	let { updateError } = useErrorMessageContext();
 
 	const onSubmit: SubmitHandler<SignupFormSchemaType> = async (data) => {
+		updateError('');
 		let response = await signup(data);
 
 		if ('errorMessage' in response) {
-			console.log(response.errorMessage);
+			updateError(response.errorMessage);
 			return;
 		}
 

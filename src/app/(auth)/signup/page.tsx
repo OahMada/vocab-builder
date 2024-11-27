@@ -1,18 +1,20 @@
-import Link from 'next/link';
 import * as React from 'react';
+import { redirect } from 'next/navigation';
 
-import SignupForm from '@/components/SignupForm';
+import { auth } from '@/auth';
 
-export default function SignUpPage() {
+import SignupWrapper from '@/components/SignupWrapper';
+import ErrorMessageProvider from '@/components/ErrorMessageProvider';
+
+export default async function SignUpPage() {
+	let session = await auth();
+	if (session?.user) {
+		redirect('/');
+	}
+
 	return (
-		<div>
-			<SignupForm />
-			<div>
-				<p>
-					Already have an account?&nbsp;
-					<Link href='/signin'>Sign In</Link>
-				</p>
-			</div>
-		</div>
+		<ErrorMessageProvider>
+			<SignupWrapper />
+		</ErrorMessageProvider>
 	);
 }

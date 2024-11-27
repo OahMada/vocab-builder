@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation';
 
 import { SigninFormSchema, SigninFormSchemaType } from '@/lib/dataValidation';
 import { credentialsLogin } from '@/actions';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function LoginForm() {
 	const {
@@ -22,12 +23,15 @@ function LoginForm() {
 	let router = useRouter();
 	let searchParams = useSearchParams();
 	let callbackUrl = searchParams.get('callbackUrl');
+	let { updateError } = useErrorMessageContext();
 
-	const onSubmit: SubmitHandler<SigninFormSchemaType> = async (data) => {
+	let onSubmit: SubmitHandler<SigninFormSchemaType> = async (data) => {
+		updateError('');
 		let response = await credentialsLogin(data);
 
 		if (response && 'errorMessage' in response) {
-			console.log(response.errorMessage);
+			updateError(response.errorMessage);
+			return;
 		} else {
 			router.push(callbackUrl ?? '/');
 		}
@@ -59,7 +63,7 @@ function LoginForm() {
 				/>
 				{errors.password && <p>{errors.password?.message}</p>}
 			</div>
-			<button>Submit</button>
+			<button>Login</button>
 		</form>
 	);
 }

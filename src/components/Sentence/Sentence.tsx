@@ -8,9 +8,9 @@ import useSWRImmutable from 'swr/immutable';
 import { getErrorMessageFromError } from '@/helpers';
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import { PopoverContent, PopoverRoot, PopoverTrigger } from '@/components/PopOver';
-import Toast from '@/components/Toast';
 
 var fetcher = async (url: string, word: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -20,8 +20,8 @@ var fetcher = async (url: string, word: string): Promise<string> => {
 };
 
 let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentData[] }>(function Sentence({ segmentedText }, ref) {
-	let [error, setError] = React.useState('');
 	let [phoneticSymbols, setPhoneticSymbols] = React.useState<null | PhoneticSymbols>(null);
+	let { updateError } = useErrorMessageContext();
 
 	React.useImperativeHandle(ref, () => {
 		return phoneticSymbols ?? {};
@@ -52,8 +52,6 @@ let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentDa
 		};
 	}
 
-	let updateError = React.useCallback((errorMessage: string) => setError(errorMessage), []);
-
 	useLocalStoragePersist({
 		localStorageKey: PHONETIC_SYMBOLS,
 		defaultValue: React.useMemo(() => ({}), []),
@@ -82,7 +80,6 @@ let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentDa
 					);
 				})}
 			</div>
-			{error && <Toast toastType='error' content={error} />}
 		</>
 	);
 });

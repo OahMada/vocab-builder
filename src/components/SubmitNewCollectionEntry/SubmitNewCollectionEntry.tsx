@@ -24,6 +24,7 @@ import { CreateVocabEntryInputSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
 import useLocalStoragePersist, { deleteAppDataEntry } from '@/hooks/useLocalStoragePersist';
 import { PhoneticSymbols } from '@/types';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import SentenceTranslation from '@/components/SentenceTranslation';
 import Toast from '@/components/Toast';
@@ -77,7 +78,7 @@ function SubmitNewCollectionEntry({
 		setEditingState(newState);
 	}
 
-	let [error, setError] = React.useState('');
+	let { errorMsg, updateError } = useErrorMessageContext();
 	let [translation, setTranslation] = React.useState<null | string>(null);
 	let [note, setNote] = React.useState<null | string>(null);
 	let { mutate } = useSWRConfig();
@@ -93,7 +94,7 @@ function SubmitNewCollectionEntry({
 		onError: (error) => {
 			if (process.env.NODE_ENV === 'development') console.log(error);
 			let errorMessage = getErrorMessageFromError(error);
-			setError(errorMessage);
+			updateError(errorMessage);
 		},
 	});
 
@@ -139,7 +140,7 @@ function SubmitNewCollectionEntry({
 		deleteAppDataEntry(NOTE_EDIT_MODE);
 		deleteAppDataEntry(PHONETIC_SYMBOLS);
 
-		setError('');
+		updateError('');
 
 		updateShouldClearUserInput(clearUserInput);
 	}
@@ -171,7 +172,7 @@ function SubmitNewCollectionEntry({
 		let result = CreateVocabEntryInputSchema.safeParse(newEntry);
 		if (result.error) {
 			let errorMessage = constructZodErrorMessage(result.error);
-			setError(errorMessage);
+			updateError(errorMessage);
 			return;
 		}
 
@@ -182,7 +183,7 @@ function SubmitNewCollectionEntry({
 		});
 		let response = await promise!;
 		if ('errorMessage' in response) {
-			setError(response.errorMessage);
+			updateError(response.errorMessage);
 			return;
 		}
 
@@ -235,7 +236,7 @@ function SubmitNewCollectionEntry({
 			<div>
 				<button
 					onClick={() => {
-						setError(''); // Otherwise, the submit button would stay disabled.
+						updateError(''); // Otherwise, the submit button would stay disabled.
 						resetTranslation();
 						mutate([FETCH_TRANSLATE_ROUTE, sentence]);
 					}}
@@ -251,12 +252,12 @@ function SubmitNewCollectionEntry({
 					Cancel
 				</button>
 				{!isLoading && (
-					<button onClick={handleSubmitNewEntry} disabled={error !== '' || isValidating || isEditing}>
+					<button onClick={handleSubmitNewEntry} disabled={errorMsg !== '' || isValidating || isEditing}>
 						{isPending ? 'Submitting...' : 'Finish'}
 					</button>
 				)}
 			</div>
-			{error && <Toast toastType='error' content={error} />}
+			{errorMsg && <Toast toastType='error' content={errorMsg} />}
 		</div>
 	);
 }

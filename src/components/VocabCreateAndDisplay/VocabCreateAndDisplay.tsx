@@ -44,15 +44,19 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 		<>
 			<ErrorBoundaryWrapper>
 				{!sentence ? (
-					<UserInput updateSentence={updateSentence} clearUserInput={shouldClearUserInput} />
+					<ErrorMessageProvider>
+						<UserInput updateSentence={updateSentence} clearUserInput={shouldClearUserInput} />
+					</ErrorMessageProvider>
 				) : (
 					<SWRConfigWrapper>
-						<SubmitNewCollectionEntry
-							sentence={sentence}
-							addOptimisticVocabEntry={addOptimisticVocabEntry}
-							updateSentence={updateSentence}
-							updateShouldClearUserInput={updateShouldClearUserInput}
-						/>
+						<ErrorMessageProvider>
+							<SubmitNewCollectionEntry
+								sentence={sentence}
+								addOptimisticVocabEntry={addOptimisticVocabEntry}
+								updateSentence={updateSentence}
+								updateShouldClearUserInput={updateShouldClearUserInput}
+							/>
+						</ErrorMessageProvider>
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>

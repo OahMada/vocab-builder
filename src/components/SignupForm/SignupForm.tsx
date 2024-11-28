@@ -6,7 +6,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { SignupFormSchema, SignupFormSchemaType } from '@/lib/dataValidation';
-import { signup } from '@/actions';
+import { signup, type SignupReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function SignupForm() {
@@ -20,11 +20,19 @@ function SignupForm() {
 	});
 
 	let router = useRouter();
+
 	let { updateError } = useErrorMessageContext();
+	let [isPending, startTransition] = React.useTransition();
 
 	const onSubmit: SubmitHandler<SignupFormSchemaType> = async (data) => {
 		updateError('');
-		let response = await signup(data);
+		let promise: SignupReturnType;
+
+		startTransition(() => {
+			promise = signup(data);
+		});
+
+		let response = await promise!;
 
 		if ('errorMessage' in response) {
 			updateError(response.errorMessage);
@@ -50,7 +58,7 @@ function SignupForm() {
 				<input type='password' id='password' {...register('password')} onChange={() => clearErrors('password')} />
 				{errors.password && <p>{errors.password.message}</p>}
 			</div>
-			<button>Submit</button>
+			<button>{isPending ? 'Signing Up...' : 'Sign Up'}</button>
 		</form>
 	);
 }

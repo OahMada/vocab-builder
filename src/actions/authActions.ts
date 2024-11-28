@@ -57,6 +57,8 @@ export async function signup(data: unknown): Promise<{ data: string } | { errorM
 	}
 }
 
+export type SignupReturnType = ReturnType<typeof signup>;
+
 export async function credentialsLogin(data: SigninFormSchemaType) {
 	try {
 		await signIn('credentials', { ...data, redirect: false });
@@ -64,6 +66,8 @@ export async function credentialsLogin(data: SigninFormSchemaType) {
 		return { errorMessage: getErrorMessageFromError(error) };
 	}
 }
+
+export type CredentialsSigninReturnType = ReturnType<typeof credentialsLogin>;
 
 export async function socialLogin(data: unknown, callback: string) {
 	let result = SocialLoginFormSchema.safeParse(data);

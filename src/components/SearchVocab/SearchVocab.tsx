@@ -22,7 +22,7 @@ var SearchVocab = () => {
 	}, [handleSearch, isKeyPressed]);
 
 	return (
-		<div>
+		<>
 			<input placeholder='Search vocab' onChange={handleSearch} defaultValue={search} ref={inputRef} />
 			<button
 				onClick={() => {
@@ -35,7 +35,7 @@ var SearchVocab = () => {
 			>
 				Clear
 			</button>
-		</div>
+		</>
 	);
 };
 

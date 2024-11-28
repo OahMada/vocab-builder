@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 
 import { SigninFormSchema, SigninFormSchemaType } from '@/lib/dataValidation';
-import { credentialsLogin } from '@/actions';
+import { credentialsLogin, type CredentialsSigninReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function LoginForm() {
@@ -22,12 +22,20 @@ function LoginForm() {
 
 	let router = useRouter();
 	let searchParams = useSearchParams();
+	let [isPending, startTransition] = React.useTransition();
+
 	let callbackUrl = searchParams.get('callbackUrl');
 	let { updateError } = useErrorMessageContext();
 
 	let onSubmit: SubmitHandler<SigninFormSchemaType> = async (data) => {
 		updateError('');
-		let response = await credentialsLogin(data);
+		let promise: CredentialsSigninReturnType;
+
+		startTransition(() => {
+			promise = credentialsLogin(data);
+		});
+
+		let response = await promise!;
 
 		if (response && 'errorMessage' in response) {
 			updateError(response.errorMessage);
@@ -63,7 +71,7 @@ function LoginForm() {
 				/>
 				{errors.password && <p>{errors.password?.message}</p>}
 			</div>
-			<button>Login</button>
+			<button>{isPending ? 'Logging in...' : 'Login'}</button>
 		</form>
 	);
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { SearchParams } from 'nuqs/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 import { getVocabData } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
@@ -33,7 +34,10 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 
 	return (
 		<div>
-			<SearchVocab />
+			<div>
+				<SearchVocab />
+				<Link href='/'>Back to home</Link>
+			</div>
 			<div>
 				<React.Suspense fallback={<p>Loading...</p>}>
 					<VocabCount />

@@ -107,7 +107,7 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 			signIn: '/signin',
 			newUser: '/',
 		},
-		debug: process.env.NODE_ENV === 'development',
+		// debug: process.env.NODE_ENV === 'development',
 		// logger: {
 		// 	error(code, ...message) {
 		// 		console.error('logger1', code, message);

@@ -13,7 +13,7 @@ import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEn
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
 
-function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: string; initialHaveMoreData: boolean }) {
+function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialCursor?: string; initialHaveMoreData: boolean; userId: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
 	let cursorRef = React.useRef(initialCursor); // https://www.prisma.io/docs/orm/prisma-client/queries/pagination#cursor-based-pagination
 	let [isOnscreen, scrollTrigger] = useIntersectionObserver();
@@ -34,7 +34,7 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 				setHaveMoreData(false);
 				return;
 			}
-			let response = await getPaginatedVocabData(cursorRef.current);
+			let response = await getPaginatedVocabData(cursorRef.current, userId);
 
 			if ('errorMessage' in response) {
 				updateError(response.errorMessage);
@@ -50,7 +50,7 @@ function EntryListing({ initialCursor, initialHaveMoreData }: { initialCursor?: 
 			let lastEntry = response.data.at(-1)!; // since the empty array is ruled out
 			cursorRef.current = lastEntry.id;
 		},
-		[dispatch, updateError]
+		[dispatch, updateError, userId]
 	);
 
 	React.useEffect(() => {

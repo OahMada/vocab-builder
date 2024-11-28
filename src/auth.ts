@@ -90,6 +90,10 @@ export var { handlers, signIn, signOut, auth } = NextAuth(() => {
 				}
 				return token;
 			},
+			async session({ session, user }) {
+				session.user.id = user.id;
+				return session;
+			},
 		},
 		jwt: {
 			async encode({ token }) {

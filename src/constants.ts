@@ -15,9 +15,6 @@ export const FETCH_TRANSLATE_ROUTE = process.env.NODE_ENV === 'development' ? '/
 export const FETCH_PHONETIC_SYMBOL_ROUTE =
 	process.env.NODE_ENV === 'development' ? '/api/fetch-phonetic-symbol?mock=true' : '/api/fetch-phonetic-symbol';
 
-export const USER_EMAIL = 'adam@gmail.com';
-export const DATABASE_USER_ID = '670bf138f51931ba3ec85d84';
-
 export const VOCAB_LIST_VALIDATION_TAG = 'vocab-list';
 export const ENTRIES_PER_PAGE = 10;
 

@@ -10,7 +10,6 @@ import { VocabEntry } from '@/types';
 import {
 	FETCH_TRANSLATE_ROUTE,
 	SENTENCE_TEXT,
-	USER_EMAIL,
 	TRANSLATION_TEXT,
 	NOTE_TEXT,
 	PHONETIC_SYMBOLS,
@@ -166,7 +165,6 @@ function SubmitNewCollectionEntry({
 			sentencePlusPhoneticSymbols,
 			translation,
 			note,
-			userEmail: USER_EMAIL,
 		};
 
 		let result = CreateVocabEntryInputSchema.safeParse(newEntry);

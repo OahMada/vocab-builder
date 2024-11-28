@@ -23,6 +23,7 @@ function ErrorMessageProvider({ children }: { children: React.ReactNode }) {
 export function useErrorMessageContext() {
 	let result = React.useContext(ErrorMessageContext);
 	if (!result) {
+		// TODO this could be the case when app first loads. but why only with searchResults component?
 		throw new Error('useErrorMessageContext has to be used within <ErrorMessageContext.Provider>');
 	}
 	return result;

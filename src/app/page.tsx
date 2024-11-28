@@ -17,7 +17,7 @@ async function Vocab() {
 		redirect('/signin');
 	}
 
-	let vocabData = await getVocabData(6);
+	let vocabData = await getVocabData(6, session.user.id);
 	let sentence = (await cookies()).get(SENTENCE_TEXT)?.value || undefined;
 
 	if ('errorMessage' in vocabData) {

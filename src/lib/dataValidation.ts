@@ -19,7 +19,6 @@ export var CreateVocabEntryInputSchema = z.object({
 			message: 'Please keep the note shorter than 1,000 characters',
 		})
 		.optional(),
-	userEmail: z.string().email().min(5),
 });
 
 export var VocabEntryStringSchema = z.string().trim();
@@ -42,11 +41,11 @@ export var SignupFormSchema = z.object({
 	password: z
 		.string()
 		.min(8, { message: 'Be at least 8 characters long' })
-		// .regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
-		// .regex(/[0-9]/, { message: 'Contain at least one number.' })
-		// .regex(/[^a-zA-Z0-9]/, {
-		// 	message: 'Contain at least one special character.',
-		// })
+		.regex(/[a-zA-Z]/, { message: 'Contain at least one letter.' })
+		.regex(/[0-9]/, { message: 'Contain at least one number.' })
+		.regex(/[^a-zA-Z0-9]/, {
+			message: 'Contain at least one special character.',
+		})
 		.trim(),
 });
 

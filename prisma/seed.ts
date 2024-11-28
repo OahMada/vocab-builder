@@ -12,7 +12,7 @@ for (let index = 0; index < uniqueSentences.length; index++) {
 		note: faker.lorem.sentences(),
 		user: {
 			connect: {
-				email: 'adam@gmail.com',
+				id: process.env.USER_ID,
 			},
 		},
 	});

@@ -3,8 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PhoneticSymbolSchema } from '@/lib/dataValidation';
 import { delay } from '@/helpers';
 import performAxiosRequest from '@/lib/performAxiosRequest';
+import { auth } from '@/auth';
 
 export async function POST(request: NextRequest) {
+	let session = await auth();
+
+	if (!session?.user) {
+		return new NextResponse('Not authenticated', { status: 401 });
+	}
+
 	// for mock
 	let searchParams = request.nextUrl.searchParams;
 	let mock = searchParams.get('mock');

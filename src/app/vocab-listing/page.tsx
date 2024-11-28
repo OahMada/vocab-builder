@@ -22,7 +22,7 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 
 	let { search } = searchParamsCache.parse(await searchParams);
 
-	let vocabData = await getVocabData(ENTRIES_PER_PAGE);
+	let vocabData = await getVocabData(ENTRIES_PER_PAGE, session.user.id);
 
 	if ('errorMessage' in vocabData) {
 		return <div>{vocabData.errorMessage}</div>;
@@ -41,7 +41,7 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 				<React.Suspense fallback={<p>Loading...</p>}>
 					<ErrorMessageProvider>
 						<VocabDataProvider initialState={vocabData.data}>
-							<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} />
+							<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} userId={session.user.id} />
 						</VocabDataProvider>
 					</ErrorMessageProvider>
 				</React.Suspense>

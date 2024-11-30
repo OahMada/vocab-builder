@@ -26,9 +26,9 @@ import { PhoneticSymbols } from '@/types';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import SentenceTranslation from '@/components/SentenceTranslation';
-import Toast from '@/components/Toast';
 import Note from '@/components/Note';
 import Sentence from '@/components/Sentence';
+import ErrorMsg from '@/components/ErrorMsg';
 
 interface EditingState {
 	noteEditing: boolean;
@@ -255,11 +255,7 @@ function SubmitNewCollectionEntry({
 					</button>
 				)}
 			</div>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</div>
 	);
 }

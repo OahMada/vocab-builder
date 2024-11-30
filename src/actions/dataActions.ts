@@ -4,7 +4,7 @@ import { revalidateTag, unstable_cache } from 'next/cache';
 // https://github.com/prisma/prisma/issues/6718#issuecomment-824893638
 import { ObjectId } from 'bson';
 
-import prisma, { PrismaErrorHandling, entrySelect } from '@/lib/db';
+import prisma, { prismaErrorHandling, entrySelect } from '@/lib/db';
 import { auth } from '@/auth';
 
 import { CreateVocabEntryInputSchema, UserInputSchema, VocabEntryStringSchema, VocabEntryUpdatingDataSchema } from '@/lib/dataValidation';
@@ -53,7 +53,7 @@ export async function createVocabEntry(
 			data: response,
 		};
 	} catch (error) {
-		return PrismaErrorHandling(error);
+		return prismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -121,7 +121,7 @@ export async function deleteVocabEntry(id: unknown): Promise<{ data: VocabEntry 
 			data: response,
 		};
 	} catch (error) {
-		return PrismaErrorHandling(error);
+		return prismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -163,7 +163,7 @@ export async function updateVocabEntry(data: unknown): Promise<{ data: VocabEntr
 			data: response,
 		};
 	} catch (error) {
-		return PrismaErrorHandling(error);
+		return prismaErrorHandling(error);
 	} finally {
 		revalidateTag(VOCAB_LIST_VALIDATION_TAG);
 	}
@@ -188,7 +188,7 @@ export var getVocabData: (limit: number, userId: string) => Promise<{ data: Voca
 			});
 			return { data };
 		} catch (error) {
-			return PrismaErrorHandling(error);
+			return prismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],
@@ -225,7 +225,7 @@ export var getPaginatedVocabData: (cursor: string, userId: string | undefined) =
 				});
 				return { data };
 			} catch (error) {
-				return PrismaErrorHandling(error);
+				return prismaErrorHandling(error);
 			}
 		},
 		[VOCAB_LIST_VALIDATION_TAG],
@@ -313,7 +313,7 @@ export var performVocabSearch: (searchTerm: unknown, userId: string) => Promise<
 			})) as unknown as VocabEntry[];
 			return { data };
 		} catch (error) {
-			return PrismaErrorHandling(error);
+			return prismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],
@@ -334,7 +334,7 @@ export var countVocab: (userId: string) => Promise<{ data: number } | { errorMes
 				data: vocabCount,
 			};
 		} catch (error) {
-			return PrismaErrorHandling(error);
+			return prismaErrorHandling(error);
 		}
 	},
 	[VOCAB_LIST_VALIDATION_TAG],

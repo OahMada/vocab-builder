@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { SignupFormSchema, SignupFormSchemaType } from '@/lib/dataValidation';
+import { UserSchema, UserSchemaType } from '@/lib/dataValidation';
 import { signup, type SignupReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
@@ -15,8 +15,8 @@ function SignupForm() {
 		handleSubmit,
 		formState: { errors },
 		clearErrors,
-	} = useForm<SignupFormSchemaType>({
-		resolver: zodResolver(SignupFormSchema),
+	} = useForm<UserSchemaType>({
+		resolver: zodResolver(UserSchema),
 	});
 
 	let router = useRouter();
@@ -24,7 +24,7 @@ function SignupForm() {
 	let { updateError } = useErrorMessageContext();
 	let [isPending, startTransition] = React.useTransition();
 
-	const onSubmit: SubmitHandler<SignupFormSchemaType> = async (data) => {
+	const onSubmit: SubmitHandler<UserSchemaType> = async (data) => {
 		updateError('');
 		let promise: SignupReturnType;
 

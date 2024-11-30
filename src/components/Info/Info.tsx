@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { auth } from '@/auth';
 
-import AppSetting from '@/components/AppSetting';
+import UserInfo from '@/components/UserInfo';
 import Footer from '@/components/Footer';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import StyledSection from './StyledSection';
-import SettingForm from '@/components/SettingForm';
+import UserInfoForm from '@/components/UserInfoForm';
 
 async function Info() {
 	let session = await auth();
@@ -18,11 +18,11 @@ async function Info() {
 				<p>Build your vocabulary with ease.</p>
 			</div>
 			<ErrorMessageProvider>
-				<AppSetting>
+				<UserInfo>
 					{session?.user ? (
 						<>
 							<h2>Hello, {session?.user?.name}</h2>
-							<SettingForm />
+							<UserInfoForm />
 						</>
 					) : (
 						<p>
@@ -30,7 +30,7 @@ async function Info() {
 							phonetic symbols beside unfamiliar words and optionally add a note to the sentence. All the data will be safely saved to the database.
 						</p>
 					)}
-				</AppSetting>
+				</UserInfo>
 			</ErrorMessageProvider>
 			<Footer />
 		</StyledSection>

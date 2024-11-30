@@ -1,15 +1,18 @@
 'use server';
 
-import { AuthError } from 'next-auth';
+import { AuthError, User } from 'next-auth';
+import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 
-import { signIn, signOut } from '@/auth';
-import prisma, { PrismaErrorHandling } from '@/lib/db';
-import { SigninFormSchemaType, SignupFormSchema, SocialLoginFormSchema } from '@/lib/dataValidation';
+import { auth, signIn, signOut } from '@/auth';
+import prisma, { prismaErrorHandling, userSelect } from '@/lib/db';
+import { SigninFormSchemaType, UserSchema, SocialLoginFormSchema } from '@/lib/dataValidation';
 import { constructZodErrorMessage, getErrorMessageFromError } from '@/helpers';
+import { DatabaseUser } from '@/types';
+import { User as PrismaUser } from '@prisma/client';
 
-export async function signup(data: unknown): Promise<{ data: string } | { errorMessage: string }> {
-	let result = SignupFormSchema.safeParse(data);
+export async function signup(data: unknown): Promise<{ data: DatabaseUser } | { errorMessage: string }> {
+	let result = UserSchema.safeParse(data);
 
 	if (result.error) {
 		let errorMessage = constructZodErrorMessage(result.error);
@@ -33,27 +36,30 @@ export async function signup(data: unknown): Promise<{ data: string } | { errorM
 	let hashedPassword = await bcrypt.hash(password, 10);
 
 	try {
-		await prisma.$transaction(async (tx) => {
-			const { id } = await tx.user.create({
+		let response = await prisma.$transaction(async (tx) => {
+			let user = await tx.user.create({
 				data: {
 					email,
 					name,
 					password: hashedPassword,
 				},
+				select: userSelect,
 			});
 
 			await tx.account.create({
 				data: {
-					userId: id,
+					userId: user.id,
 					type: 'credentials',
 					provider: 'credentials',
-					providerAccountId: id,
+					providerAccountId: user.id,
 				},
 			});
+
+			return user;
 		});
-		return { data: 'User created.' };
+		return { data: response };
 	} catch (error) {
-		return PrismaErrorHandling(error);
+		return prismaErrorHandling(error);
 	}
 }
 
@@ -107,4 +113,124 @@ export async function signout() {
 		}
 		throw error;
 	}
+}
+
+export async function updateUser(data: unknown): Promise<{ data: User } | { errorMessage: string }> {
+	// authorization
+	let session = await auth();
+	if (!session?.user) {
+		return { errorMessage: 'Not authenticated.' };
+	}
+	let {
+		user: { id: userId },
+	} = session;
+
+	// data validation
+	let result = UserSchema.partial().safeParse(data);
+	if (result.error) {
+		return {
+			errorMessage: constructZodErrorMessage(result.error),
+		};
+	}
+	let { name, email, password } = result.data;
+
+	// fetch user data
+	let user: PrismaUser | null;
+	try {
+		user = await prisma.user.findUnique({
+			where: {
+				id: userId,
+			},
+		});
+		if (!user) {
+			return {
+				errorMessage: 'User not found',
+			};
+		}
+	} catch (error) {
+		return prismaErrorHandling(error);
+	}
+
+	// update call
+	if (name) {
+		if (name === user.name) {
+			return {
+				data: session.user,
+			};
+		}
+
+		try {
+			let response = await prisma.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					name,
+				},
+				select: userSelect,
+			});
+
+			revalidatePath('/setting');
+
+			return { data: response };
+		} catch (error) {
+			return prismaErrorHandling(error);
+		}
+	}
+
+	if (email) {
+		if (email === user.email) {
+			return {
+				data: session.user,
+			};
+		}
+
+		try {
+			let response = await prisma.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					email,
+				},
+				select: userSelect,
+			});
+			revalidatePath('/setting');
+
+			return { data: response };
+		} catch (error) {
+			return prismaErrorHandling(error);
+		}
+	}
+
+	if (password && user.password) {
+		let isPasswordMatch = await bcrypt.compare(password, user.password);
+		if (isPasswordMatch) {
+			return {
+				data: session.user,
+			};
+		}
+		let hashedNewPassword = await bcrypt.hash(password, 10);
+
+		try {
+			let response = await prisma.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					password: hashedNewPassword,
+				},
+				select: userSelect,
+			});
+			revalidatePath('/setting');
+
+			return { data: response };
+		} catch (error) {
+			return prismaErrorHandling(error);
+		}
+	}
+
+	return {
+		errorMessage: 'Something went wrong on the server',
+	};
 }

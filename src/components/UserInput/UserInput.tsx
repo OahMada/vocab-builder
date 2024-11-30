@@ -10,13 +10,13 @@ import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import useKeyboard from '@/hooks/useKeyboard';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
-import Toast from '@/components/Toast';
+import ErrorMsg from '@/components/ErrorMsg';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
 	let [isLoading, startTransition] = React.useTransition();
 	let isKeyPressed = useKeyboard(['Shift', 'Enter']); // Press shift + enter to submit
-	let { errorMsg, updateError } = useErrorMessageContext();
+	let { updateError } = useErrorMessageContext();
 
 	let updateUserInput = React.useCallback(
 		function (text: string) {
@@ -104,11 +104,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
 				</div>
 			</StyledForm>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</>
 	);
 }

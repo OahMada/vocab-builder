@@ -6,7 +6,7 @@ import { useFormStatus } from 'react-dom';
 import { signout } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
-function SettingForm() {
+function UserInfoForm() {
 	let { updateError } = useErrorMessageContext();
 	async function clientAction() {
 		let response = await signout();
@@ -23,7 +23,7 @@ function SettingForm() {
 	);
 }
 
-export default SettingForm;
+export default UserInfoForm;
 
 interface OAuthLoginButtonProps extends React.ComponentPropsWithoutRef<'button'> {
 	// className: string;

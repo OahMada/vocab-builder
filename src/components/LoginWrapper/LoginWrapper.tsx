@@ -9,10 +9,17 @@ import { signinErrors } from '@/constants';
 
 import LoginForm from '@/components/LoginForm';
 import OAuthLogin from '@/components/OAuthLogin';
-import Toast from '@/components/Toast';
+import ErrorMsg from '@/components/ErrorMsg';
 
 function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorParam | 'default' | null }) {
-	let { errorMsg } = useErrorMessageContext();
+	let { updateError } = useErrorMessageContext();
+
+	React.useEffect(() => {
+		if (errorCode) {
+			// TODO prevent the error from reappearing
+			updateError(signinErrors[errorCode]);
+		}
+	}, [errorCode, updateError]);
 
 	return (
 		<div>
@@ -24,16 +31,7 @@ function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorPar
 					<Link href='/signup'>Sign Up</Link>
 				</p>
 			</div>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
-			{errorCode && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={signinErrors[errorCode]} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</div>
 	);
 }

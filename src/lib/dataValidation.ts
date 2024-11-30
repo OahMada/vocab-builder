@@ -35,7 +35,7 @@ export var VocabEntryUpdatingDataSchema = z.object({
 		.optional(),
 });
 
-export var SignupFormSchema = z.object({
+export var UserSchema = z.object({
 	name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }).trim(),
 	email: z.string().email({ message: 'Please enter a valid email.' }).trim(),
 	password: z
@@ -49,7 +49,22 @@ export var SignupFormSchema = z.object({
 		.trim(),
 });
 
-export type SignupFormSchemaType = z.infer<typeof SignupFormSchema>;
+export type UserSchemaType = z.infer<typeof UserSchema>;
+
+var confirmPassword = z.string().trim().min(8, { message: 'Be at least 8 characters long' });
+export var UpdateUserSchema = UserSchema.extend({
+	confirmPassword,
+})
+	.partial()
+	.refine(
+		(data) => {
+			console.log('refinement', data);
+			return data.password === data.confirmPassword;
+		},
+		{ message: 'Password does not match, please try again.', path: ['passwordConfirmation'] }
+	);
+
+export type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;
 
 export var SigninFormSchema = z.object({
 	email: z.string().email({ message: 'Please enter a valid email.' }).trim(),

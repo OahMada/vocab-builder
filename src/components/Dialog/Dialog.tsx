@@ -6,7 +6,7 @@ interface ContentProps extends React.ComponentPropsWithoutRef<typeof Dialog.Cont
 	// className: string;
 	children: React.ReactNode;
 	title: string;
-	description: string;
+	description?: string;
 }
 
 export var DialogContent = React.forwardRef<ContentElement, ContentProps>(({ children, title, description, ...props }, forwardedRef) => (
@@ -14,7 +14,7 @@ export var DialogContent = React.forwardRef<ContentElement, ContentProps>(({ chi
 		<Dialog.Overlay />
 		<Dialog.Content {...props} ref={forwardedRef}>
 			<Dialog.Title>{title}</Dialog.Title>
-			<Dialog.Description>{description}</Dialog.Description>
+			{description && <Dialog.Description>{description}</Dialog.Description>}
 			{children}
 			<Dialog.Close asChild>
 				<button aria-label='Close'>X</button>

@@ -5,13 +5,11 @@ import * as React from 'react';
 import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 
 import Entry from '@/components/Entry';
-import Toast from '@/components/Toast';
-import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
+import ErrorMsg from '@/components/ErrorMsg';
 
 function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
-	let { errorMsg } = useErrorMessageContext();
 
 	if (trim) {
 		optimisticState = optimisticState.slice(0, 5);
@@ -24,11 +22,7 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 					return <Entry key={entry.id} entry={entry} index={index} />;
 				})}
 			</AccordionRoot>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</>
 	);
 }

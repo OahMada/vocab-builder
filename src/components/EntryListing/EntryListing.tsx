@@ -6,12 +6,12 @@ import { getPaginatedVocabData } from '@/actions';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
 import Entry from '@/components/Entry';
-import Toast from '@/components/Toast';
 import { ENTRIES_PER_PAGE } from '@/constants';
 import { useVocabDataProvider } from '@/components/VocabDataProvider';
 import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEntriesProvider';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
+import ErrorMsg from '@/components/ErrorMsg';
 
 function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialCursor?: string; initialHaveMoreData: boolean; userId: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
@@ -25,7 +25,7 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 	let dispatch = vocabDataProvider.dispatch; // vocabDataProvider would change after the dispatch call, so it's better to take dispatch out.
 
 	let { optimisticState } = useOptimisticVocabEntriesContext();
-	let { errorMsg, updateError } = useErrorMessageContext();
+	let { updateError } = useErrorMessageContext();
 
 	let handleQueryPagination = React.useCallback(
 		async function () {
@@ -72,11 +72,7 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 					</div>
 				)}
 			</AccordionRoot>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</>
 	);
 }

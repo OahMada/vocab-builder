@@ -3,13 +3,10 @@
 import Link from 'next/link';
 import * as React from 'react';
 
-import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
-
 import SignupForm from '@/components/SignupForm';
-import Toast from '@/components/Toast';
+import ErrorMsg from '@/components/ErrorMsg';
 
 function SignupWrapper() {
-	let { errorMsg } = useErrorMessageContext();
 	return (
 		<div>
 			<SignupForm />
@@ -19,11 +16,7 @@ function SignupWrapper() {
 					<Link href='/signin'>Sign In</Link>
 				</p>
 			</div>
-			{errorMsg && (
-				<React.Suspense fallback='loading'>
-					<Toast toastType='error' content={errorMsg} />
-				</React.Suspense>
-			)}
+			<ErrorMsg />
 		</div>
 	);
 }

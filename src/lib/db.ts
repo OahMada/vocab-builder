@@ -5,12 +5,12 @@ import 'server-only';
 import { PrismaClient, Prisma } from '@prisma/client';
 import { getErrorMessageFromError } from '@/helpers';
 
-export function PrismaErrorHandling(error: unknown) {
+export function prismaErrorHandling(error: unknown) {
 	if (process.env.NODE_ENV === 'development') console.log(JSON.stringify(error));
 	if (error instanceof Prisma.PrismaClientKnownRequestError) {
 		// The .code property can be accessed in a type-safe manner
 		if (error.code === 'P2002') {
-			return { errorMessage: 'The very sentence has already been saved. Please update the existing one instead.' };
+			return { errorMessage: 'The same value already exists in the database; please try another.' };
 		} else {
 			return { errorMessage: `${error.message}. Code: ${error.code}` };
 		}
@@ -42,3 +42,9 @@ export var entrySelect = {
 	note: true,
 	id: true,
 } satisfies Prisma.VocabEntrySelect;
+
+export var userSelect = {
+	id: true,
+	email: true,
+	name: true,
+} satisfies Prisma.UserSelect;

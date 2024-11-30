@@ -11,7 +11,7 @@ import { credentialsLogin, type CredentialsSigninReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function LoginForm() {
-	const {
+	let {
 		register,
 		handleSubmit,
 		formState: { errors },

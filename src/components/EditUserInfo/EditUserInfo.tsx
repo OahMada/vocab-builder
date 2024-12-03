@@ -10,13 +10,16 @@ function EditUserInfo({
 	fieldSet,
 	title,
 	submitHandler,
+	dialogOpen,
+	updateDialogState,
 }: {
 	children: React.ReactNode;
 	fieldSet: React.ReactNode;
 	title: string;
 	submitHandler: (e: React.SyntheticEvent) => Promise<void>;
+	dialogOpen: boolean;
+	updateDialogState: (value: boolean) => void;
 }) {
-	let [open, setOpen] = React.useState<boolean>(false);
 	let [isPending, startTransition] = React.useTransition();
 	let { updateError } = useErrorMessageContext();
 
@@ -34,11 +37,10 @@ function EditUserInfo({
 			updateError(errorMessage);
 			return;
 		}
-		setOpen(false);
 	}
 
 	return (
-		<DialogRoot open={open} onOpenChange={setOpen}>
+		<DialogRoot open={dialogOpen} onOpenChange={updateDialogState}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent title={title} aria-describedby={undefined}>
 				<form onSubmit={handleSubmit}>

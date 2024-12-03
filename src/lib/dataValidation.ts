@@ -58,10 +58,9 @@ export var UpdateUserSchema = UserSchema.extend({
 	.partial()
 	.refine(
 		(data) => {
-			console.log('refinement', data);
 			return data.password === data.confirmPassword;
 		},
-		{ message: 'Password does not match, please try again.', path: ['passwordConfirmation'] }
+		{ message: 'Password does not match, please try again.', path: ['passConfirmResult'] }
 	);
 
 export type UpdateUserSchemaType = z.infer<typeof UpdateUserSchema>;

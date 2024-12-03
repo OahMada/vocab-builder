@@ -11,6 +11,8 @@ import EditUserInfo from '@/components/EditUserInfo';
 
 type UserInfoEditTitleMapKeys = keyof typeof UserInfoEditTitleMap;
 type SubmittingData = { [key in UserInfoEditTitleMapKeys]?: string };
+// https://github.com/orgs/react-hook-form/discussions/7111#discussioncomment-8359671
+type FormData = UpdateUserSchemaType & { passConfirmResult: string };
 
 const UserInfoEditTitleMap = {
 	name: 'Update Name',
@@ -21,17 +23,20 @@ const UserInfoEditTitleMap = {
 function UserInfoEntry({ children, type }: { children: React.ReactNode; type: keyof typeof UserInfoEditTitleMap }) {
 	let title: string = UserInfoEditTitleMap[type];
 	let newPasswordInputRef = React.useRef<null | HTMLInputElement>(null);
+	let [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
+
+	let updateDialogState = React.useCallback(function (value: boolean) {
+		setDialogOpen(value);
+	}, []);
 
 	let {
 		register,
 		handleSubmit,
 		formState: { errors },
 		clearErrors,
-	} = useForm<UpdateUserSchemaType>({
+	} = useForm<FormData>({
 		resolver: zodResolver(UpdateUserSchema),
 	});
-
-	// TODO A way to show the password mismatch error and prevent the dialog from closing when Zod validation fails.
 
 	let { ref, ...rest } = register('password');
 	React.useImperativeHandle(ref, () => newPasswordInputRef.current);
@@ -49,6 +54,7 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 		if (response && 'errorMessage' in response) {
 			throw new Error(response.errorMessage);
 		}
+		updateDialogState(false);
 	};
 
 	let fieldSet: React.ReactNode;
@@ -113,7 +119,7 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 						/>
 						{errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
 					</div>
-					{errors.root}
+					{errors.passConfirmResult && <p>{errors.passConfirmResult.message}</p>}
 				</>
 			);
 			break;
@@ -122,7 +128,13 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 	return (
 		<div>
 			{children}
-			<EditUserInfo fieldSet={fieldSet} title={title} submitHandler={handleSubmit(onSubmit)}>
+			<EditUserInfo
+				fieldSet={fieldSet}
+				title={title}
+				submitHandler={handleSubmit(onSubmit)}
+				dialogOpen={dialogOpen}
+				updateDialogState={updateDialogState}
+			>
 				<button>Update</button>
 			</EditUserInfo>
 		</div>

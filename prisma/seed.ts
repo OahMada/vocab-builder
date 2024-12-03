@@ -25,8 +25,8 @@ async function main() {
 	for (const vocabEntry of vocabEntries) {
 		const newEntry = await prisma.vocabEntry.create({ data: vocabEntry });
 		console.log(`Created post with id: ${newEntry.id}`);
-		console.log('Seeding finished.');
 	}
+	console.log('Seeding finished.');
 }
 main()
 	.then(async () => {

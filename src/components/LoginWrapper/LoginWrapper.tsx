@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { SignInPageErrorParam } from '@auth/core/types';
+import { parseAsString, useQueryState } from 'nuqs';
 
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { signinErrors } from '@/constants';
@@ -13,13 +14,15 @@ import ErrorMsg from '@/components/ErrorMsg';
 
 function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorParam | 'default' | null }) {
 	let { updateError } = useErrorMessageContext();
+	// Clear error code in URL with Nuqs search params management
+	let setError = useQueryState('error', parseAsString.withDefault('').withOptions({ clearOnDefault: true }))[1];
 
 	React.useEffect(() => {
 		if (errorCode) {
-			// TODO prevent the error from reappearing
 			updateError(signinErrors[errorCode]);
+			setError('');
 		}
-	}, [errorCode, updateError]);
+	}, [errorCode, setError, updateError]);
 
 	return (
 		<div>

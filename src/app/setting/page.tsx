@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/auth';
@@ -7,6 +8,11 @@ import { UserInfo } from '@/types';
 import UserInfoEntry from '@/components/UserInfoEntry';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import ErrorMsg from '@/components/ErrorMsg';
+
+export const metadata: Metadata = {
+	title: 'Setting / Vocab Builder',
+	description: 'Change user settings.',
+};
 
 export default async function SettingPage() {
 	let session = await auth();

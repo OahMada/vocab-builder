@@ -2,13 +2,17 @@
 
 import * as React from 'react';
 import styled from 'styled-components';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 import ErrorMsg from '@/components/ErrorMsg';
 
 function UserInfo({ children }: { children: React.ReactNode }) {
+	let pathname = usePathname();
 	return (
 		<StyledDiv>
 			{children}
+			{pathname !== '/' && <Link href='/'>Back to home</Link>}
 			<ErrorMsg />
 		</StyledDiv>
 	);

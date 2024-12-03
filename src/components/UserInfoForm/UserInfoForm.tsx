@@ -2,11 +2,14 @@
 
 import * as React from 'react';
 import { useFormStatus } from 'react-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { signout } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 function UserInfoForm() {
+	let pathname = usePathname();
 	let { updateError } = useErrorMessageContext();
 	async function clientAction() {
 		let response = await signout();
@@ -17,7 +20,7 @@ function UserInfoForm() {
 
 	return (
 		<form action={clientAction}>
-			<button type='button'>Edit Info</button>
+			{pathname !== '/setting' && <Link href='/setting'>Edit Info</Link>}
 			<LogoutButton type='submit'>Logout</LogoutButton>
 		</form>
 	);

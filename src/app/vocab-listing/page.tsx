@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { SearchParams } from 'nuqs/server';
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
+import type { Metadata } from 'next';
 
 import { getVocabData } from '@/actions';
 import { ENTRIES_PER_PAGE } from '@/constants';
@@ -14,6 +14,11 @@ import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
 import SearchResults from '@/components/SearchResults';
 import VocabCount from '@/components/VocabCount';
+
+export const metadata: Metadata = {
+	title: 'Vocab Listing',
+	description: 'Examine the entire vocabulary collection.',
+};
 
 export default async function VocabListing({ searchParams }: { searchParams: Promise<SearchParams> }) {
 	let session = await auth();
@@ -36,7 +41,6 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 		<div>
 			<div>
 				<SearchVocab />
-				<Link href='/'>Back to home</Link>
 			</div>
 			<div>
 				<React.Suspense fallback={<p>Loading...</p>}>

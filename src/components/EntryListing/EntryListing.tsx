@@ -12,6 +12,7 @@ import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEn
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
 import ErrorMsg from '@/components/ErrorMsg';
+import ScrollArea from '@/components/ScrollArea';
 
 function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialCursor?: string; initialHaveMoreData: boolean; userId: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
@@ -63,14 +64,16 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 	return (
 		<>
 			<AccordionRoot type='single' defaultValue='item-1' collapsible>
-				{optimisticState.map((entry, index) => {
-					return <Entry key={entry.id} entry={entry} index={index} />;
-				})}
-				{haveMoreData && (
-					<div ref={scrollTrigger}>
-						<p>Loading...</p>
-					</div>
-				)}
+				<ScrollArea>
+					{optimisticState.map((entry, index) => {
+						return <Entry key={entry.id} entry={entry} index={index} />;
+					})}
+					{haveMoreData && (
+						<div ref={scrollTrigger}>
+							<p>Loading...</p>
+						</div>
+					)}
+				</ScrollArea>
 			</AccordionRoot>
 			<ErrorMsg />
 		</>

@@ -2,7 +2,7 @@
 
 import { revalidateTag, unstable_cache } from 'next/cache';
 // https://github.com/prisma/prisma/issues/6718#issuecomment-824893638
-import { ObjectId } from 'bson';
+// import { ObjectId } from 'bson';
 
 import prisma, { prismaErrorHandling, entrySelect } from '@/lib/db';
 import { auth } from '@/auth';
@@ -255,7 +255,8 @@ export var performVocabSearch: (searchTerm: unknown, userId: string) => Promise<
 								filter: [
 									{
 										equals: {
-											value: new ObjectId(userId),
+											// https://github.com/prisma/prisma/issues/15013#issuecomment-1381397966
+											value: { $oid: userId },
 											path: 'user_id',
 										},
 									},

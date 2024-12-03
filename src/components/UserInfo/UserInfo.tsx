@@ -7,12 +7,12 @@ import Link from 'next/link';
 
 import ErrorMsg from '@/components/ErrorMsg';
 
-function UserInfo({ children }: { children: React.ReactNode }) {
+function UserInfo({ children, isAuthenticated }: { children: React.ReactNode; isAuthenticated: boolean }) {
 	let pathname = usePathname();
 	return (
 		<StyledDiv>
 			{children}
-			{pathname !== '/' && <Link href='/'>Back to home</Link>}
+			{isAuthenticated && pathname !== '/' && <Link href='/'>Back to home</Link>}
 			<ErrorMsg />
 		</StyledDiv>
 	);

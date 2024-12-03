@@ -23,7 +23,7 @@ function ErrorMessageProvider({ children }: { children: React.ReactNode }) {
 export function useErrorMessageContext() {
 	let result = React.useContext(ErrorMessageContext);
 	if (!result) {
-		// TODO this could be the case when app first loads. but why only with searchResults component?
+		// TODO this could be the case when app first loads. but why only with searchResults component? It happens when I search and fetch all data at the same time. Wait until I have CSS to see if it persists.
 		throw new Error('useErrorMessageContext has to be used within <ErrorMessageContext.Provider>');
 	}
 	return result;

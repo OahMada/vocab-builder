@@ -15,7 +15,6 @@ function OAuthLogin() {
 	async function clientAction(formData: FormData) {
 		updateError('');
 		let rawFormData = formData.get('action');
-
 		let response = await socialLogin(rawFormData, callbackUrl ?? '');
 		if (response && 'errorMessage' in response) {
 			updateError(response.errorMessage);

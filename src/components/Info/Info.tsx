@@ -18,7 +18,7 @@ async function Info() {
 				<p>Build your vocabulary with ease.</p>
 			</div>
 			<ErrorMessageProvider>
-				<UserInfo>
+				<UserInfo isAuthenticated={!!session?.user}>
 					{session?.user ? (
 						<>
 							<h2>Hello, {session?.user?.name}</h2>

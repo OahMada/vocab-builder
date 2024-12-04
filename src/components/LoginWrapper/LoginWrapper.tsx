@@ -6,7 +6,7 @@ import { SignInPageErrorParam } from '@auth/core/types';
 import { parseAsString, useQueryState } from 'nuqs';
 
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
-import { signinErrors } from '@/constants';
+import { SIGNINERRORS } from '@/constants';
 
 import LoginForm from '@/components/LoginForm';
 import OAuthLogin from '@/components/OAuthLogin';
@@ -19,7 +19,7 @@ function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorPar
 
 	React.useEffect(() => {
 		if (errorCode) {
-			updateError(signinErrors[errorCode]);
+			updateError(SIGNINERRORS[errorCode]);
 			setError('');
 		}
 	}, [errorCode, setError, updateError]);

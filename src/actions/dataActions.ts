@@ -343,3 +343,52 @@ export var countVocab: (userId: string) => Promise<{ data: number } | { errorMes
 		tags: [VOCAB_LIST_VALIDATION_TAG],
 	}
 );
+
+export async function exportData(): Promise<{ data: string } | { errorMessage: string }> {
+	let session = await auth();
+	if (!session?.user) {
+		return {
+			errorMessage: 'Not authenticated.',
+		};
+	}
+	let { id: userId } = session.user;
+
+	let vocabData: VocabEntry[];
+	try {
+		vocabData = await prisma.vocabEntry.findMany({
+			where: { userId },
+			select: entrySelect,
+		});
+	} catch (error) {
+		return prismaErrorHandling(error);
+	}
+
+	let htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Exported Vocab Data</title>
+        </head>
+        <body>
+          <table>
+           ${vocabData
+							.map((entry) => {
+								return `<tr>
+								<td>${entry.sentencePlusPhoneticSymbols}</td>
+								<td>${entry.translation}</td>
+								<td>${entry.note}</td>
+							</tr>`;
+							})
+							.join('')}
+          </table>
+        </body>
+      </html>
+    `;
+
+	return {
+		data: htmlContent,
+	};
+}
+
+export type ExportDataReturnType = ReturnType<typeof exportData>;

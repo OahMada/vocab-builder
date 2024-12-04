@@ -19,7 +19,7 @@ export const VOCAB_LIST_VALIDATION_TAG = 'vocab-list';
 export const ENTRIES_PER_PAGE = 10;
 
 // https://github.com/nextauthjs/next-auth/blob/3ec06842682a31e53fceabca701a362abda1e7dd/packages/core/src/types.ts#L204
-export const signinErrors: Record<SignInPageErrorParam | 'default', string> = {
+export const SIGNINERRORS: Record<SignInPageErrorParam | 'default', string> = {
 	default: 'Unable to sign in.',
 	Signin: 'Try signing in with a different account.',
 	OAuthSignin: 'Try signing in with a different account.',

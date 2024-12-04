@@ -3,9 +3,10 @@ import type { Metadata } from 'next';
 
 import { auth } from '@/auth';
 
-import SignupWrapper from '@/components/SignupWrapper';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
-import LoggedInRedirect from '@/components/LoggedInRedirect';
+import PageRedirect from '@/components/PageRedirect';
+import SignupForm from '@/components/SignupForm';
+import ErrorMsg from '@/components/ErrorMsg';
 
 export const metadata: Metadata = {
 	title: 'Sign Up / Vocab Builder',
@@ -14,12 +15,13 @@ export const metadata: Metadata = {
 export default async function SignUpPage() {
 	let session = await auth();
 	if (session?.user) {
-		return <LoggedInRedirect />;
+		return <PageRedirect doneAction='login' redirectPage='/' />;
 	}
 
 	return (
 		<ErrorMessageProvider>
-			<SignupWrapper />
+			<SignupForm />
+			<ErrorMsg />
 		</ErrorMessageProvider>
 	);
 }

@@ -6,7 +6,7 @@ import { errorParamsCache } from '@/lib/nuqs';
 
 import LoginWrapper from '@/components/LoginWrapper';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
-import LoggedInRedirect from '@/components/LoggedInRedirect';
+import PageRedirect from '@/components/PageRedirect';
 
 export const metadata: Metadata = {
 	title: 'Sign In / Vocab Builder',
@@ -17,7 +17,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
 
 	let session = await auth();
 	if (session?.user) {
-		return <LoggedInRedirect />;
+		return <PageRedirect doneAction='login' redirectPage='/' />;
 	}
 	return (
 		<ErrorMessageProvider>

@@ -8,6 +8,7 @@ import { UserInfo } from '@/types';
 import UserInfoEntry from '@/components/UserInfoEntry';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import ErrorMsg from '@/components/ErrorMsg';
+import DeleteUser from '@/components/DeleteUser';
 
 export const metadata: Metadata = {
 	title: 'Setting / Vocab Builder',
@@ -48,7 +49,9 @@ export default async function SettingPage() {
 				</div>
 				<div>
 					<h2>Delete User</h2>
-					<button>Delete</button>
+					<DeleteUser>
+						<button>Delete User</button>
+					</DeleteUser>
 				</div>
 			</section>
 			<ErrorMsg />

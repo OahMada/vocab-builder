@@ -234,3 +234,47 @@ export async function updateUser(data: unknown): Promise<{ data: User } | { erro
 		errorMessage: 'Something went wrong on the server',
 	};
 }
+
+export async function deleteUser(): Promise<undefined | { errorMessage: string }> {
+	// authorization
+	let session = await auth();
+	if (!session?.user) {
+		return { errorMessage: 'Not authenticated.' };
+	}
+	let {
+		user: { id: userId },
+	} = session;
+
+	// delete actions
+	let deleteVocab = prisma.vocabEntry.deleteMany({
+		where: {
+			userId,
+		},
+	});
+
+	let deleteSession = prisma.session.deleteMany({
+		where: {
+			userId,
+		},
+	});
+
+	let deleteAccount = prisma.account.deleteMany({
+		where: {
+			userId,
+		},
+	});
+
+	let deleteUser = prisma.user.delete({
+		where: {
+			id: userId,
+		},
+	});
+
+	try {
+		await prisma.$transaction([deleteVocab, deleteSession, deleteAccount, deleteUser]);
+	} catch (error) {
+		return prismaErrorHandling(error);
+	}
+}
+
+export type DeleteUserReturnType = ReturnType<typeof deleteUser>;

@@ -51,7 +51,7 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 			submittingData.password = data.password;
 		}
 		let response = await updateUser(submittingData);
-		if (response && 'errorMessage' in response) {
+		if ('errorMessage' in response) {
 			throw new Error(response.errorMessage);
 		}
 		updateDialogState(false);

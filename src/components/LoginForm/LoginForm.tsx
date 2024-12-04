@@ -37,7 +37,7 @@ function LoginForm() {
 
 		let response = await promise!;
 
-		if (response && 'errorMessage' in response) {
+		if (response) {
 			updateError(response.errorMessage);
 			return;
 		} else {

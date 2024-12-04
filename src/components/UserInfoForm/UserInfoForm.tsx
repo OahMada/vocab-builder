@@ -13,7 +13,7 @@ function UserInfoForm() {
 	let { updateError } = useErrorMessageContext();
 	async function clientAction() {
 		let response = await signout();
-		if (response && 'errorMessage' in response) {
+		if (response) {
 			updateError(response.errorMessage);
 		}
 	}

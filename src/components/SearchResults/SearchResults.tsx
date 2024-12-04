@@ -14,9 +14,6 @@ async function SearchResults({ searchTerm }: { searchTerm: string }) {
 	}
 
 	let searchVocabData = await performVocabSearch(searchTerm, session.user.id);
-
-	console.log(searchVocabData);
-
 	if ('errorMessage' in searchVocabData) {
 		return <div>{searchVocabData.errorMessage}</div>;
 	}

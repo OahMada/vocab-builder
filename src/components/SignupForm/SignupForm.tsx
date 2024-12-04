@@ -40,6 +40,7 @@ function SignupForm() {
 		}
 
 		router.replace('/');
+		// TODO replace this with a delayed redirect
 	};
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>

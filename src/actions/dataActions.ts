@@ -363,31 +363,20 @@ export async function exportData(): Promise<{ data: string } | { errorMessage: s
 		return prismaErrorHandling(error);
 	}
 
-	let htmlContent = `
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <title>Exported Vocab Data</title>
-        </head>
-        <body>
-          <table>
-           ${vocabData
-							.map((entry) => {
-								return `<tr>
-								<td>${entry.sentencePlusPhoneticSymbols}</td>
-								<td>${entry.translation}</td>
-								<td>${entry.note}</td>
-							</tr>`;
-							})
-							.join('')}
-          </table>
-        </body>
-      </html>
-    `;
+	let data = `
+#separator:tab
+#html:true
+#columns:sentence\ttranslation\tnote
+#notetype:vocab
+${vocabData
+	.map((entry) => {
+		return `${entry.sentencePlusPhoneticSymbols}\t${entry.translation}\t${entry.note}\n`;
+	})
+	.join('')}
+`;
 
 	return {
-		data: htmlContent,
+		data,
 	};
 }
 

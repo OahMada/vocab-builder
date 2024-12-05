@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 
 import { signout } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import CustomLink from '@/components/CustomLink';
 
 function UserInfoForm() {
 	let pathname = usePathname();
@@ -20,7 +21,14 @@ function UserInfoForm() {
 
 	return (
 		<form action={clientAction}>
-			{pathname !== '/setting' && <Link href='/setting'>Edit Info</Link>}
+			{pathname !== '/setting' &&
+				(pathname === '/' ? (
+					<CustomLink href='/setting' prefetch={true}>
+						Edit Info
+					</CustomLink>
+				) : (
+					<Link href='/setting'>Edit Info</Link>
+				))}
 			<LogoutButton type='submit'>Logout</LogoutButton>
 		</form>
 	);

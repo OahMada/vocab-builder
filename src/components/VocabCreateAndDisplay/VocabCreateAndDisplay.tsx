@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Cookie from 'js-cookie';
-import Link from 'next/link';
 
 import { VocabEntry } from '@/types';
 
@@ -68,15 +67,9 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 				</ErrorMessageProvider>
 			</React.Suspense>
 			<div>
-				{sentence ? (
-					<Link href='/vocab-listing' prefetch={true}>
-						View All
-					</Link>
-				) : (
-					<CustomLink href='/vocab-listing' prefetch={true}>
-						View All
-					</CustomLink>
-				)}
+				<CustomLink href='/vocab-listing' prefetch={true}>
+					View All
+				</CustomLink>
 			</div>
 		</>
 	);

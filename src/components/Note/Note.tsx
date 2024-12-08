@@ -2,6 +2,9 @@ import * as React from 'react';
 
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
 import { NOTE_EDIT_MODE } from '@/constants';
+import Button from '@/components/Button';
+import ButtonGroup from '@/components/ButtonGroup';
+import TextArea from '@/components/TextArea';
 
 interface NoteProps {
 	note: string;
@@ -17,10 +20,10 @@ var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, up
 		valueToSave: editMode,
 	});
 	return (
-		<div>
+		<>
 			{editMode ? (
 				<>
-					<textarea
+					<TextArea
 						name='note'
 						value={note}
 						onChange={(e) => {
@@ -28,16 +31,20 @@ var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, up
 						}}
 						ref={forwardedRef}
 					/>
-					<button onClick={() => updateNote('')}>Clear</button>
-					<button onClick={() => setEditMode(false)}>Done</button>
+					<ButtonGroup>
+						<Button onClick={() => updateNote('')}>Clear</Button>
+						<Button onClick={() => setEditMode(false)}>Done</Button>
+					</ButtonGroup>
 				</>
 			) : (
 				<>
-					<p>{note ? note : 'Empty Note.'}</p>
-					<button onClick={() => setEditMode(true)}>Edit Note</button>
+					{note && <p>{note}</p>}
+					<ButtonGroup>
+						<Button onClick={() => setEditMode(true)}>Edit Note</Button>
+					</ButtonGroup>
 				</>
 			)}
-		</div>
+		</>
 	);
 });
 

@@ -25,10 +25,15 @@ import useLocalStoragePersist, { deleteAppDataEntry } from '@/hooks/useLocalStor
 import { PhoneticSymbols } from '@/types';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
-import SentenceTranslation from '@/components/SentenceTranslation';
+import SentenceTranslation, { TranslationFallback } from '@/components/SentenceTranslation';
 import Note from '@/components/Note';
 import Sentence from '@/components/Sentence';
 import ErrorMsg from '@/components/ErrorMsg';
+import ButtonGroup from '@/components/ButtonGroup';
+import Button from '@/components/Button';
+import CardPiece from './CardPiece';
+import HeaderTag from '@/components/HeaderTag';
+import Card from '@/components/Card';
 
 interface EditingState {
 	noteEditing: boolean;
@@ -201,62 +206,75 @@ function SubmitNewCollectionEntry({
 
 	let translationNode: React.ReactNode;
 	if (isLoading || isValidating) {
-		translationNode = <p>Translating...</p>;
+		translationNode = (
+			<TranslationFallback>
+				<p>Translating...</p>
+			</TranslationFallback>
+		);
 	} else if (swrError) {
-		translationNode = <p>Error occurred during the process; you can hit the button below to try again.</p>;
+		translationNode = (
+			<TranslationFallback>
+				<p>Error occurred during the process; you can hit the button below to try again.</p>
+			</TranslationFallback>
+		);
 	} else if (translation) {
 		translationNode = (
 			<SentenceTranslation
 				updateTranslation={(translation: string) => setTranslation(translation)}
 				translation={translation}
 				ref={handleUpdateEditingState.bind(null, 'translationEditing')}
+				retryBtn={
+					<Button
+						onClick={() => {
+							updateError(''); // Otherwise, the submit button would stay disabled.
+							resetTranslation();
+							mutate([FETCH_TRANSLATE_ROUTE, sentence]);
+						}}
+					>
+						Re-translate
+					</Button>
+				}
 			/>
 		);
 	}
 
 	return (
-		<div>
-			<div>
-				<h2>New Vocabulary Entry</h2>
+		<Card>
+			<CardPiece>
+				<HeaderTag level={2}>New Vocabulary Entry</HeaderTag>
 				{/* There's some loading because I've setup PopOver component to lazy load. */}
 				<React.Suspense fallback={<p>Loading...</p>}>
 					<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />
 				</React.Suspense>
-				<h2>Translation</h2>
+			</CardPiece>
+			<CardPiece>
+				<HeaderTag level={3}>Translation</HeaderTag>
 				{translationNode}
-				<h3>Note</h3>
+			</CardPiece>
+			<CardPiece>
+				<HeaderTag level={3}>Note</HeaderTag>
 				<Note
 					note={note === null ? '' : note}
 					updateNote={(note: string) => setNote(note)}
 					ref={handleUpdateEditingState.bind(null, 'noteEditing')}
 				/>
-			</div>
-			<div>
-				<button
-					onClick={() => {
-						updateError(''); // Otherwise, the submit button would stay disabled.
-						resetTranslation();
-						mutate([FETCH_TRANSLATE_ROUTE, sentence]);
-					}}
-					disabled={isLoading || isValidating}
-				>
-					Retry Translation
-				</button>
-				<button
+			</CardPiece>
+			<ButtonGroup>
+				<Button
 					onClick={() => {
 						reset(false);
 					}}
 				>
 					Cancel
-				</button>
+				</Button>
 				{!isLoading && (
-					<button onClick={handleSubmitNewEntry} disabled={errorMsg !== '' || isValidating || isEditing}>
+					<Button onClick={handleSubmitNewEntry} disabled={errorMsg !== '' || isValidating || isEditing}>
 						{isPending ? 'Submitting...' : 'Finish'}
-					</button>
+					</Button>
 				)}
-			</div>
+			</ButtonGroup>
 			<ErrorMsg />
-		</div>
+		</Card>
 	);
 }
 

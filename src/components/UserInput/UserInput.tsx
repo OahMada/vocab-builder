@@ -1,5 +1,4 @@
 import * as React from 'react';
-import styled from 'styled-components';
 
 import { USER_INPUT_SENTENCE } from '@/constants';
 
@@ -11,6 +10,11 @@ import useKeyboard from '@/hooks/useKeyboard';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import ErrorMsg from '@/components/ErrorMsg';
+import ButtonGroup from '@/components/ButtonGroup';
+import Button from '@/components/Button';
+import TextArea from '@/components/TextArea';
+import HeaderTag from '@/components/HeaderTag';
+import Card from '@/components/Card';
 
 function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: string) => void; clearUserInput: boolean }) {
 	let [userInput, setUserInput] = React.useState<null | string>(null);
@@ -76,9 +80,9 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 
 	return (
 		<>
-			<StyledForm onSubmit={handleSubmit}>
-				<h1>Enter Sentence: </h1>
-				<textarea
+			<Card onSubmit={handleSubmit} as='form'>
+				<HeaderTag level={2}>Enter Sentence: </HeaderTag>
+				<TextArea
 					value={userInput ?? ''}
 					onChange={(e) => {
 						setUserInput(e.target.value);
@@ -89,40 +93,24 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					name='user-input' // Browser would complain if this is omitted.
 					autoFocus={true}
 				/>
-				<div className='btns'>
-					<button type='button' onClick={handleGetClipboard}>
+				<ButtonGroup>
+					<Button type='button' onClick={handleGetClipboard}>
 						Get Clipboard
-					</button>
-					<button
+					</Button>
+					<Button
 						type='button'
 						onClick={() => {
 							setUserInput('');
 						}}
 					>
 						Clear
-					</button>
-					<button>{isLoading ? 'Submitting' : 'Submit'}</button>
-				</div>
-			</StyledForm>
+					</Button>
+					<Button>{isLoading ? 'Submitting' : 'Submit'}</Button>
+				</ButtonGroup>
+			</Card>
 			<ErrorMsg />
 		</>
 	);
 }
 
 export default UserInput;
-
-var StyledForm = styled.form`
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-
-	textarea {
-		resize: none;
-		width: 100%;
-	}
-
-	.btns {
-		display: flex;
-		justify-content: flex-end;
-	}
-`;

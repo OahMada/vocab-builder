@@ -1,14 +1,18 @@
 import * as React from 'react';
 
 import useLocalStoragePersist from '@/hooks/useLocalStoragePersist';
+import ButtonGroup from '@/components/ButtonGroup';
+import Button from '@/components/Button';
+import TextArea from '@/components/TextArea';
 
 interface SentenceTranslationProps {
 	updateTranslation: (translation: string) => void;
 	translation: string;
+	retryBtn: React.ReactNode;
 }
 
 var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslationProps>(function (
-	{ updateTranslation, translation },
+	{ updateTranslation, translation, retryBtn },
 	forwardedRef
 ) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
@@ -20,42 +24,60 @@ var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslat
 	});
 
 	return (
-		<div>
+		<>
 			{editMode ? (
 				<>
-					<textarea
+					<TextArea
 						value={translation}
 						onChange={(e) => {
 							updateTranslation(e.target.value);
 						}}
 						name='translation-text'
 						ref={forwardedRef}
+						rows={2}
 					/>
-					<button
-						type='button'
-						onClick={() => {
-							setEditMode(false);
-						}}
-					>
-						Done
-					</button>
+					<ButtonGroup className='trans-btn'>
+						<Button
+							type='button'
+							onClick={() => {
+								setEditMode(false);
+							}}
+						>
+							Done
+						</Button>
+					</ButtonGroup>
 				</>
 			) : (
 				<>
 					<p>{translation}</p>
-					<button
-						onClick={() => {
-							setEditMode(true);
-						}}
-					>
-						Edit Translation
-					</button>
+					<ButtonGroup>
+						{retryBtn}
+						<Button
+							onClick={() => {
+								setEditMode(true);
+							}}
+						>
+							Edit
+						</Button>
+					</ButtonGroup>
 				</>
 			)}
-		</div>
+		</>
 	);
 });
 
 SentenceTranslation.displayName = 'SentenceTranslation';
 
 export default SentenceTranslation;
+
+export function TranslationFallback({ children }: { children: React.ReactNode }) {
+	return (
+		<>
+			{children}
+			<ButtonGroup>
+				<Button disabled={true}>Retry</Button>
+				<Button disabled={true}>Edit</Button>
+			</ButtonGroup>
+		</>
+	);
+}

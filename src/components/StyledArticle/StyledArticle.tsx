@@ -8,6 +8,8 @@ var StyledArticle = styled.article`
 	display: flex;
 	flex-direction: column;
 	gap: 32px;
+
+	height: 100vh;
 `;
 
 export default function StyledArticleWrapper({ children }: { children: React.ReactNode }) {

@@ -6,7 +6,7 @@ import { SITE_TITLE, SITE_DESC } from '@/constants';
 
 import './globals.css';
 
-import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry';
+// import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry';
 import ToastProvider from '@/components/ToastProvider';
 import MainContentWrapper from '@/components/MainContentWrapper';
 import Info from '@/components/Info';
@@ -24,16 +24,16 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body>
-				<StyledComponentsRegistry>
-					<ToastProvider>
-						<SessionProvider>
-							<MainContentWrapper>
-								<Info />
-								<NuqsAdapter>{children}</NuqsAdapter>
-							</MainContentWrapper>
-						</SessionProvider>
-					</ToastProvider>
-				</StyledComponentsRegistry>
+				{/* <StyledComponentsRegistry> */}
+				<ToastProvider>
+					<SessionProvider>
+						<MainContentWrapper>
+							<Info />
+							<NuqsAdapter>{children}</NuqsAdapter>
+						</MainContentWrapper>
+					</SessionProvider>
+				</ToastProvider>
+				{/* </StyledComponentsRegistry> */}
 			</body>
 		</html>
 	);

@@ -4,7 +4,7 @@ import * as React from 'react';
 import styled from 'styled-components';
 
 interface ButtonProps extends React.ComponentPropsWithoutRef<'button'> {
-	children: string;
+	children: React.ReactNode;
 	className?: string;
 }
 

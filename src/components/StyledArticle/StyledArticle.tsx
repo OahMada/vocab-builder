@@ -7,7 +7,7 @@ var StyledArticle = styled.article`
 	grid-column: 3 / 4;
 	display: flex;
 	flex-direction: column;
-	gap: 32px;
+	gap: var(--gap-big);
 
 	height: 100vh;
 `;

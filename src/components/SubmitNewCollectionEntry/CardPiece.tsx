@@ -17,7 +17,7 @@ var CardPiece = styled.div`
 		padding: calc(var(--textarea-padding) + 1px);
 		max-width: 100%;
 		min-height: calc(2rem * 1.5 + 2 * var(--textarea-padding) + 2px); // to be the same height as textarea
-		background-color: lightgray;
+		background-color: #eee;
 		border-radius: var(--border-radius-normal);
 	}
 

@@ -2,6 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useSWRConfig } from 'swr';
 import { produce } from 'immer';
+import styled from 'styled-components';
 
 import { FETCH_PHONETIC_SYMBOL_ROUTE, PHONETIC_SYMBOLS } from '@/constants';
 import useSWRImmutable from 'swr/immutable';
@@ -11,6 +12,7 @@ import { PhoneticSymbols } from '@/types';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import { PopoverContent, PopoverRoot, PopoverTrigger } from '@/components/PopOver';
+import Button from '@/components/Button';
 
 var fetcher = async (url: string, word: string): Promise<string> => {
 	let response = await axios.post(url, {
@@ -70,7 +72,7 @@ let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentDa
 						<React.Fragment key={index}>
 							{phoneticSymbols && phoneticSymbols[segment] ? (
 								<>
-									{segment}
+									{segment}&nbsp;
 									<PhoneticSymbol symbol={phoneticSymbols[segment]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(segment)} />
 								</>
 							) : (
@@ -124,10 +126,10 @@ function Word({
 	return (
 		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
 			<PopoverTrigger asChild>
-				<button aria-label={`Fetch the phonetic symbol for the word ${triggerWord}`}>{triggerWord}</button>
+				<SentenceWordButton aria-label={`Fetch the phonetic symbol for the word ${triggerWord}`}>{triggerWord}</SentenceWordButton>
 			</PopoverTrigger>
 			<PopoverContent>
-				<button
+				<Button
 					onClick={() => {
 						setShouldFetch(true);
 						if (error) {
@@ -137,7 +139,7 @@ function Word({
 					}}
 				>
 					{isLoading ? 'Loading' : 'Get IPA'}
-				</button>
+				</Button>
 			</PopoverContent>
 		</PopoverRoot>
 	);
@@ -149,22 +151,37 @@ function PhoneticSymbol({ symbol, removeOnePhoneticSymbol }: { symbol: string; r
 	return (
 		<PopoverRoot open={popOverOpen} onOpenChange={(open) => setPopOverOpen(open)}>
 			<PopoverTrigger asChild>
-				<button>
+				<SentencePhoneticSymbolButton>
 					<small>
 						<code> {` ${symbol} `}</code>
 					</small>
-				</button>
+				</SentencePhoneticSymbolButton>
 			</PopoverTrigger>
 			<PopoverContent>
-				<button
+				<Button
 					onClick={() => {
 						removeOnePhoneticSymbol();
 						setPopOverOpen(false);
 					}}
 				>
 					Remove
-				</button>
+				</Button>
 			</PopoverContent>
 		</PopoverRoot>
 	);
 }
+
+var SentenceWordButton = styled(Button)`
+	border-style: none;
+	padding: 3px 5px;
+	display: inline-block;
+	box-shadow: 1px 0.5px 4px hsl(10deg 0% 0% / 0.2);
+	cursor: pointer;
+	background-color: unset;
+	line-height: 1.5;
+	margin: 3px 0;
+`;
+
+var SentencePhoneticSymbolButton = styled(SentenceWordButton)`
+	box-shadow: 0.5px 1px 2px hsl(10deg 0% 0% / 0.2);
+`;

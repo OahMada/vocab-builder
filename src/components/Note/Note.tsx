@@ -11,7 +11,7 @@ interface NoteProps {
 	updateNote: (note: string) => void;
 }
 
-var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, updateNote }, forwardedRef) {
+var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function Note({ note, updateNote }, forwardedRef) {
 	let [editMode, setEditMode] = React.useState<boolean | null>(null);
 	useLocalStoragePersist<boolean>({
 		defaultValue: false,
@@ -47,7 +47,5 @@ var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function ({ note, up
 		</>
 	);
 });
-
-Note.displayName = 'Note';
 
 export default Note;

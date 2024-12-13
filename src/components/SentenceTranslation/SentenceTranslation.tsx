@@ -11,7 +11,7 @@ interface SentenceTranslationProps {
 	retryBtn: React.ReactNode;
 }
 
-var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslationProps>(function (
+var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslationProps>(function SentenceTranslation(
 	{ updateTranslation, translation, retryBtn },
 	forwardedRef
 ) {
@@ -65,8 +65,6 @@ var SentenceTranslation = React.forwardRef<HTMLTextAreaElement, SentenceTranslat
 		</>
 	);
 });
-
-SentenceTranslation.displayName = 'SentenceTranslation';
 
 export default SentenceTranslation;
 

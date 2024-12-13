@@ -15,4 +15,5 @@ var StyledTextArea = styled.textarea`
 	width: 100%;
 	display: block;
 	border-radius: var(--border-radius-normal);
+	background-color: transparent;
 `;

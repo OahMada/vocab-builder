@@ -10,6 +10,9 @@ import { RawFormData } from '@/types';
 import DeleteEntry from '@/components/DeleteEntry';
 import EditEntry from '@/components/EditEntry';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/Accordion';
+import ButtonGroup from '@/components/ButtonGroup';
+import Button from '@/components/Button';
+import HeaderTag from '@/components/HeaderTag';
 
 function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
@@ -46,19 +49,19 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 
 	return (
 		<AccordionItem value={`item-${index + 1}`}>
-			<AccordionTrigger>{html}</AccordionTrigger>
+			<AccordionTrigger asChild={true}>{html}</AccordionTrigger>
 			<AccordionContent>
 				<div>
-					<h2>Translation: </h2>
+					{note && <HeaderTag level={4}>Translation: </HeaderTag>}
 					<p>{translation}</p>
 				</div>
 				{note && (
 					<div>
-						<h2>Note: </h2>
+						<HeaderTag level={4}>Note: </HeaderTag>
 						<p>{note}</p>
 					</div>
 				)}
-				<div>
+				<ButtonGroup>
 					<EditEntry
 						handleEditEntry={handleEditEntry}
 						fieldSet={
@@ -74,12 +77,12 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 							</>
 						}
 					>
-						<button>Edit</button>
+						<Button>Edit</Button>
 					</EditEntry>
 					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
-						<button>Delete</button>
+						<Button>Delete</Button>
 					</DeleteEntry>
-				</div>
+				</ButtonGroup>
 			</AccordionContent>
 		</AccordionItem>
 	);

@@ -4,6 +4,9 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
+import styled from 'styled-components';
+
+import Button from '@/components/Button';
 
 type Ref = HTMLAnchorElement;
 interface CustomLinkProps extends React.ComponentPropsWithoutRef<'a'> {
@@ -13,7 +16,7 @@ interface CustomLinkProps extends React.ComponentPropsWithoutRef<'a'> {
 	prefetch: boolean;
 }
 
-var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function ({ href, children, prefetch, ...props }, forwardRef) {
+var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function CustomLink({ href, children, prefetch, ...props }, forwardRef) {
 	let router = useRouter();
 
 	React.useEffect(() => {
@@ -28,12 +31,17 @@ var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function ({ href, childr
 	};
 
 	return (
-		<a href={href} onClick={handleClick} ref={forwardRef} {...props}>
-			{children}
-		</a>
+		<Button>
+			<StyledA href={href} onClick={handleClick} ref={forwardRef} {...props}>
+				{children}
+			</StyledA>
+		</Button>
 	);
 });
 
-CustomLink.displayName = 'CustomLink';
-
 export default CustomLink;
+
+var StyledA = styled.a`
+	text-decoration: none;
+	color: black;
+`;

@@ -241,7 +241,7 @@ function SubmitNewCollectionEntry({
 	return (
 		<Card>
 			<CardPiece>
-				<HeaderTag level={2}>New Vocabulary Entry</HeaderTag>
+				<HeaderTag level={2}>Sentence</HeaderTag>
 				{/* There's some loading because I've setup PopOver component to lazy load. */}
 				<React.Suspense fallback={<p>Loading...</p>}>
 					<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />

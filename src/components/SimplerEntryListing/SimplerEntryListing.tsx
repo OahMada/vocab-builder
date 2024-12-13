@@ -12,7 +12,7 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
 
 	if (trim) {
-		optimisticState = optimisticState.slice(0, 5);
+		optimisticState = optimisticState.slice(0, 4);
 	}
 
 	return (

@@ -49,7 +49,7 @@ export var AccordionItem = styled(Accordion.Item)`
 `;
 
 var StyledHeader = styled(Accordion.Header)`
-	padding: var(--card-padding);
+	padding: var(--padding-normal);
 
 	&[data-state='open'] {
 		border-bottom: 1px solid;
@@ -78,6 +78,6 @@ var StyledContent = styled(Accordion.Content)`
 	gap: var(--gap-normal);
 
 	&[data-state='open'] {
-		padding: var(--card-padding);
+		padding: var(--padding-normal);
 	}
 `;

@@ -13,6 +13,7 @@ import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/
 import ButtonGroup from '@/components/ButtonGroup';
 import Button from '@/components/Button';
 import HeaderTag from '@/components/HeaderTag';
+import TextArea from '@/components/TextArea';
 
 function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 	let { note, sentencePlusPhoneticSymbols, translation, id } = entry;
@@ -66,14 +67,14 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 						handleEditEntry={handleEditEntry}
 						fieldSet={
 							<>
-								<fieldset>
-									<label htmlFor='translation'>Translation</label>
-									<textarea name='translation' id='translation' defaultValue={translation} />
-								</fieldset>
-								<fieldset>
-									<label htmlFor='note'>Note</label>
-									<textarea name='note' id='note' defaultValue={note} />
-								</fieldset>
+								<div>
+									<label htmlFor='translation'>Translation:</label>
+									<TextArea name='translation' id='translation' defaultValue={translation} />
+								</div>
+								<div>
+									<label htmlFor='note'>Note:</label>
+									<TextArea name='note' id='note' defaultValue={note} />
+								</div>
 							</>
 						}
 					>

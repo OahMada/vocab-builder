@@ -15,6 +15,8 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 		optimisticState = optimisticState.slice(0, 4);
 	}
 
+	// TODO the case of empty list
+
 	return (
 		<>
 			<AccordionRoot type='single' defaultValue='item-1' collapsible>

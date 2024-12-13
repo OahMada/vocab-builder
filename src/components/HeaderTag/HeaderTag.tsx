@@ -21,10 +21,7 @@ var StyledTag = styled.h1<{ $level: number }>`
 					line-height: var(--header-height);
 				`;
 			case 3:
-				return css`
-					font-size: var(--font-big);
-					line-height: var(--header-height);
-				`;
+				return H3Styles;
 			case 1:
 				return css`
 					font-size: var(--font-biggest);
@@ -32,4 +29,9 @@ var StyledTag = styled.h1<{ $level: number }>`
 				`;
 		}
 	}}
+`;
+
+export var H3Styles = css`
+	font-size: var(--font-big);
+	line-height: var(--header-height);
 `;

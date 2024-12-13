@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import styled from 'styled-components';
 
 import { UpdateVocabEntryReturnType } from '@/actions';
 import { RawFormData } from '@/types';
@@ -9,6 +10,8 @@ import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEn
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import { DialogContent, DialogRoot, DialogTrigger } from '@/components/Dialog';
+import Button from '@/components/Button';
+import ButtonGroup from '@/components/ButtonGroup';
 
 function EditEntry({
 	children,
@@ -53,14 +56,26 @@ function EditEntry({
 	return (
 		<DialogRoot open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent title='Edit Vocab Entry' description='You can only update the translation and note of an entry.'>
-				<form action={clientAction}>
+			<DialogContent title='Edit Vocab Entry' description='You can update the translation and note of an entry.'>
+				<StyledForm action={clientAction}>
 					{fieldSet}
-					<button>{isPending ? 'Saving...' : 'Save'}</button>
-				</form>
+					<ButtonGroup>
+						<Button>{isPending ? 'Saving...' : 'Save'}</Button>
+					</ButtonGroup>
+				</StyledForm>
 			</DialogContent>
 		</DialogRoot>
 	);
 }
 
 export default EditEntry;
+
+var StyledForm = styled.form`
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap-small);
+
+	label {
+		font-weight: bold;
+	}
+`;

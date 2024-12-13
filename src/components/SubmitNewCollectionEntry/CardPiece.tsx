@@ -10,21 +10,21 @@ var CardPiece = styled.div`
 
 	position: relative;
 	border: 1px solid;
-	padding: var(--card-padding);
+	padding: var(--padding-normal);
 	border-radius: var(--border-radius-normal);
 
 	p {
-		padding: calc(var(--textarea-padding) + 1px);
+		padding: calc(var(--padding-small) + 1px);
 		max-width: 100%;
-		min-height: calc(2rem * 1.5 + 2 * var(--textarea-padding) + 2px); // to be the same height as textarea
+		min-height: calc(2rem * 1.5 + 2 * var(--padding-small) + 2px); // to be the same height as textarea
 		background-color: #eee;
 		border-radius: var(--border-radius-normal);
 	}
 
 	${ButtonGroup} {
 		position: absolute;
-		right: var(--card-padding);
-		top: var(--card-padding);
+		right: var(--padding-normal);
+		top: var(--padding-normal);
 	}
 `;
 

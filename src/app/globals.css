@@ -77,8 +77,9 @@ body {
 	--gap-small: 5px;
 	--gap-extra-small: 3px;
 
-	--card-padding: 10px;
-	--textarea-padding: 5px;
+	--padding-big: 1.5rem;
+	--padding-normal: 10px;
+	--padding-small: 5px;
 
 	--border-radius-big: 10px;
 	--border-radius-normal: 5px;

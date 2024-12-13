@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 var Card = styled.div`
-	padding: var(--card-padding) 0;
+	padding: var(--padding-normal) 0;
 
 	display: flex;
 	flex-direction: column;

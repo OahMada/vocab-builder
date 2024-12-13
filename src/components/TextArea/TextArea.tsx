@@ -11,7 +11,7 @@ export default TextArea;
 
 var StyledTextArea = styled.textarea`
 	resize: none;
-	padding: var(--textarea-padding);
+	padding: var(--padding-small);
 	width: 100%;
 	display: block;
 	border-radius: var(--border-radius-normal);

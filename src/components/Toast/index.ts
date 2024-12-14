@@ -2,5 +2,8 @@
 
 import dynamic from 'next/dynamic';
 
-let Toast = dynamic(() => import('./Toast'));
+var Toast = dynamic(() => import('./Toast'));
+var ToastProvider = dynamic(() => import('./ToastProvider'));
+
+export { ToastProvider };
 export default Toast;

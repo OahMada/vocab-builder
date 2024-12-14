@@ -105,7 +105,7 @@ function UserInput({ updateSentence, clearUserInput }: { updateSentence: (text: 
 					>
 						Clear
 					</Button>
-					<Button>{isLoading ? 'Submitting' : 'Submit'}</Button>
+					<Button disabled={isLoading}>{isLoading ? 'Submitting' : 'Submit'}</Button>
 				</ButtonGroup>
 			</Card>
 			<ErrorMsg />

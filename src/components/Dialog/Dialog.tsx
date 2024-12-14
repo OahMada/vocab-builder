@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import styled from 'styled-components';
 import { X as CloseIcon } from 'react-feather';
 
-import { H3Styles, DialogOverlayStyles, DialogContentStyles, DialogDescriptionStyles } from '@/lib/styled';
+import { h3Styles, dialogOverlayStyles, dialogContentStyles, dialogDescriptionStyles, closeIconStyles } from '@/lib/styled';
 import Button from '@/components/Button';
 
 type ContentElement = React.ElementRef<typeof Dialog.Content>;
@@ -36,28 +36,21 @@ export var DialogRoot = Dialog.Root;
 export var DialogTrigger = Dialog.Trigger;
 
 var StyledOverlay = styled(Dialog.Overlay)`
-	${DialogOverlayStyles}
+	${dialogOverlayStyles}
 `;
 
 var StyledContent = styled(Dialog.Content)`
-	${DialogContentStyles}
+	${dialogContentStyles}
 `;
 
 var StyledDescription = styled(Dialog.Description)`
-	${DialogDescriptionStyles}
+	${dialogDescriptionStyles}
 `;
 
 var StyledTitle = styled(Dialog.Title)`
-	${H3Styles}
+	${h3Styles}
 `;
 
 var StyledCloseBtn = styled(Button)`
-	border: none;
-	background-color: unset;
-
-	position: absolute;
-	top: var(--padding-big);
-	right: var(--padding-big);
-
-	cursor: pointer;
+	${closeIconStyles}
 `;

@@ -7,7 +7,7 @@ import { SITE_TITLE, SITE_DESC } from '@/constants';
 import './globals.css';
 
 import StyledComponentsRegistry from '@/lib/StyledComponentsRegistry';
-import ToastProvider from '@/components/ToastProvider';
+import { ToastProvider } from '@/components/Toast';
 import MainContentWrapper from '@/components/MainContentWrapper';
 import Info from '@/components/Info';
 

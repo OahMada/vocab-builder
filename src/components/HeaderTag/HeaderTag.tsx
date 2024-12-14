@@ -1,7 +1,7 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
 
-import { H3Styles } from '@/lib/styled';
+import { h3Styles } from '@/lib/styled';
 
 function HeaderTag({ children, level }: { children: React.ReactNode; level: number }) {
 	let tagName = `h${level}`;
@@ -23,7 +23,7 @@ var StyledTag = styled.h1<{ $level: number }>`
 					line-height: var(--header-height);
 				`;
 			case 3:
-				return H3Styles;
+				return h3Styles;
 			case 1:
 				return css`
 					font-size: var(--font-biggest);

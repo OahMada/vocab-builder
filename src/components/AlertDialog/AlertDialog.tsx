@@ -2,7 +2,7 @@ import React from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import styled from 'styled-components';
 
-import { DialogOverlayStyles, DialogContentStyles, H3Styles, DialogDescriptionStyles } from '@/lib/styled';
+import { dialogOverlayStyles, dialogContentStyles, h3Styles, dialogDescriptionStyles } from '@/lib/styled';
 
 type ContentElement = React.ElementRef<typeof AlertDialog.Content>;
 interface ContentProps extends React.ComponentPropsWithoutRef<typeof AlertDialog.Content> {
@@ -31,17 +31,17 @@ export var AlertDialogCancel = AlertDialog.Cancel;
 export var AlertDialogAction = AlertDialog.Action;
 
 var StyledOverlay = styled(AlertDialog.Overlay)`
-	${DialogOverlayStyles}
+	${dialogOverlayStyles}
 `;
 
 var StyledContent = styled(AlertDialog.Content)`
-	${DialogContentStyles}
+	${dialogContentStyles}
 `;
 
 var StyledTitle = styled(AlertDialog.Title)`
-	${H3Styles}
+	${h3Styles}
 `;
 
 var StyledDescription = styled(AlertDialog.Description)`
-	${DialogDescriptionStyles}
+	${dialogDescriptionStyles}
 `;

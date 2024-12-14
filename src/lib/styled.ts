@@ -1,18 +1,18 @@
 import { css } from 'styled-components';
 
-export var H3Styles = css`
+export var h3Styles = css`
 	font-size: var(--font-big);
 	line-height: var(--header-height);
 `;
 
-export var DialogOverlayStyles = css`
+export var dialogOverlayStyles = css`
 	position: fixed;
 	inset: 0;
 	background-color: gray;
 	opacity: 0.9;
 `;
 
-export var DialogContentStyles = css`
+export var dialogContentStyles = css`
 	background-color: white;
 
 	position: fixed;
@@ -24,6 +24,15 @@ export var DialogContentStyles = css`
 	padding: var(--padding-big);
 `;
 
-export var DialogDescriptionStyles = css`
+export var dialogDescriptionStyles = css`
 	margin-bottom: 10px;
+`;
+
+export var closeIconStyles = css`
+	border: none;
+	background-color: unset;
+
+	position: absolute;
+	top: var(--padding-big);
+	right: var(--padding-big);
 `;

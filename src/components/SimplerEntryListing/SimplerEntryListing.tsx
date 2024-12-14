@@ -12,7 +12,7 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
 
 	if (trim) {
-		optimisticState = optimisticState.slice(0, 4);
+		optimisticState = optimisticState.slice(0, 5);
 	}
 
 	// TODO the case of empty list

@@ -7,6 +7,8 @@ import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEn
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import { AlertDialogCancel, AlertDialogRoot, AlertDialogTrigger, AlertDialogContent } from '@/components/AlertDialog';
+import ButtonGroup from '../ButtonGroup';
+import Button from '../Button';
 
 function DeleteEntry({
 	children,
@@ -47,14 +49,14 @@ function DeleteEntry({
 			<AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
 			<AlertDialogContent
 				title='Are you sure you want to delete this sentence?'
-				description='You will have to add the sentence again later if needed.'
+				description='You will have to add the sentence again if needed later.'
 			>
-				<form style={{ display: 'flex', gap: 25, justifyContent: 'flex-end' }} action={clientAction}>
+				<ButtonGroup as='form' action={clientAction}>
 					<AlertDialogCancel asChild>
-						<button type='button'>Cancel</button>
+						<Button type='button'>Cancel</Button>
 					</AlertDialogCancel>
-					<button>{isPending ? 'Deleting' : 'Delete'}</button>
-				</form>
+					<Button>{isPending ? 'Deleting...' : 'Delete'}</Button>
+				</ButtonGroup>
 			</AlertDialogContent>
 		</AlertDialogRoot>
 	);

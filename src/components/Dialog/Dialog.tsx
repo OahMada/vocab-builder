@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import styled from 'styled-components';
 import { X as CloseIcon } from 'react-feather';
 
-import { H3Styles } from '@/components/HeaderTag';
+import { H3Styles, DialogOverlayStyles, DialogContentStyles, DialogDescriptionStyles } from '@/lib/styled';
 import Button from '@/components/Button';
 
 type ContentElement = React.ElementRef<typeof Dialog.Content>;
@@ -18,7 +18,7 @@ export var DialogContent = React.forwardRef<ContentElement, ContentProps>(({ chi
 	<Dialog.Portal>
 		<StyledOverlay />
 		<StyledContent {...props} ref={forwardedRef}>
-			<StyledTitle as='h3'>{title}</StyledTitle>
+			<StyledTitle>{title}</StyledTitle>
 			{description && <StyledDescription>{description}</StyledDescription>}
 			{children}
 			<Dialog.Close asChild>
@@ -36,26 +36,15 @@ export var DialogRoot = Dialog.Root;
 export var DialogTrigger = Dialog.Trigger;
 
 var StyledOverlay = styled(Dialog.Overlay)`
-	position: fixed;
-	inset: 0;
-	background-color: gray;
-	opacity: 0.9;
+	${DialogOverlayStyles}
 `;
 
 var StyledContent = styled(Dialog.Content)`
-	background-color: white;
-
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-
-	width: 60vw;
-	padding: var(--padding-big);
+	${DialogContentStyles}
 `;
 
 var StyledDescription = styled(Dialog.Description)`
-	margin-bottom: 10px;
+	${DialogDescriptionStyles}
 `;
 
 var StyledTitle = styled(Dialog.Title)`

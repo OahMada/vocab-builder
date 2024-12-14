@@ -63,26 +63,30 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 					</div>
 				)}
 				<ButtonGroup>
-					<EditEntry
-						handleEditEntry={handleEditEntry}
-						fieldSet={
-							<>
-								<div>
-									<label htmlFor='translation'>Translation:</label>
-									<TextArea name='translation' id='translation' defaultValue={translation} />
-								</div>
-								<div>
-									<label htmlFor='note'>Note:</label>
-									<TextArea name='note' id='note' defaultValue={note} />
-								</div>
-							</>
-						}
-					>
-						<Button>Edit</Button>
-					</EditEntry>
-					<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
-						<Button>Delete</Button>
-					</DeleteEntry>
+					<React.Suspense fallback={<Button disabled={true}>Edit</Button>}>
+						<EditEntry
+							handleEditEntry={handleEditEntry}
+							fieldSet={
+								<>
+									<div>
+										<label htmlFor='translation'>Translation:</label>
+										<TextArea name='translation' id='translation' defaultValue={translation} />
+									</div>
+									<div>
+										<label htmlFor='note'>Note:</label>
+										<TextArea name='note' id='note' defaultValue={note} placeholder='Empty content.' />
+									</div>
+								</>
+							}
+						>
+							<Button>Edit</Button>
+						</EditEntry>
+					</React.Suspense>
+					<React.Suspense fallback={<Button disabled={true}>Delete</Button>}>
+						<DeleteEntry handleDeleteEntry={handleDeleteEntry}>
+							<Button>Delete</Button>
+						</DeleteEntry>
+					</React.Suspense>
 				</ButtonGroup>
 			</AccordionContent>
 		</AccordionItem>

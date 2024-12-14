@@ -2,6 +2,8 @@ import React from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import styled from 'styled-components';
 
+import { DialogOverlayStyles, DialogContentStyles, H3Styles, DialogDescriptionStyles } from '@/lib/styled';
+
 type ContentElement = React.ElementRef<typeof AlertDialog.Content>;
 interface ContentProps extends React.ComponentPropsWithoutRef<typeof AlertDialog.Content> {
 	// className: string;
@@ -13,11 +15,11 @@ interface ContentProps extends React.ComponentPropsWithoutRef<typeof AlertDialog
 export var AlertDialogContent = React.forwardRef<ContentElement, ContentProps>(({ children, title, description, ...props }, forwardedRef) => (
 	<AlertDialog.Portal>
 		<StyledOverlay />
-		<AlertDialog.Content {...props} ref={forwardedRef}>
-			<AlertDialog.Title>{title}</AlertDialog.Title>
-			<AlertDialog.Description>{description}</AlertDialog.Description>
+		<StyledContent {...props} ref={forwardedRef}>
+			<StyledTitle>{title}</StyledTitle>
+			<StyledDescription>{description}</StyledDescription>
 			{children}
-		</AlertDialog.Content>
+		</StyledContent>
 	</AlertDialog.Portal>
 ));
 
@@ -29,18 +31,17 @@ export var AlertDialogCancel = AlertDialog.Cancel;
 export var AlertDialogAction = AlertDialog.Action;
 
 var StyledOverlay = styled(AlertDialog.Overlay)`
-	/* position: fixed;
-	inset: 0;
-	animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	${DialogOverlayStyles}
+`;
 
-	@keyframes overlayShow {
-		from {
-			opacity: 0;
-			transform: translate(-50%, -48%) scale(0.96);
-		}
-		to {
-			opacity: 1;
-			transform: translate(-50%, -50%) scale(1);
-		}
-	} */
+var StyledContent = styled(AlertDialog.Content)`
+	${DialogContentStyles}
+`;
+
+var StyledTitle = styled(AlertDialog.Title)`
+	${H3Styles}
+`;
+
+var StyledDescription = styled(AlertDialog.Description)`
+	${DialogDescriptionStyles}
 `;

@@ -22,6 +22,7 @@ var StyledButton = styled.button`
 	padding-top: 0;
 	padding-bottom: 0;
 	height: var(--header-height);
+	cursor: pointer;
 `;
 
 export default Button;

@@ -13,7 +13,7 @@ import VocabDataProvider from '@/components/VocabDataProvider';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
 import SearchResults from '@/components/SearchResults';
-import VocabCount from '@/components/VocabCount';
+import VocabCount, { VocabCountFallBack } from '@/components/VocabCount';
 
 export const metadata: Metadata = {
 	title: 'Vocab Listing',
@@ -43,7 +43,7 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 				<SearchVocab />
 			</div>
 			<div>
-				<React.Suspense fallback={<p>Loading...</p>}>
+				<React.Suspense fallback={<VocabCountFallBack />}>
 					<VocabCount />
 				</React.Suspense>
 				<React.Suspense fallback={<p>Loading...</p>}>

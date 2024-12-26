@@ -7,7 +7,7 @@ import { VocabEntry } from '@/types';
 
 import { SENTENCE_TEXT } from '@/constants';
 
-import SimplerEntryListing from '@/components/SimplerEntryListing';
+import SimplerEntryListing, { SimplerEntryListingFallback } from '@/components/SimplerEntryListing';
 import SubmitNewCollectionEntry from '@/components/SubmitNewCollectionEntry';
 import UserInput from '@/components/UserInput';
 import ErrorBoundaryWrapper from '@/components/ErrorBoundaryWrapper';
@@ -59,7 +59,7 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
-			<React.Suspense fallback={<p>Loading</p>}>
+			<React.Suspense fallback={<SimplerEntryListingFallback />}>
 				<ErrorMessageProvider>
 					<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
 						<SimplerEntryListing trim={true} />

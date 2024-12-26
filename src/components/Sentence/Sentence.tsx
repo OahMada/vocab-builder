@@ -62,27 +62,25 @@ let Sentence = React.forwardRef<PhoneticSymbols, { segmentedText: Intl.SegmentDa
 	});
 
 	return (
-		<>
-			<div>
-				{[...segmentedText].map(({ segment, isWordLike }, index) => {
-					if (!isWordLike) {
-						return segment;
-					}
-					return (
-						<React.Fragment key={index}>
-							{phoneticSymbols && phoneticSymbols[segment] ? (
-								<>
-									{segment}&nbsp;
-									<PhoneticSymbol symbol={phoneticSymbols[segment]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(segment)} />
-								</>
-							) : (
-								<Word triggerWord={segment} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
-							)}
-						</React.Fragment>
-					);
-				})}
-			</div>
-		</>
+		<div>
+			{[...segmentedText].map(({ segment, isWordLike }, index) => {
+				if (!isWordLike) {
+					return segment;
+				}
+				return (
+					<React.Fragment key={index}>
+						{phoneticSymbols && phoneticSymbols[segment] ? (
+							<>
+								{segment}&nbsp;
+								<PhoneticSymbol symbol={phoneticSymbols[segment]} removeOnePhoneticSymbol={removeOnePhoneticSymbol(segment)} />
+							</>
+						) : (
+							<Word triggerWord={segment} updateError={updateError} updatePhoneticSymbols={updatePhoneticSymbols} />
+						)}
+					</React.Fragment>
+				);
+			})}
+		</div>
 	);
 });
 
@@ -185,3 +183,11 @@ var SentenceWordButton = styled(Button)`
 var SentencePhoneticSymbolButton = styled(SentenceWordButton)`
 	box-shadow: 0.5px 1px 2px hsl(10deg 0% 0% / 0.2);
 `;
+
+export function SentenceFallback() {
+	return (
+		<div>
+			<p>Loading...</p>
+		</div>
+	);
+}

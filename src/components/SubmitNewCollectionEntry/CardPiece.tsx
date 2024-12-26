@@ -13,7 +13,7 @@ var CardPiece = styled.div`
 	padding: var(--padding-normal);
 	border-radius: var(--border-radius-normal);
 
-	p {
+	& > p {
 		padding: calc(var(--padding-small) + 1px);
 		max-width: 100%;
 		min-height: calc(2rem * 1.5 + 2 * var(--padding-small) + 2px); // to be the same height as textarea

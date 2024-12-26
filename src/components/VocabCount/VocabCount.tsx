@@ -22,3 +22,11 @@ async function VocabCount() {
 }
 
 export default VocabCount;
+
+export function VocabCountFallBack() {
+	return (
+		<div>
+			<p>_ records in total.</p>
+		</div>
+	);
+}

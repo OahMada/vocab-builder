@@ -27,7 +27,7 @@ import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import SentenceTranslation, { TranslationFallback } from '@/components/SentenceTranslation';
 import Note from '@/components/Note';
-import Sentence from '@/components/Sentence';
+import Sentence, { SentenceFallback } from '@/components/Sentence';
 import ErrorMsg from '@/components/ErrorMsg';
 import ButtonGroup from '@/components/ButtonGroup';
 import Button from '@/components/Button';
@@ -243,7 +243,7 @@ function SubmitNewCollectionEntry({
 			<CardPiece>
 				<HeaderTag level={2}>Sentence</HeaderTag>
 				{/* There's some loading because I've setup PopOver component to lazy load. */}
-				<React.Suspense fallback={<p>Loading...</p>}>
+				<React.Suspense fallback={<SentenceFallback />}>
 					<Sentence segmentedText={segmentedText} ref={phoneticSymbolRef} />
 				</React.Suspense>
 			</CardPiece>

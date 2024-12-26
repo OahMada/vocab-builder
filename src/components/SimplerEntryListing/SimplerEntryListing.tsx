@@ -12,7 +12,7 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 	let { optimisticState } = useOptimisticVocabEntriesContext();
 
 	if (trim) {
-		optimisticState = optimisticState.slice(0, 5);
+		optimisticState = optimisticState.slice(0, 3);
 	}
 
 	// TODO the case of empty list
@@ -29,3 +29,11 @@ function SimplerEntryListing({ trim = false }: { trim?: boolean }) {
 	);
 }
 export default React.memo(SimplerEntryListing);
+
+export function SimplerEntryListingFallBack() {
+	return (
+		<div>
+			<p>Loading...</p>
+		</div>
+	);
+}

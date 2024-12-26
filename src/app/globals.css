@@ -77,6 +77,7 @@ body {
 	--gap-small: 5px;
 	--gap-extra-small: 3px;
 
+	--padding-biggest: 2rem;
 	--padding-big: 1.5rem;
 	--padding-normal: 10px;
 	--padding-small: 5px;
@@ -86,4 +87,9 @@ body {
 	--border-radius-small: 2px;
 
 	--header-height: 2rem;
+
+	--left-column-width: 21.875rem;
+	--right-column-width: 42.875rem;
+
+	--footer-height: 1.5rem;
 }

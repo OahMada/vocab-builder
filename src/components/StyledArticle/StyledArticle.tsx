@@ -9,7 +9,7 @@ var StyledArticle = styled.article`
 	flex-direction: column;
 	gap: var(--gap-big);
 
-	height: 100vh;
+	min-height: calc(100dvh - 2 * var(--padding-biggest) - var(--footer-height));
 `;
 
 export default function StyledArticleWrapper({ children }: { children: React.ReactNode }) {

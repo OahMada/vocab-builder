@@ -13,10 +13,10 @@ interface CustomLinkProps extends React.ComponentPropsWithoutRef<'a'> {
 	// className: string;
 	children: React.ReactNode;
 	href: string;
-	prefetch: boolean;
+	prefetch?: boolean;
 }
 
-var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function CustomLink({ href, children, prefetch, ...props }, forwardRef) {
+var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function CustomLink({ href, children, prefetch = true, ...props }, forwardRef) {
 	let router = useRouter();
 
 	React.useEffect(() => {

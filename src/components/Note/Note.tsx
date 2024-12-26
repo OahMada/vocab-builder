@@ -30,6 +30,7 @@ var Note = React.forwardRef<HTMLTextAreaElement, NoteProps>(function Note({ note
 							updateNote(e.target.value);
 						}}
 						ref={forwardedRef}
+						placeholder="Don't overwhelm yourself with overly extensive notes."
 					/>
 					<ButtonGroup>
 						<Button onClick={() => updateNote('')}>Clear</Button>

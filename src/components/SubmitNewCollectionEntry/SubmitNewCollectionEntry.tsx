@@ -214,7 +214,7 @@ function SubmitNewCollectionEntry({
 	} else if (swrError) {
 		translationNode = (
 			<TranslationFallback>
-				<p>Error occurred during the process; you can hit the button below to try again.</p>
+				<p>Error occurred during the process; you can hit the retry button to try again.</p>
 			</TranslationFallback>
 		);
 	} else if (translation) {

@@ -31,7 +31,7 @@ var CustomLink = React.forwardRef<Ref, CustomLinkProps>(function CustomLink({ hr
 	};
 
 	return (
-		<Button>
+		<Button type='button'>
 			<StyledA href={href} onClick={handleClick} ref={forwardRef} {...props}>
 				{children}
 			</StyledA>

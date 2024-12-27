@@ -7,8 +7,8 @@ import { useOptimisticVocabEntriesContext } from '@/components/OptimisticVocabEn
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 
 import { AlertDialogCancel, AlertDialogRoot, AlertDialogTrigger, AlertDialogContent } from '@/components/AlertDialog';
-import ButtonGroup from '../ButtonGroup';
-import Button from '../Button';
+import ButtonGroup from '@/components/ButtonGroup';
+import Button from '@/components/Button';
 
 function DeleteEntry({
 	children,
@@ -55,7 +55,7 @@ function DeleteEntry({
 					<AlertDialogCancel asChild>
 						<Button type='button'>Cancel</Button>
 					</AlertDialogCancel>
-					<Button>{isPending ? 'Deleting...' : 'Delete'}</Button>
+					<Button type='submit'>{isPending ? 'Deleting...' : 'Delete'}</Button>
 				</ButtonGroup>
 			</AlertDialogContent>
 		</AlertDialogRoot>

@@ -8,7 +8,12 @@ import Link from 'next/link';
 import { UserSchema, UserSchemaType } from '@/lib/dataValidation';
 import { signup, type SignupReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
-import PageRedirect from '../PageRedirect';
+import PageRedirect from '@/components/PageRedirect';
+import Button from '@/components/Button';
+import AuthWrapper from '@/components/AuthWrapper';
+import InputEntry from '@/components/InputEntry';
+import StyledForm from '@/components/StyledForm';
+import FormSubmittingError from '@/components/FormSubmittingError';
 
 function SignupForm() {
 	const {
@@ -46,32 +51,38 @@ function SignupForm() {
 		return <PageRedirect doneAction='signup' redirectPage='/login' />;
 	}
 	return (
-		<div>
-			<form onSubmit={handleSubmit(onSubmit)}>
+		<AuthWrapper>
+			<StyledForm onSubmit={handleSubmit(onSubmit)}>
 				<div>
-					<label htmlFor='name'>Name:</label>
-					<input id='name' {...register('name')} onChange={() => clearErrors('name')} />
-					{errors.name && <p>{errors.name.message}</p>}
+					<InputEntry>
+						<label htmlFor='name'>Name:</label>
+						<input id='name' {...register('name')} onChange={() => clearErrors('name')} placeholder='John Doe' />
+					</InputEntry>
+					{errors.name && <FormSubmittingError>{errors.name.message}</FormSubmittingError>}
 				</div>
 				<div>
-					<label htmlFor='email'>Email:</label>
-					<input id='email' {...register('email')} onChange={() => clearErrors('email')} />
-					{errors.email && <p>{errors.email.message}</p>}
+					<InputEntry>
+						<label htmlFor='email'>Email:</label>
+						<input id='email' {...register('email')} onChange={() => clearErrors('email')} placeholder='email@email.com' />
+					</InputEntry>
+					{errors.email && <FormSubmittingError>{errors.email.message}</FormSubmittingError>}
 				</div>
 				<div>
-					<label htmlFor='password'>Password: </label>
-					<input type='password' id='password' {...register('password')} onChange={() => clearErrors('password')} />
-					{errors.password && <p>{errors.password.message}</p>}
+					<InputEntry>
+						<label htmlFor='password'>Password: </label>
+						<input type='password' id='password' {...register('password')} onChange={() => clearErrors('password')} placeholder='*******' />
+					</InputEntry>
+					{errors.password && <FormSubmittingError>{errors.password.message}</FormSubmittingError>}
 				</div>
-				<button>{isPending ? 'Signing Up...' : 'Sign Up'}</button>
-			</form>
+				<Button>{isPending ? 'Signing Up...' : 'Sign Up'}</Button>
+			</StyledForm>
 			<div>
 				<p>
 					Already have an account?&nbsp;
 					<Link href='/signin'>Sign In</Link>
 				</p>
 			</div>
-		</div>
+		</AuthWrapper>
 	);
 }
 

@@ -4,6 +4,8 @@ import * as React from 'react';
 import { DialogContent, DialogRoot, DialogTrigger } from '@/components/Dialog';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { getErrorMessageFromError } from '@/helpers';
+import StyledForm from '@/components/StyledForm';
+import Button from '@/components/Button';
 
 function EditUserInfo({
 	children,
@@ -43,10 +45,10 @@ function EditUserInfo({
 		<DialogRoot open={dialogOpen} onOpenChange={updateDialogState}>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent title={title} aria-describedby={undefined}>
-				<form onSubmit={handleSubmit}>
+				<StyledForm onSubmit={handleSubmit}>
 					{fieldSet}
-					<button>{isPending ? 'Updating...' : 'Update'}</button>
-				</form>
+					<Button>{isPending ? 'Updating...' : 'Update'}</Button>
+				</StyledForm>
 			</DialogContent>
 		</DialogRoot>
 	);

@@ -3,11 +3,15 @@
 import * as React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import styled from 'styled-components';
 
 import { UpdateUserSchema, type UpdateUserSchemaType } from '@/lib/dataValidation';
 import { updateUser } from '@/actions';
 
 import EditUserInfo from '@/components/EditUserInfo';
+import Button from '@/components/Button';
+import InputEntry from '@/components/InputEntry';
+import FormSubmittingError from '@/components/FormSubmittingError';
 
 type UserInfoEditTitleMapKeys = keyof typeof UserInfoEditTitleMap;
 type SubmittingData = { [key in UserInfoEditTitleMapKeys]?: string };
@@ -62,32 +66,36 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 		case 'name':
 			fieldSet = (
 				<>
-					<label htmlFor='name'>User Name:&nbsp;</label>
-					<input
-						type='text'
-						id='name'
-						{...register(type)}
-						onChange={() => {
-							clearErrors(type);
-						}}
-					/>
-					{errors[type] && <p>{errors[type].message}</p>}
+					<InputEntry>
+						<label htmlFor='name'>User Name:&nbsp;</label>
+						<input
+							type='text'
+							id='name'
+							{...register(type)}
+							onChange={() => {
+								clearErrors(type);
+							}}
+						/>
+					</InputEntry>
+					{errors[type] && <FormSubmittingError>{errors[type].message}</FormSubmittingError>}
 				</>
 			);
 			break;
 		case 'email':
 			fieldSet = (
 				<>
-					<label htmlFor='email'>New Email:&nbsp;</label>
-					<input
-						type='text'
-						id='email'
-						{...register(type)}
-						onChange={() => {
-							clearErrors(type);
-						}}
-					/>
-					{errors[type] && <p>{errors[type].message}</p>}
+					<InputEntry>
+						<label htmlFor='email'>New Email:&nbsp;</label>
+						<input
+							type='text'
+							id='email'
+							{...register(type)}
+							onChange={() => {
+								clearErrors(type);
+							}}
+						/>
+					</InputEntry>
+					{errors[type] && <FormSubmittingError>{errors[type].message}</FormSubmittingError>}
 				</>
 			);
 			break;
@@ -95,38 +103,42 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 			fieldSet = (
 				<>
 					<div>
-						<label htmlFor='password'>New Password:&nbsp;</label>
-						<input
-							type='text'
-							id='password'
-							{...rest}
-							onChange={() => {
-								clearErrors(type);
-							}}
-							ref={newPasswordInputRef}
-						/>
-						{errors[type] && <p>{errors[type].message}</p>}
+						<InputEntry>
+							<label htmlFor='password'>New Password:&nbsp;</label>
+							<input
+								type='text'
+								id='password'
+								{...rest}
+								onChange={() => {
+									clearErrors(type);
+								}}
+								ref={newPasswordInputRef}
+							/>
+						</InputEntry>
+						{errors[type] && <FormSubmittingError>{errors[type].message}</FormSubmittingError>}
 					</div>
 					<div>
-						<label htmlFor='confirm-password'>Confirm New Password:&nbsp;</label>
-						<input
-							type='text'
-							id='confirm-password'
-							{...register('confirmPassword')}
-							onChange={() => {
-								clearErrors('confirmPassword');
-							}}
-						/>
-						{errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
+						<InputEntry>
+							<label htmlFor='confirm-password'>Confirm New Password:&nbsp;</label>
+							<input
+								type='text'
+								id='confirm-password'
+								{...register('confirmPassword')}
+								onChange={() => {
+									clearErrors('confirmPassword');
+								}}
+							/>
+						</InputEntry>
+						{errors.confirmPassword && <FormSubmittingError>{errors.confirmPassword.message}</FormSubmittingError>}
 					</div>
-					{errors.passConfirmResult && <p>{errors.passConfirmResult.message}</p>}
+					{errors.passConfirmResult && <FormSubmittingError>{errors.passConfirmResult.message}</FormSubmittingError>}
 				</>
 			);
 			break;
 	}
 
 	return (
-		<div>
+		<StyledDiv>
 			{children}
 			<EditUserInfo
 				fieldSet={fieldSet}
@@ -135,10 +147,21 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 				dialogOpen={dialogOpen}
 				updateDialogState={updateDialogState}
 			>
-				<button>Update</button>
+				<Button>Update</Button>
 			</EditUserInfo>
-		</div>
+		</StyledDiv>
 	);
 }
 
 export default UserInfoEntry;
+
+var StyledDiv = styled.div`
+	display: flex;
+	gap: var(--gap-small);
+	width: 100%;
+	align-items: center;
+
+	p {
+		flex-basis: 40%;
+	}
+`;

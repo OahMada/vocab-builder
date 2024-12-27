@@ -4,7 +4,8 @@ import * as React from 'react';
 import { saveAs } from 'file-saver';
 
 import { exportData, type ExportDataReturnType } from '@/actions';
-import { useErrorMessageContext } from '../ErrorMessageProvider';
+import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import Button from '@/components/Button';
 
 function ExportData() {
 	let [isPending, startTransition] = React.useTransition();
@@ -24,7 +25,7 @@ function ExportData() {
 		let blob = new Blob([response.data], { type: 'text/plain;charset=utf-8' });
 		saveAs(blob, 'exported-vocab.txt');
 	}
-	return <button onClick={clientAction}>{isPending ? 'Processing...' : 'Export'}</button>;
+	return <Button onClick={clientAction}>{isPending ? 'Processing...' : 'Export'}</Button>;
 }
 
 export default ExportData;

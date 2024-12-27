@@ -72,7 +72,8 @@ body {
 	--font-normal: 1rem;
 	--font-small: 0.8rem;
 
-	--gap-big: 16px;
+	--gap-biggest: 1.8rem;
+	--gap-big: 1rem;
 	--gap-normal: 8px;
 	--gap-small: 5px;
 	--gap-extra-small: 3px;

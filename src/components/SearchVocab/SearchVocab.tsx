@@ -6,6 +6,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { searchParser } from '@/lib/nuqs';
 import useKeyboard from '@/hooks/useKeyboard';
+import Button from '@/components/Button';
 
 var SearchVocab = () => {
 	let isKeyPressed = useKeyboard('Enter');
@@ -24,7 +25,7 @@ var SearchVocab = () => {
 	return (
 		<>
 			<input placeholder='Search vocab' onChange={handleSearch} defaultValue={search} ref={inputRef} />
-			<button
+			<Button
 				onClick={() => {
 					setSearch(null);
 					if (!inputRef.current) {
@@ -34,7 +35,7 @@ var SearchVocab = () => {
 				}}
 			>
 				Clear
-			</button>
+			</Button>
 		</>
 	);
 };

@@ -10,6 +10,9 @@ import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import ErrorMsg from '@/components/ErrorMsg';
 import DeleteUser from '@/components/DeleteUser';
 import ExportData from '@/components/ExportData';
+import StyledArticle from '@/components/StyledArticle';
+import HeaderTag from '@/components/HeaderTag';
+import Button from '@/components/Button';
 
 export const metadata: Metadata = {
 	title: 'Setting / Vocab Builder',
@@ -26,39 +29,45 @@ export default async function SettingPage() {
 
 	return (
 		<ErrorMessageProvider>
-			<section>
+			<StyledArticle>
 				<div>
-					<h2>Edit User Info</h2>
+					<HeaderTag level={2}>Edit User Info</HeaderTag>
 					{userInfo.name && (
-						<UserInfoEntry type='name'>
-							<h3>User Name</h3>
-							<p>{userInfo.name}</p>
-						</UserInfoEntry>
+						<>
+							<HeaderTag level={3}>User Name</HeaderTag>
+							<UserInfoEntry type='name'>
+								<p>{userInfo.name}</p>
+							</UserInfoEntry>
+						</>
 					)}
 					{userInfo.email && (
-						<UserInfoEntry type='email'>
-							<h3>Email</h3>
-							<p>{userInfo.email}</p>
-						</UserInfoEntry>
+						<>
+							<HeaderTag level={3}>Email</HeaderTag>
+							<UserInfoEntry type='email'>
+								<p>{userInfo.email}</p>
+							</UserInfoEntry>
+						</>
 					)}
 					{userInfo.password && (
-						<UserInfoEntry type='password'>
-							<h3>Password</h3>
-							<p>*****</p>
-						</UserInfoEntry>
+						<>
+							<HeaderTag level={3}>Password</HeaderTag>
+							<UserInfoEntry type='password'>
+								<p>*****</p>
+							</UserInfoEntry>
+						</>
 					)}
 				</div>
 				<div>
-					<h2>Delete User</h2>
+					<HeaderTag level={2}>Delete User</HeaderTag>
 					<DeleteUser>
-						<button>Delete User</button>
+						<Button>Delete User</Button>
 					</DeleteUser>
 				</div>
 				<div>
-					<h2>Export Data</h2>
+					<HeaderTag level={2}>Export Data</HeaderTag>
 					<ExportData />
 				</div>
-			</section>
+			</StyledArticle>
 			<ErrorMsg />
 		</ErrorMessageProvider>
 	);

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { deleteUser, type DeleteUserReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AlertDialogCancel, AlertDialogRoot, AlertDialogTrigger, AlertDialogContent } from '@/components/AlertDialog';
+import Button from '@/components/Button';
 
 function DeleteUser({ children }: { children: React.ReactNode }) {
 	let { updateError } = useErrorMessageContext();
@@ -36,9 +37,9 @@ function DeleteUser({ children }: { children: React.ReactNode }) {
 			<AlertDialogContent title='Are you sure you want to delete your account and all data?' description='The action can not be reverted.'>
 				<form style={{ display: 'flex', gap: 25, justifyContent: 'flex-end' }} action={clientAction}>
 					<AlertDialogCancel asChild>
-						<button type='button'>Cancel</button>
+						<Button type='button'>Cancel</Button>
 					</AlertDialogCancel>
-					<button>{isPending ? 'Loading' : 'Delete'}</button>
+					<Button type='submit'>{isPending ? 'Loading' : 'Delete'}</Button>
 				</form>
 			</AlertDialogContent>
 		</AlertDialogRoot>

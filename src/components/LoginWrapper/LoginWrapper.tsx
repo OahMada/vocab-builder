@@ -11,6 +11,7 @@ import { SIGNINERRORS } from '@/constants';
 import LoginForm from '@/components/LoginForm';
 import OAuthLogin from '@/components/OAuthLogin';
 import ErrorMsg from '@/components/ErrorMsg';
+import AuthWrapper from '@/components/AuthWrapper';
 
 function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorParam | 'default' | null }) {
 	let { updateError } = useErrorMessageContext();
@@ -25,7 +26,7 @@ function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorPar
 	}, [errorCode, setError, updateError]);
 
 	return (
-		<div>
+		<AuthWrapper>
 			<OAuthLogin />
 			<LoginForm />
 			<div>
@@ -35,7 +36,7 @@ function LoginWrapper({ errorCode = 'default' }: { errorCode: SignInPageErrorPar
 				</p>
 			</div>
 			<ErrorMsg />
-		</div>
+		</AuthWrapper>
 	);
 }
 

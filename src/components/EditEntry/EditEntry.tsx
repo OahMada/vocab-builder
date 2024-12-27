@@ -60,7 +60,7 @@ function EditEntry({
 				<StyledForm action={clientAction}>
 					{fieldSet}
 					<ButtonGroup>
-						<Button>{isPending ? 'Saving...' : 'Save'}</Button>
+						<Button type='submit'>{isPending ? 'Saving...' : 'Save'}</Button>
 					</ButtonGroup>
 				</StyledForm>
 			</DialogContent>

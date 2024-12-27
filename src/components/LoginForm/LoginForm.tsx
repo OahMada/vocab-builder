@@ -9,6 +9,10 @@ import { useSearchParams } from 'next/navigation';
 import { SigninFormSchema, SigninFormSchemaType } from '@/lib/dataValidation';
 import { credentialsLogin, type CredentialsSigninReturnType } from '@/actions';
 import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
+import InputEntry from '@/components/InputEntry';
+import Button from '@/components/Button';
+import StyledForm from '@/components/StyledForm';
+import FormSubmittingError from '@/components/FormSubmittingError';
 
 function LoginForm() {
 	let {
@@ -45,34 +49,38 @@ function LoginForm() {
 		}
 	};
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<StyledForm onSubmit={handleSubmit(onSubmit)}>
 			<div>
-				<label htmlFor='email'>Email:</label>
-				<input
-					id='email'
-					{...register('email')}
-					placeholder='email'
-					onChange={() => {
-						clearErrors('email');
-					}}
-				/>
-				{errors.email && <p>{errors.email.message}</p>}
+				<InputEntry>
+					<label htmlFor='email'>Email:</label>
+					<input
+						id='email'
+						{...register('email')}
+						placeholder='email@email.com'
+						onChange={() => {
+							clearErrors('email');
+						}}
+					/>
+				</InputEntry>
+				{errors.email && <FormSubmittingError>{errors.email.message}</FormSubmittingError>}
 			</div>
 			<div>
-				<label htmlFor='password'>Password: </label>
-				<input
-					type='password'
-					id='password'
-					{...register('password')}
-					placeholder='password'
-					onChange={() => {
-						clearErrors('password');
-					}}
-				/>
-				{errors.password && <p>{errors.password?.message}</p>}
+				<InputEntry>
+					<label htmlFor='password'>Password: </label>
+					<input
+						type='password'
+						id='password'
+						{...register('password')}
+						placeholder='******'
+						onChange={() => {
+							clearErrors('password');
+						}}
+					/>
+				</InputEntry>
+				{errors.password && <FormSubmittingError>{errors.password?.message}</FormSubmittingError>}
 			</div>
-			<button>{isPending ? 'Logging in...' : 'Login'}</button>
-		</form>
+			<Button>{isPending ? 'Logging in...' : 'Login'}</Button>
+		</StyledForm>
 	);
 }
 

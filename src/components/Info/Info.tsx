@@ -22,7 +22,7 @@ async function Info() {
 					<div className='user-info'>
 						<div>
 							<p>To use this app, simply input a sentence, and the Chinese translation is automatically fetched upon submission. </p>
-							<p>You can then add phonetic symbols beside unfamiliar words and optionally add a note to the sentence.</p>
+							<p>You can then add phonetic symbols beside any unfamiliar words and optionally add a note to the sentence.</p>
 							<p>All the data will be safely saved to the database.</p>
 						</div>
 

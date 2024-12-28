@@ -13,6 +13,7 @@ import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
 import ErrorMsg from '@/components/ErrorMsg';
 import ScrollArea from '@/components/ScrollArea';
+import HeaderTag from '../HeaderTag';
 
 function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialCursor?: string; initialHaveMoreData: boolean; userId: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);
@@ -61,6 +62,14 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 		if (isOnscreen && haveMoreData) fetchMoreData();
 	}, [haveMoreData, isOnscreen, handleQueryPagination]);
 
+	if (optimisticState.length === 0) {
+		return (
+			<div>
+				<HeaderTag level={3}>No sentence saved yet.</HeaderTag>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<AccordionRoot type='single' defaultValue='item-1' collapsible>
@@ -68,13 +77,13 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 					{optimisticState.map((entry, index) => {
 						return <Entry key={entry.id} entry={entry} index={index} />;
 					})}
-					{haveMoreData && (
-						<div ref={scrollTrigger}>
-							<p>Loading...</p>
-						</div>
-					)}
 				</ScrollArea>
 			</AccordionRoot>
+			{haveMoreData && (
+				<div ref={scrollTrigger}>
+					<p>Loading...</p>
+				</div>
+			)}
 			<ErrorMsg />
 		</div>
 	);

@@ -39,6 +39,8 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 	let initialHaveMoreData = vocabData.data.length === ENTRIES_PER_PAGE; // if lesser, there is no more data.
 	let lastEntryId = vocabData.data.at(-1)?.id;
 
+	// TODO make search bar fixed in position
+
 	return (
 		<StyledArticle>
 			<SearchVocab />

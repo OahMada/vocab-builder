@@ -16,7 +16,7 @@ export const FETCH_PHONETIC_SYMBOL_ROUTE =
 	process.env.NODE_ENV === 'development' ? '/api/fetch-phonetic-symbol?mock=true' : '/api/fetch-phonetic-symbol';
 
 export const VOCAB_LIST_VALIDATION_TAG = 'vocab-list';
-export const ENTRIES_PER_PAGE = 10;
+export const ENTRIES_PER_PAGE = 15;
 
 // https://github.com/nextauthjs/next-auth/blob/3ec06842682a31e53fceabca701a362abda1e7dd/packages/core/src/types.ts#L204
 export const SIGNINERRORS: Record<SignInPageErrorParam | 'default', string> = {

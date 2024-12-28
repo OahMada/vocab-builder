@@ -8,12 +8,14 @@ import { ENTRIES_PER_PAGE } from '@/constants';
 import { searchParamsCache } from '@/lib/nuqs';
 import { auth } from '@/auth';
 
-import EntryListing from '@/components/EntryListing';
+import EntryListing, { EntryListingFallBack } from '@/components/EntryListing';
 import VocabDataProvider from '@/components/VocabDataProvider';
 import ErrorMessageProvider from '@/components/ErrorMessageProvider';
 import SearchVocab from '@/components/SearchVocab';
 import SearchResults from '@/components/SearchResults';
+import StyledArticle from '@/components/StyledArticle';
 import VocabCount, { VocabCountFallBack } from '@/components/VocabCount';
+import HideContentOnSearch from '@/components/HideContentOnSearch';
 
 export const metadata: Metadata = {
 	title: 'Vocab Listing',
@@ -38,28 +40,25 @@ export default async function VocabListing({ searchParams }: { searchParams: Pro
 	let lastEntryId = vocabData.data.at(-1)?.id;
 
 	return (
-		<div>
-			<div>
-				<SearchVocab />
-			</div>
-			<div>
+		<StyledArticle>
+			<SearchVocab />
+			<HideContentOnSearch $shouldHide={!!search}>
 				<React.Suspense fallback={<VocabCountFallBack />}>
 					<VocabCount />
 				</React.Suspense>
-				<React.Suspense fallback={<p>Loading...</p>}>
+				<React.Suspense fallback={<EntryListingFallBack />}>
 					<ErrorMessageProvider>
 						<VocabDataProvider initialState={vocabData.data}>
 							<EntryListing initialCursor={lastEntryId} initialHaveMoreData={initialHaveMoreData} userId={session.user.id} />
 						</VocabDataProvider>
 					</ErrorMessageProvider>
 				</React.Suspense>
-			</div>
-
+			</HideContentOnSearch>
 			{search && (
 				<React.Suspense fallback={<p>Searching...</p>}>
 					<SearchResults searchTerm={search} />
 				</React.Suspense>
 			)}
-		</div>
+		</StyledArticle>
 	);
 }

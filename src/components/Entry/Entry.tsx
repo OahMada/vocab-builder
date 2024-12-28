@@ -50,7 +50,9 @@ function Entry({ entry, index }: { entry: VocabEntry; index: number }) {
 
 	return (
 		<AccordionItem value={`item-${index + 1}`}>
-			<AccordionTrigger asChild={true}>{html}</AccordionTrigger>
+			<AccordionTrigger asChild={true}>
+				{index + 1}.&nbsp;{html}
+			</AccordionTrigger>
 			<AccordionContent>
 				<div>
 					{note && <HeaderTag level={4}>Translation: </HeaderTag>}

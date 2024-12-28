@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useQueryState } from 'nuqs';
 import { useDebouncedCallback } from 'use-debounce';
+import styled from 'styled-components';
 
 import { searchParser } from '@/lib/nuqs';
 import useKeyboard from '@/hooks/useKeyboard';
@@ -23,7 +24,7 @@ var SearchVocab = () => {
 	}, [handleSearch, isKeyPressed]);
 
 	return (
-		<>
+		<StyledDiv>
 			<input placeholder='Search vocab' onChange={handleSearch} defaultValue={search} ref={inputRef} />
 			<Button
 				onClick={() => {
@@ -36,8 +37,17 @@ var SearchVocab = () => {
 			>
 				Clear
 			</Button>
-		</>
+		</StyledDiv>
 	);
 };
 
 export default SearchVocab;
+
+var StyledDiv = styled.div`
+	display: flex;
+	gap: var(--gap-normal);
+
+	input {
+		flex-basis: 20rem;
+	}
+`;

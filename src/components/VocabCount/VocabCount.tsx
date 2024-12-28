@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { auth } from '@/auth';
 import { countVocab } from '@/actions';
+import StyledDiv from './StyledDiv';
 
 async function VocabCount() {
 	let session = await auth();
@@ -11,13 +12,13 @@ async function VocabCount() {
 	let vocabCountData = await countVocab(session?.user.id);
 
 	if ('errorMessage' in vocabCountData) {
-		return <div>{vocabCountData.errorMessage}</div>;
+		return <StyledDiv>{vocabCountData.errorMessage}</StyledDiv>;
 	}
 
 	return (
-		<div>
+		<StyledDiv>
 			<p>{vocabCountData.data} records in total.</p>
-		</div>
+		</StyledDiv>
 	);
 }
 
@@ -25,8 +26,8 @@ export default VocabCount;
 
 export function VocabCountFallBack() {
 	return (
-		<div>
+		<StyledDiv>
 			<p>_ records in total.</p>
-		</div>
+		</StyledDiv>
 	);
 }

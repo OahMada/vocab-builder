@@ -9,6 +9,7 @@ var StyledFooter = styled.footer`
 	display: flex;
 	justify-content: center;
 	height: var(--footer-height);
+	line-height: var(--footer-height);
 `;
 
 function Footer() {

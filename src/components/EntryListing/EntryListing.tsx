@@ -62,7 +62,7 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 	}, [haveMoreData, isOnscreen, handleQueryPagination]);
 
 	return (
-		<>
+		<div>
 			<AccordionRoot type='single' defaultValue='item-1' collapsible>
 				<ScrollArea>
 					{optimisticState.map((entry, index) => {
@@ -76,7 +76,15 @@ function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialC
 				</ScrollArea>
 			</AccordionRoot>
 			<ErrorMsg />
-		</>
+		</div>
 	);
 }
 export default EntryListing;
+
+export function EntryListingFallBack() {
+	return (
+		<div>
+			<p>Loading...</p>
+		</div>
+	);
+}

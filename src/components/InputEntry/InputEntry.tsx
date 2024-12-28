@@ -6,12 +6,12 @@ var InputEntry = styled.div`
 	display: flex;
 	flex-direction: row;
 	gap: var(--gap-small);
-	width: 100%;
 	align-items: center;
 
 	label {
 		flex-basis: 6rem;
 		min-width: fit-content;
+		flex-shrink: 0;
 	}
 `;
 

@@ -119,7 +119,7 @@ function UserInfoEntry({ children, type }: { children: React.ReactNode; type: ke
 					</div>
 					<div>
 						<InputEntry>
-							<label htmlFor='confirm-password'>Confirm New Password:&nbsp;</label>
+							<label htmlFor='confirm-password'>Confirm Password:&nbsp;</label>
 							<input
 								type='text'
 								id='confirm-password'

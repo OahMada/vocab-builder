@@ -22,7 +22,7 @@ var StyledTag = styled.h1<{ $level: number }>`
 			case 2:
 				return css`
 					font-size: var(--font-bigger);
-					line-height: var(--header-height);
+					line-height: var(--header-tag-height);
 				`;
 			case 3:
 				return h3Styles;

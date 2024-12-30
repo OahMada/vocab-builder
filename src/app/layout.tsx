@@ -11,6 +11,7 @@ import { ToastProvider } from '@/components/Toast';
 import MainContentWrapper from '@/components/MainContentWrapper';
 import Info from '@/components/Info';
 import Footer from '@/components/Footer';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
 	title: SITE_TITLE,
@@ -30,6 +31,7 @@ export default function RootLayout({
 						<SessionProvider>
 							<MainContentWrapper>
 								<Info />
+								<Header />
 								<NuqsAdapter>{children}</NuqsAdapter>
 								<Footer />
 							</MainContentWrapper>

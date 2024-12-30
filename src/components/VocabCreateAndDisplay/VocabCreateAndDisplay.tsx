@@ -59,6 +59,11 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</SWRConfigWrapper>
 				)}
 			</ErrorBoundaryWrapper>
+			<div>
+				<CustomLink href='/vocab-listing' prefetch={true}>
+					View All
+				</CustomLink>
+			</div>
 			<React.Suspense fallback={<SimplerEntryListingFallback />}>
 				<ErrorMessageProvider>
 					<OptimisticVocabEntriesProvider initialState={optimisticVocab}>
@@ -66,11 +71,6 @@ function VocabCreateAndDisplay({ vocabData, savedSentence }: { vocabData: VocabE
 					</OptimisticVocabEntriesProvider>
 				</ErrorMessageProvider>
 			</React.Suspense>
-			<div>
-				<CustomLink href='/vocab-listing' prefetch={true}>
-					View All
-				</CustomLink>
-			</div>
 		</>
 	);
 }

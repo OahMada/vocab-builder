@@ -87,10 +87,19 @@ body {
 	--border-radius-normal: 5px;
 	--border-radius-small: 2px;
 
-	--header-height: 2rem;
+	--header-tag-height: 2rem;
 
 	--left-column-width: 21.875rem;
 	--right-column-width: 42.875rem;
 
+	@media (width <= 66.5rem) {
+		--right-column-width: 44rem;
+	}
+
 	--footer-height: 3rem;
+	--header-height: 3rem;
+
+	@media (width <= 68.75rem) {
+		--left-column-width: 18rem;
+	}
 }

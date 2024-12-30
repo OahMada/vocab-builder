@@ -160,8 +160,5 @@ var StyledDiv = styled.div`
 	gap: var(--gap-small);
 	width: 100%;
 	align-items: center;
-
-	p {
-		flex-basis: 40%;
-	}
+	justify-content: space-between;
 `;

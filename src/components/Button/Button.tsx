@@ -21,7 +21,7 @@ var StyledButton = styled.button`
 	border-radius: var(--border-radius-small);
 	padding-top: 0;
 	padding-bottom: 0;
-	height: var(--header-height);
+	height: var(--header-tag-height);
 	cursor: pointer;
 `;
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
+import StyledArticle from '@/components/StyledArticle';
 
 export default function Loading() {
-	return <div>Loading...</div>;
+	return <StyledArticle>Loading...</StyledArticle>;
 }

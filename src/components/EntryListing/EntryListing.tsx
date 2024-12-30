@@ -13,7 +13,7 @@ import { useErrorMessageContext } from '@/components/ErrorMessageProvider';
 import { AccordionRoot } from '@/components/Accordion';
 import ErrorMsg from '@/components/ErrorMsg';
 import ScrollArea from '@/components/ScrollArea';
-import HeaderTag from '../HeaderTag';
+import HeaderTag from '@/components/HeaderTag';
 
 function EntryListing({ initialCursor, initialHaveMoreData, userId }: { initialCursor?: string; initialHaveMoreData: boolean; userId: string }) {
 	let [haveMoreData, setHaveMoreData] = React.useState(initialHaveMoreData);

@@ -2,7 +2,7 @@ import { css } from 'styled-components';
 
 export var h3Styles = css`
 	font-size: var(--font-big);
-	line-height: var(--header-height);
+	line-height: var(--header-tag-height);
 `;
 
 export var dialogOverlayStyles = css`
@@ -20,7 +20,7 @@ export var dialogContentStyles = css`
 	left: 50%;
 	transform: translate(-50%, -50%);
 
-	width: 40vw;
+	width: max(40vw, 20rem);
 	padding: var(--padding-big);
 `;
 

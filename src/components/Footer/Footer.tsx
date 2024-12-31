@@ -18,7 +18,7 @@ var StyledFooter = styled.footer`
 `;
 
 function Footer() {
-	return <StyledFooter> &copy;&nbsp;2018-present Adam Hao. All rights reserved.</StyledFooter>;
+	return <StyledFooter> &copy;&nbsp;2024-present Adam Hao. All rights reserved.</StyledFooter>;
 }
 
 export default Footer;

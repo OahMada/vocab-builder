@@ -1,4 +1,4 @@
-# Vocab Builder
+# [Vocab Builder](https://vocab-builder-tau.vercel.app/)
 
 Vocab Builder is a tool for assisting in learning English. Specifically, it accepts sentences and automatically translates them into Chinese. Additionally, phonetic symbols of the words in a sentence can be inserted if there is any uncertainty regarding the words.
 
